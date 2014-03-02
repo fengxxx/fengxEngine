@@ -3,9 +3,11 @@ import wx
 #import sys
 import  wx.lib.mvctree  as  tree
 import os
-import images
-import  string
+#import images
+#import  string
+import math
 
+from key import  *
 try:
     from wx import glcanvas
     haveGLCanvas = True
@@ -38,17 +40,26 @@ ICON_PATH=ROOT_DIR+"\\App.ico"
 
 MAIN_BG_COLOR=(37,37,37)
 
-
-
+EYE_POS=[1,1,1]
+TARGET_POS=[0,0,0]
+ANGLE = -90
+ANGLE_UP=-90
+PI=3.14159
+SPEED=0.1
 class openGL_BasicCanvas(glcanvas.GLCanvas):
+    global ANGLE
+    global EYE_POS
+    global TARGET_POS
+    global PI
+
     def __init__(self, parent):
         glcanvas.GLCanvas.__init__(self, parent, -1)
         self.init = False
         self.context = glcanvas.GLContext(self)
         
         # initial mouse position
-        self.lastx = self.x = 30
-        self.lasty = self.y = 30
+        self.lastx = self.x = 0
+        self.lasty = self.y = 0
         self.size = None
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         self.Bind(wx.EVT_SIZE, self.OnSize)
@@ -56,7 +67,8 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
-
+        self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
 
     def OnEraseBackground(self, event):
         pass # Do nothing, to avoid flashing on MSW.
@@ -68,25 +80,13 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         #print b
         #gluPerspective(0,b,1,60)
         wx.CallAfter(self.DoSetViewport)
-        
-
         event.Skip()
 
     def DoSetViewport(self):
         size = self.size =self.GetClientSize()
-        #self.SetCurrent(self.context)
-        #print self.context
-        #print size 
         a=min( size.width, size.height)
-  
         b=size.width/(size.height+0.0)
-        #glFrustum(-1, 1, -1, 1, 1.0, 150)
-        #gluPerspective(0,b,1,100)
-    
-        #glFrustum(-b, b, -1, 1, 1.0, 150)
-        #gluPerspective(0,b,1,100)
         glViewport(0, 0, a, a)
-
         #glViewport(0,0,1000,1000)
 
 
@@ -102,17 +102,105 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
     def OnMouseDown(self, evt):
         self.CaptureMouse()
         self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-
+        self.lastx, self.lasty = evt.GetPosition()
 
     def OnMouseUp(self, evt):
         self.ReleaseMouse()
 
 
     def OnMouseMotion(self, evt):
-        if evt.Dragging() and evt.LeftIsDown():
-            self.lastx, self.lasty = self.x, self.y
+        global ANGLE
+        global ANGLE_UP
+        global SPEED
+        if evt.Dragging() and evt.RightIsDown():
+            
             self.x, self.y = evt.GetPosition()
+
+            ex=self.x-self.lastx
+            ey=self.y-self.lasty
+
+            ANGLE +=ex*0.2
+            ANGLE_UP +=ey*0.2
+            rad =PI*ANGLE/180.0
+            rad_UP =PI*ANGLE_UP/180.0
+            print ex
+            print TARGET_POS
+            TARGET_POS[1] = EYE_POS[1] + 100*(-math.cos(rad_UP))
+            TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
+            TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)   
+            print TARGET_POS
+
+            self.move()
+
+
+
+            self.lastx, self.lasty = self.x, self.y
             self.Refresh(False)
+
+
+
+    def OnKeyDown(self, evt):
+        key=chr(evt.GetKeyCode())
+        global ANGLE
+        global TARGET_POS 
+        global EYE_POS
+        
+        if key=="D":
+            ANGLE +=1.1
+            rad =PI*ANGLE/180.0
+            TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
+            TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
+            TARGET_POS[1] = EYE_POS[1];
+            self.move()
+
+        if key=="A":
+            ANGLE -=1.1
+            rad =PI*ANGLE/180.0
+            TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
+            TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
+            TARGET_POS[1] = EYE_POS[1];
+            self.move()
+        if key=="W":
+
+            rad =PI*ANGLE/180.0
+            EYE_POS[2] += math.sin(rad) * SPEED
+            EYE_POS[0] += math.cos(rad) * SPEED
+            #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
+            #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
+            #TARGET_POS[1] = EYE_POS[1];
+            self.move()
+        if key=="S":
+ 
+            rad =PI*ANGLE/180.0
+            EYE_POS[2] -= math.sin(rad) * SPEED
+            EYE_POS[0] -= math.cos(rad) * SPEED
+            #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
+            #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
+            #TARGET_POS[1] = EYE_POS[1];
+            self.move()
+        if key=="E":
+            a=0.1
+            EYE_POS[1] +=a
+            TARGET_POS[1] += a
+            self.move()
+        if key=="Q":
+            a=0.1
+            EYE_POS[1] -=a
+            TARGET_POS[1] -= a
+            self.move()
+        if key=="F":
+            EYE_POS=[1,1,1]
+            TARGET_POS=[0,0,0]
+            self.move()
+    def OnKeyUp(self, evt):
+        key=evt.GetKeyCode()
+        print chr(key)
+
+
+    def  move(self):
+        glLoadIdentity()
+        gluLookAt(EYE_POS[0],EYE_POS[1], EYE_POS[2],  TARGET_POS[0],TARGET_POS[1] ,TARGET_POS[2], 0,1,0)
+        self.Refresh(False)
 
 
 
@@ -128,8 +216,8 @@ class mainGlCanvas(openGL_BasicCanvas):
         glTranslatef(0.0, 0.0, -2.0)
 
         # position object
-        glRotatef(self.y, 1.0, 0.0, 0.0)
-        glRotatef(self.x, 0.0, 1.0, 0.0)
+        #glRotatef(self.y, 1.0, 0.0, 0.0)
+        #glRotatef(self.x, 0.0, 1.0, 0.0)
 
 
         a = 0.217
@@ -236,8 +324,8 @@ class mainGlCanvas(openGL_BasicCanvas):
         h = max(h, 1.0)
         xScale = 180.0 / w
         yScale = 180.0 / h
-        glRotatef((self.y - self.lasty) * yScale, 1.0, 0.0, 0.0);
-        glRotatef((self.x - self.lastx) * xScale, 0.0, 1.0, 0.0);
+        #glRotatef((self.y - self.lasty) * yScale, 1.0, 0.0, 0.0);
+        #glRotatef((self.x - self.lastx) * xScale, 0.0, 1.0, 0.0);
         glBegin(GL_LINES)
         self.xyz()
         self.grid()
@@ -267,10 +355,10 @@ class mainGlCanvas(openGL_BasicCanvas):
                 glColor3f(0.1,0.1,0.1)
             else:
                 glColor3f(0.6,0.6,0.6)
-                glVertex3d(-l, i * j - l, 0)
-                glVertex3d(l, i * j - l, 0)
-                glVertex3d(i * j - l, l, 0)
-                glVertex3d(i * j - l, -l, 0)
+                glVertex3d(-l, 0, i * j - l)
+                glVertex3d(l, 0,i * j - l)
+                glVertex3d(i * j - l, 0,l)
+                glVertex3d(i * j - l, 0,-l)
 
 
 class MyTreeCtrl(wx.TreeCtrl):
