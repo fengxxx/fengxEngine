@@ -65,11 +65,14 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.OnMouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
         self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
-
+        EYE_POS=[1,1,1]
+        TARGET_POS=[0,0,0]
+        self.move()
     def OnEraseBackground(self, event):
         pass # Do nothing, to avoid flashing on MSW.
 
@@ -100,10 +103,10 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
 
 
     def OnMouseDown(self, evt):
-        self.CaptureMouse()
+        #self.CaptureMouse()
         self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
         self.lastx, self.lasty = evt.GetPosition()
-
+        #print "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n"*5
     def OnMouseUp(self, evt):
         self.ReleaseMouse()
 
@@ -114,27 +117,26 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         global SPEED
         if evt.Dragging() and evt.RightIsDown():
             
+
             self.x, self.y = evt.GetPosition()
+            #print ( "mousePos: "+str(evt.GetPosition()))
 
             ex=self.x-self.lastx
             ey=self.y-self.lasty
 
+            #print ("long: x  "+str(ex)+"\n  y  "+str(ey))
             ANGLE +=ex*0.2
             ANGLE_UP +=ey*0.2
             rad =PI*ANGLE/180.0
             rad_UP =PI*ANGLE_UP/180.0
-            print ex
-            print TARGET_POS
-            TARGET_POS[1] = EYE_POS[1] + 100*(-math.cos(rad_UP))
+
+            #print ("Eye pos: "+str(TARGET_POS))
+            TARGET_POS[1] = EYE_POS[1] + -100*math.cos(rad_UP)
             TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
             TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)   
-            print TARGET_POS
-
+            #print ("Eye pos: "+str(TARGET_POS))
             self.move()
-
-
-
-            self.lastx, self.lasty = self.x, self.y
+            self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
 
 
@@ -210,10 +212,14 @@ class mainGlCanvas(openGL_BasicCanvas):
         glMatrixMode(GL_PROJECTION)
         size = self.size =self.GetClientSize()
         #a=min( size.width, size.height)/max( size.width, size.height)
-        glFrustum(-1, 1, -1, 1, 1.0, 150)
+        glFrustum(-1, 1, -1, 1,1, 1500)
         # position viewer
         glMatrixMode(GL_MODELVIEW)
-        glTranslatef(0.0, 0.0, -2.0)
+
+
+        gluLookAt(EYE_POS[0],EYE_POS[1], EYE_POS[2],  TARGET_POS[0],TARGET_POS[1] ,TARGET_POS[2], 0,1,0)
+        self.Refresh(False)
+        #glTranslatef(0.0, 0.0, -2.0)
 
         # position object
         #glRotatef(self.y, 1.0, 0.0, 0.0)
@@ -397,7 +403,7 @@ class TestTreeCtrlPanel(wx.Panel):
         #self.log = log
         tID = wx.NewId()
 
-        self.tree = MyTreeCtrl(self, tID, (400,0) , wx.DefaultSize,
+        self.tree = MyTreeCtrl(self, tID, (400,100) , wx.DefaultSize,
                                wx.TR_HAS_BUTTONS
                                 |wx.TR_TWIST_BUTTONS
                                 | wx.TR_SINGLE
