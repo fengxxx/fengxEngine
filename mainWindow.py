@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#coding:utf-8 
 import wx
 #import sys
 import  wx.lib.mvctree  as  tree
@@ -14,6 +14,7 @@ except ImportError:
 
 try:
     from OpenGL.GL import *
+    from OpenGL.GLU import *
     from OpenGL.GLUT import *
     haveOpenGL = True
 except ImportError:
@@ -32,7 +33,7 @@ overview = treemixin.__doc__
 
 
 ROOT_DIR=os.getcwd()
-MAIN_WINDOW_SIZE=(900,600)
+MAIN_WINDOW_SIZE=(600,600)
 ICON_PATH=ROOT_DIR+"\\App.ico"
 
 MAIN_BG_COLOR=(37,37,37)
@@ -62,14 +63,31 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
 
 
     def OnSize(self, event):
+        size=self.GetClientSize()
+        b=size.width/(size.height+0.0)
+        #print b
+        #gluPerspective(0,b,1,60)
         wx.CallAfter(self.DoSetViewport)
+        
+
         event.Skip()
 
     def DoSetViewport(self):
-        size = self.size = self.GetClientSize()
-        self.SetCurrent(self.context)
-        #glViewport(0, 0, size.width, size.height)
-        glViewport(0,0,100,100)
+        size = self.size =self.GetClientSize()
+        #self.SetCurrent(self.context)
+        #print self.context
+        #print size 
+        a=min( size.width, size.height)
+  
+        b=size.width/(size.height+0.0)
+        #glFrustum(-1, 1, -1, 1, 1.0, 150)
+        #gluPerspective(0,b,1,100)
+    
+        #glFrustum(-b, b, -1, 1, 1.0, 150)
+        #gluPerspective(0,b,1,100)
+        glViewport(0, 0, a, a)
+
+        #glViewport(0,0,1000,1000)
 
 
     def OnPaint(self, event):
@@ -102,8 +120,9 @@ class mainGlCanvas(openGL_BasicCanvas):
     def InitGL(self):
         # set viewing projection
         glMatrixMode(GL_PROJECTION)
-        glFrustum(-0.5, 0.5, -0.5, 0.5, 1.0, 3.0)
-
+        size = self.size =self.GetClientSize()
+        #a=min( size.width, size.height)/max( size.width, size.height)
+        glFrustum(-1, 1, -1, 1, 1.0, 150)
         # position viewer
         glMatrixMode(GL_MODELVIEW)
         glTranslatef(0.0, 0.0, -2.0)
@@ -112,34 +131,78 @@ class mainGlCanvas(openGL_BasicCanvas):
         glRotatef(self.y, 1.0, 0.0, 0.0)
         glRotatef(self.x, 0.0, 1.0, 0.0)
 
+
+        a = 0.217
+        b = 0.342
+        c = 0.537
+        d = 0.24
+
+        glClearColor (a,a,a,1)
+
         glEnable(GL_DEPTH_TEST)
+        #glEnable(GL_LIGHTING)
+        #glEnable(GL_LIGHT1)
+
+
+   
+
+        glShadeModel(GL_FLAT)
+        glShadeModel(GL_SMOOTH)
+
+
+        lightIntensity=1
+
+        #-----------------------light
+        LightAmbient= (0.1, 0.15, 0.2, 1.0 )
+        LightDiffuse=     (lightIntensity,lightIntensity, lightIntensity, 1.0 )
+        LightPosition=    ( 2, 2, 2, 1.0 )
+        Light_Model_Ambient = (0, 0, 0, 1.0)
+        LightSpecular=    (1.0, 1.0, 1.0, 1.0)
+        MaterialSpecular = ( 1.0,1.0,1.0,1.0 )
+
+        glLightfv(GL_LIGHT1,GL_SPECULAR, LightSpecular)
+
+        glMaterialfv(GL_FRONT,GL_SPECULAR,MaterialSpecular)
+
+        glMaterialf(GL_FRONT,GL_SHININESS,128)
+
+        glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient)
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse)
+        glLightfv(GL_LIGHT1, GL_POSITION,LightPosition)
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, Light_Model_Ambient)
+
+
+        glEnable(GL_LIGHT1)
         glEnable(GL_LIGHTING)
-        glEnable(GL_LIGHT0)
+        glEnable(GL_COLOR_MATERIAL)
+        #-----------------------light
 
 
     def OnDraw(self):
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         # draw six faces of a cube
+       
         glBegin(GL_QUADS)
+        glColor3f(0,0,0.5)
         glNormal3f( 0.0, 0.0, 1.0)
         glVertex3f( 0.5, 0.5, 0.5)
         glVertex3f(-0.5, 0.5, 0.5)
         glVertex3f(-0.5,-0.5, 0.5)
         glVertex3f( 0.5,-0.5, 0.5)
-
+        glColor3f(0,0.6,0)
         glNormal3f( 0.0, 0.0,-1.0)
         glVertex3f(-0.5,-0.5,-0.5)
         glVertex3f(-0.5, 0.5,-0.5)
         glVertex3f( 0.5, 0.5,-0.5)
         glVertex3f( 0.5,-0.5,-0.5)
-
+        glColor3f(0.4,0,0)
         glNormal3f( 0.0, 1.0, 0.0)
         glVertex3f( 0.5, 0.5, 0.5)
         glVertex3f( 0.5, 0.5,-0.5)
         glVertex3f(-0.5, 0.5,-0.5)
         glVertex3f(-0.5, 0.5, 0.5)
-
+        glColor3f(0,0.5,0.5)
         glNormal3f( 0.0,-1.0, 0.0)
         glVertex3f(-0.5,-0.5,-0.5)
         glVertex3f( 0.5,-0.5,-0.5)
@@ -151,7 +214,8 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3f( 0.5,-0.5, 0.5)
         glVertex3f( 0.5,-0.5,-0.5)
         glVertex3f( 0.5, 0.5,-0.5)
-
+        glColor3f(0.5,0.5,0.5)
+        
         glNormal3f(-1.0, 0.0, 0.0)
         glVertex3f(-0.5,-0.5,-0.5)
         glVertex3f(-0.5,-0.5, 0.5)
@@ -159,6 +223,11 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3f(-0.5, 0.5,-0.5)
         glEnd()
 
+        #glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        #glLoadIdentity()
+        glScale(0.9,0.9,0.2)
+        glPopMatrix()
         if self.size is None:
             self.size = self.GetClientSize()
  
@@ -169,12 +238,43 @@ class mainGlCanvas(openGL_BasicCanvas):
         yScale = 180.0 / h
         glRotatef((self.y - self.lasty) * yScale, 1.0, 0.0, 0.0);
         glRotatef((self.x - self.lastx) * xScale, 0.0, 1.0, 0.0);
+        glBegin(GL_LINES)
+        self.xyz()
+        self.grid()
+        glEnd()
+
         self.SwapBuffers()
 
 
+    def xyz(self):
+        a=15
+        glColor3f(0,0,1)
+        glVertex3d(0, 0, -a)
+        glVertex3d(0, 0, a)
+        glColor3f(0,1,0)
+        glVertex3d(a, 0, 0)
+        glVertex3d(-a, 0, 0)
+        glColor3f(1,0,0)
+        glVertex3d(0, -a, 0)
+        glVertex3d(0, a, 0)
+
+    def grid(self):
+        num=41
+        j=0.08#l/10
+        l=j*(num-1)/2
+        for i in range(num):
+            if i == (num-1/2):
+                glColor3f(0.1,0.1,0.1)
+            else:
+                glColor3f(0.1,0.6,0.5)
+                glVertex3d(-l, i * j - l, 0)
+                glVertex3d(l, i * j - l, 0)
+                glVertex3d(i * j - l, l, 0)
+                glVertex3d(i * j - l, -l, 0)
+
 
 class MyTreeCtrl(wx.TreeCtrl):
-    def __init__(self, parent, id, pos, size, style, log):
+    def __init__(self, parent, id, pos, size, style):
         wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
         #self.log = log
         print self.SetWindowStyleFlag
@@ -201,12 +301,12 @@ class MyTreeCtrl(wx.TreeCtrl):
 '''                           
 
 class TestTreeCtrlPanel(wx.Panel):
-    def __init__(self, parent, log):
+    def __init__(self, parent):
         # Use the WANTS_CHARS style so the panel doesn't eat the Return key.
         wx.Panel.__init__(self, parent, -1, style=wx.WANTS_CHARS)
         self.Bind(wx.EVT_SIZE, self.OnSize)
 
-        self.log = log
+        #self.log = log
         tID = wx.NewId()
 
         self.tree = MyTreeCtrl(self, tID, (400,0) , wx.DefaultSize,
@@ -220,7 +320,7 @@ class TestTreeCtrlPanel(wx.Panel):
                                 |wx.TR_EXTENDED
                                #|wx.TR_NO_BUTTONS
                                #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
-                               , self.log)
+                               )
 
         isz = (16,16)
         il = wx.ImageList(isz[0], isz[1])
@@ -300,7 +400,7 @@ class TestTreeCtrlPanel(wx.Panel):
         item = event.GetItem()
         if item and self.tree.GetItemText(item) == "The Root Item":
             wx.Bell()
-            self.log.WriteText("You can't edit this one...\n")
+            print ("You can't edit this one...\n")
 
             # Lets just see what's visible of its children
             cookie = 0
@@ -379,39 +479,202 @@ class mainFrame(wx.Frame):
     global MAIN_BG_COLOR
     def __init__(self, parent, id):
         wx.Frame.__init__(self, parent, id, 'fengx', size=MAIN_WINDOW_SIZE,style=wx.DEFAULT_FRAME_STYLE)
-
-        self.tre = TestTreeCtrlPanel(self, "ss")
+        
+        #---------------main Window settings----->>>>
         self.SetBackgroundColour(MAIN_BG_COLOR)
-    
-        self.SetAutoLayout(True)
-        
-        
-        self.gl=mainGlCanvas(self)
-        self.gl.Bind(wx.EVT_MIDDLE_UP,  self.close)
-        
-        lgl = wx.LayoutConstraints()
-        lgl .top.SameAs(self, wx.Top, 0)
-        lgl .left.SameAs(self, wx.Left, 0)
-        lgl .bottom.SameAs(self, wx.Bottom, 0)
-        lgl .right.PercentOf(self, wx.Right, 50)
-        
         self.icon = wx.Icon(ICON_PATH, wx.BITMAP_TYPE_ICO)
         self.SetIcon(self.icon)
         
-        lc = wx.LayoutConstraints()
-        lc.top.SameAs(self, wx.Top, 10)
-        lc.left.SameAs(self, wx.Left, 10)
-        lc.bottom.SameAs(self, wx.Bottom, 10)
-        lc.right.PercentOf(self, wx.Right, 95)
-        lc.left.PercentOf(self, wx.Right, 50)
+
+        #--------------main MenuBar--------------->>>>
+        self.menuBar = wx.MenuBar()
+        self.SetMenuBar(self.CreateMenuBar())
+        #--------------main MenuBar--------------<<<<<
+        self.CreateStatusBar()
+        self.SetStatusText("fengxEngine")
+
+
+
+
+        '''
+        #--------------main Part of window------->>>>
+        #self.P_main=wx.Panel(self,-1)
+        #self.P_tooBar=wx.Panel(self)
+        #self.P_mainWindow=wx.Panel(self)
+        self.P_main=wx.Panel(self,  id=-1, pos=(0,0), size=(500,500), style=wx.TAB_TRAVERSAL|wx.NO_BORDER, name="zzz") 
+
+        '''
+        '''
+        self.P_sceneWindow=wx.Panel(self)
+        self.P_fileManager=wx.Panel(self)
+        self.P_sceneManager=wx.Panel(self)
+
+        '''
+        '''
+        #---scene window
+        self.sceneWindow=mainGlCanvas(self)
+        #---resource manager
+        self.resManager=TestTreeCtrlPanel(self)
+        #---scene manager
+        self.sceneManager=TestTreeCtrlPanel(self)
+        self.log="sss"
+        self.b2=wx.Button(self,label="xxxaaxxxxxxx")
+        
+
+        #self.log = log
+        tID = wx.NewId()
+        self.tr = MyTreeCtrl(self,tID, (400,0) , wx.DefaultSize,
+                               wx.TR_HAS_BUTTONS
+                                |wx.TR_TWIST_BUTTONS
+                                | wx.TR_SINGLE
+                                | wx.TR_MULTIPLE
+                                |wx.TR_NO_LINES
+                                |wx.TR_FULL_ROW_HIGHLIGHT
+                                |wx.TR_EDIT_LABELS
+                                |wx.TR_EXTENDED
+                               #|wx.TR_NO_BUTTONS
+                               #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
+                               )
 
         
-        self.tre.SetConstraints(lc)             
-        self.gl.SetConstraints(lgl )
+        #---layout
+        #---BoxSizer
+        self.mainBox=wx.BoxSizer(wx.HORIZONTAL)
+
+        self.mainBox.Add(self.b2,1, wx.EXPAND)
+
+        self.mainBox.Add(self.sceneWindow )#,1, wx.EXPAND
+        self.mainBox.Add(self.tr)
+        #self.mainBox.Add(self.sceneManager )
+ 
+  
+
+
+        self.P_main.SetSizer(self.mainBox)
+        #self.tbox=wx.BoxSizer(wx.VERTICAL)
+        #self.tbox.add()
+        #self.
+        #P_tooBar.add()
+
+        
+    '''
+
+
+
+        #---file project
+        #self.tre = TestTreeCtrlPanel(self)
+        #---openGl 3D window
+        self.gl=mainGlCanvas(self)
+        self.gl.Bind(wx.EVT_MIDDLE_UP,  self.close)
+
+        
+        #---ect
+        #self.b = wx.Button(self, -1, "test", (50,50))
+        #self.b.Bind(wx.EVT_BUTTON, self.OnButton, self.b)
+
+
+        '''
+        self.SetAutoLayout(True)
+
+        lgl = wx.LayoutConstraints()
+
+
+        lgl.top.PercentOf(self, wx.Top,1) 
+        lgl.left.PercentOf(self, wx.Left, 1) 
+        lgl.right.PercentOf(self,wx.Right,60) 
+        lgl.bottom.PercentOf(self,wx.Bottom,100)
+
+        lc = wx.LayoutConstraints()
+        lc.top.PercentOf(self, wx.Top, 90)
+        lc.left.PercentOf(self, wx.Left, 50)
+        lc.bottom.PercentOf(self,wx.Bottom,50)
+        #lc.bottom.SameAs(self, wx.Bottom, 100)
+        lc.right.PercentOf(self, wx.Right, 50)
+       
+        '''
+
+        
+        #self.tre.SetConstraints(lc)             
+        #self.gl.SetConstraints(lgl )
+
+        
+    def makeSimpleBox3(win):
+        box = wx.BoxSizer(wx.HORIZONTAL)
+        box.Add(SampleWindow(win, "one"), 0, wx.EXPAND)
+        box.Add(SampleWindow(win, "two"), 0, wx.EXPAND)
+        box.Add(SampleWindow(win, "three"), 0, wx.EXPAND)
+        box.Add(SampleWindow(win, "four"), 0, wx.EXPAND)
+        box.Add(SampleWindow(win, "five"), 1, wx.EXPAND)
+        return box
+
+    def CreateMenuBar(self):
+
+        # Make a menubar
+        file_menu = wx.Menu()
+        help_menu = wx.Menu()
+        t1_menu = wx.Menu()
+        t2_menu = wx.Menu()
+
+
+        TEST_QUIT = wx.NewId()
+        TEST_ABOUT = wx.NewId()
+        TEST_JIKANG = wx.NewId()
+        TEST_RUANJI = wx.NewId()
+        TEST_LIULING = wx.NewId()
+
+
+        file_menu.Append(TEST_QUIT, "&Exit")
+        help_menu.Append(TEST_ABOUT, "&About")
+        #file_menu.Append(TEST_RUANJI,"&阮籍", "时无英雄，使竖子成名")
+        
+        menu_bar = wx.MenuBar()
+
+        menu_bar.Append(file_menu, "&ThreeKindom")
+        menu_bar.Append(help_menu, "&Help")
+        '''
+        menu_bar.Append(t2_menu,)
+        menu_bar.Append(t1_menu, "&魏晋")
+        t1_menu.Append(TEST_JIKANG, "&嵇康", "广陵散")
+        t1_menu.Append(TEST_RUANJI, "&阮籍", "时无英雄，使竖子成名")
+        t1_menu.Append(TEST_LIULING, "&刘伶", "常乘鹿车，携一壶酒，使人荷锸而随之，谓曰：“死便埋我。")
+        self.m_2= wx.Menu()
+        self.m_2.Append(m_2_1, "&楚南宫", "This the text in the Statusbar")
+        self.m_2.Append(m_2_2, "&重耳", "")
+        self.m_2.Append(m_2_3, "&商臣", "You may select Earth too")
+        #self.menuBar.Append(self.m_2, "&战国")
+        self.menuBar.Append(self.menu1, "&魏晋")
+        '''
+
+
+        #self.Bind(wx.EVT_MENU, self.OnAbout, id=TEST_ABOUT)
+        self.Bind(wx.EVT_MENU, self.close, id=TEST_QUIT)
+        #self.Bind(wx.EVT_CLOSE, self.OnQuit)
+
+        return menu_bar
     def close(self,event):
         self.Close()
 
 
+    def OnButton(self, evt):
+        dlg = wx.ColourDialog(self)
+
+        # Ensure the full colour dialog is displayed, 
+        # not the abbreviated version.
+        dlg.GetColourData().SetChooseFull(True)
+
+        if dlg.ShowModal() == wx.ID_OK:
+
+            # If the user selected OK, then the dialog's wx.ColourData will
+            # contain valid information. Fetch the data ...
+            data = dlg.GetColourData()
+
+            # ... then do something with it. The actual colour data will be
+            # returned as a three-tuple (r, g, b) in this particular case.
+            print ('You selected: %s\n' % str(data.GetColour().Get()))
+
+        # Once the dialog is destroyed, Mr. wx.ColourData is no longer your
+        # friend. Don't use it again!
+        dlg.Destroy()
 mainApp = wx.PySimpleApp()
 newFrame = mainFrame(parent=None, id=-1)
 newFrame.Show()
