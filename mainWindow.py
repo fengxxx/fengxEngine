@@ -184,7 +184,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         # draw six faces of a cube
        
         glBegin(GL_QUADS)
-        glColor3f(0,0,0.5)
+        glColor3f(0.78,0.78,0.78)
         glNormal3f( 0.0, 0.0, 1.0)
         glVertex3f( 0.5, 0.5, 0.5)
         glVertex3f(-0.5, 0.5, 0.5)
@@ -263,10 +263,10 @@ class mainGlCanvas(openGL_BasicCanvas):
         j=0.08#l/10
         l=j*(num-1)/2
         for i in range(num):
-            if i == (num-1/2):
+            if i == ((num-1)/2):
                 glColor3f(0.1,0.1,0.1)
             else:
-                glColor3f(0.1,0.6,0.5)
+                glColor3f(0.6,0.6,0.6)
                 glVertex3d(-l, i * j - l, 0)
                 glVertex3d(l, i * j - l, 0)
                 glVertex3d(i * j - l, l, 0)
