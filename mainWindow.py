@@ -215,7 +215,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glMatrixMode(GL_PROJECTION)
         size = self.size =self.GetClientSize()
         #a=min( size.width, size.height)/max( size.width, size.height)
-        glFrustum(-1, 1, -1, 1, 1.0, 150)
+        glFrustum(-1, 1, -1, 1, 1.0, 15)
         # position viewer
         glMatrixMode(GL_MODELVIEW)
         glTranslatef(0.0, 0.0, -2.0)
@@ -277,25 +277,25 @@ class mainGlCanvas(openGL_BasicCanvas):
         # draw six faces of a cube
        
         glBegin(GL_QUADS)
-        glColor3f(0.78,0.78,0.78)
+        #glColor3f(0.78,0.78,0.78)
         glNormal3f( 0.0, 0.0, 1.0)
         glVertex3f( 0.5, 0.5, 0.5)
         glVertex3f(-0.5, 0.5, 0.5)
         glVertex3f(-0.5,-0.5, 0.5)
         glVertex3f( 0.5,-0.5, 0.5)
-        glColor3f(0,0.6,0)
+        #glColor3f(0,0.6,0)
         glNormal3f( 0.0, 0.0,-1.0)
         glVertex3f(-0.5,-0.5,-0.5)
         glVertex3f(-0.5, 0.5,-0.5)
         glVertex3f( 0.5, 0.5,-0.5)
         glVertex3f( 0.5,-0.5,-0.5)
-        glColor3f(0.4,0,0)
+        #glColor3f(0.4,0,0)
         glNormal3f( 0.0, 1.0, 0.0)
         glVertex3f( 0.5, 0.5, 0.5)
         glVertex3f( 0.5, 0.5,-0.5)
         glVertex3f(-0.5, 0.5,-0.5)
         glVertex3f(-0.5, 0.5, 0.5)
-        glColor3f(0,0.5,0.5)
+        #glColor3f(0,0.5,0.5)
         glNormal3f( 0.0,-1.0, 0.0)
         glVertex3f(-0.5,-0.5,-0.5)
         glVertex3f( 0.5,-0.5,-0.5)
@@ -307,7 +307,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3f( 0.5,-0.5, 0.5)
         glVertex3f( 0.5,-0.5,-0.5)
         glVertex3f( 0.5, 0.5,-0.5)
-        glColor3f(0.5,0.5,0.5)
+        #glColor3f(0.5,0.5,0.5)
         
         glNormal3f(-1.0, 0.0, 0.0)
         glVertex3f(-0.5,-0.5,-0.5)
@@ -352,7 +352,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3d(0, a, 0)
 
     def grid(self):
-        num=41
+        num=80
         j=0.08#l/10
         l=j*(num-1)/2
         for i in range(num):
@@ -370,7 +370,7 @@ class MyTreeCtrl(wx.TreeCtrl):
     def __init__(self, parent, id, pos, size, style):
         wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
         #self.log = log
-        print self.SetWindowStyleFlag
+        #print self.SetWindowStyleFlag
         self.SetForegroundColour((168,168,168))
         #self.SetItemBackgroundColour(MAIN_BG_COLOR)
         self.SetBackgroundColour(MAIN_BG_COLOR)
@@ -417,11 +417,13 @@ class TestTreeCtrlPanel(wx.Panel):
 
         isz = (16,16)
         il = wx.ImageList(isz[0], isz[1])
-        fldridx     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,      wx.ART_OTHER, isz))
+
+        fldridx     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NEW_DIR,      wx.ART_OTHER, isz))
         fldropenidx = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_OTHER, isz))
         fileidx     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
         icon=wx.Icon("App.ico", wx.BITMAP_TYPE_ICO)
-        smileidx    = il.Add(wx.BitmapFromIcon(icon))
+        
+        smileidx    = il.Add(wx.ArtProvider_GetBitmap(wx.ART_TICK_MARK, wx.ART_OTHER, isz))#il.Add(wx.BitmapFromIcon(icon))
 
         self.tree.SetImageList(il)
         self.il = il
@@ -431,7 +433,7 @@ class TestTreeCtrlPanel(wx.Panel):
         #        we don't need any real data, so we'll just use None below for
         #        the item data.
 
-        self.root = self.tree.AddRoot("The Root Item")
+        self.root = self.tree.AddRoot("project")
         self.tree.SetPyData(self.root, None)
         self.tree.SetItemImage(self.root, fldridx, wx.TreeItemIcon_Normal)
         self.tree.SetItemImage(self.root, fldropenidx, wx.TreeItemIcon_Expanded)
@@ -612,14 +614,16 @@ class mainFrame(wx.Frame):
         #---resource manager
         self.resManager=TestTreeCtrlPanel(self.P_main)
         #---scene manager
-        self.sceneManager=TestTreeCtrlPanel(self.P_main)
+        #self.sceneManager=TestTreeCtrlPanel(self.P_main)
+        #---inspect panel
+        #self.inspectorPnale=TestTreeCtrlPanel(self.P_main)
         #---toolBar
         #self.mainToolBar=wx.Panel(self)
 
         self.dir3 = wx.GenericDirCtrl(self.P_main, -1, size=(200,225), style=wx.DIRCTRL_SHOW_FILTERS,
                                 filter="All files (*.*)|*.*|Python files (*.py)|*.py")
 
-        self.dir3.SetPath(ROOT_DIR)
+        #self.dir3.SetPath(ROOT_DIR)
         #self.dir3.SetDefaultPath(ROOT_DIR)
         self.box = wx.BoxSizer(wx.HORIZONTAL)
         self.box.Add(self.sceneWindow, 3, wx.EXPAND|wx.ALL ,border=2)
