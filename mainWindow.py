@@ -3,11 +3,10 @@ import wx
 #import sys
 import  wx.lib.mvctree  as  tree
 import os
-#import images
-#import  string
+
 import math
 
-from key import  *
+#from key import  *
 try:
     from wx import glcanvas
     haveGLCanvas = True
@@ -53,7 +52,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
     global PI
 
     def __init__(self, parent):
-        glcanvas.GLCanvas.__init__(self, parent, -1)
+        glcanvas.GLCanvas.__init__(self, parent, -1,size=(100,100))
         self.init = False
         self.context = glcanvas.GLContext(self)
         
@@ -64,7 +63,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.OnMouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
         self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
@@ -100,13 +99,13 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
 
 
     def OnMouseDown(self, evt):
-        self.CaptureMouse()
+        #self.CaptureMouse()
         self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
         self.lastx, self.lasty = evt.GetPosition()
 
     def OnMouseUp(self, evt):
-        self.ReleaseMouse()
-
+        #self.ReleaseMouse()
+        print ""
 
     def OnMouseMotion(self, evt):
         global ANGLE
@@ -134,7 +133,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
 
 
 
-            self.lastx, self.lasty = self.x, self.y
+            self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
 
 
@@ -148,17 +147,23 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         if key=="D":
             ANGLE +=1.1
             rad =PI*ANGLE/180.0
-            TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
-            TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
-            TARGET_POS[1] = EYE_POS[1];
+            #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
+            #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
+            #TARGET_POS[1] = EYE_POS[1];
+            EYE_POS[2] -= math.cos(rad) * SPEED 
+            EYE_POS[0] -= -math.sin(rad) * SPEED
             self.move()
 
         if key=="A":
             ANGLE -=1.1
             rad =PI*ANGLE/180.0
-            TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
-            TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
-            TARGET_POS[1] = EYE_POS[1];
+            #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
+            #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
+            #TARGET_POS[1] = EYE_POS[1];
+            EYE_POS[0] += math.sin(rad) * SPEED
+            #EYE_POS[2] += math.sin(rad) * SPEED
+
+
             self.move()
         if key=="W":
 
@@ -397,15 +402,15 @@ class TestTreeCtrlPanel(wx.Panel):
         #self.log = log
         tID = wx.NewId()
 
-        self.tree = MyTreeCtrl(self, tID, (400,0) , wx.DefaultSize,
+        self.tree = MyTreeCtrl(self, tID, (0,0) , (100,100),
                                wx.TR_HAS_BUTTONS
                                 |wx.TR_TWIST_BUTTONS
-                                | wx.TR_SINGLE
+                                #| wx.TR_SINGLE
                                 | wx.TR_MULTIPLE
                                 |wx.TR_NO_LINES
                                 |wx.TR_FULL_ROW_HIGHLIGHT
                                 |wx.TR_EDIT_LABELS
-                                |wx.TR_EXTENDED
+                                #|wx.TR_EXTENDED
                                #|wx.TR_NO_BUTTONS
                                #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
                                )
@@ -565,6 +570,7 @@ class mainFrame(wx.Frame):
     global MAIN_WINDOW_SIZE
     global ICON_PATH
     global MAIN_BG_COLOR
+
     def __init__(self, parent, id):
         wx.Frame.__init__(self, parent, id, 'fengx', size=MAIN_WINDOW_SIZE,style=wx.DEFAULT_FRAME_STYLE)
         
@@ -580,121 +586,77 @@ class mainFrame(wx.Frame):
         #--------------main MenuBar--------------<<<<<
         self.CreateStatusBar()
         self.SetStatusText("fengxEngine")
+        '''
+        self._leftWindow1 = wx.SashLayoutWindow(self, 101, wx.DefaultPosition,
+                                                wx.Size(200, 1000), wx.NO_BORDER |
+                                                wx.SW_3D | wx.CLIP_CHILDREN)
+        
+        self.ID_WINDOW_TOP = 100
+        self.ID_WINDOW_LEFT1 = 101
+        self.ID_WINDOW_RIGHT1 = 102
+        self.ID_WINDOW_BOTTOM = 103
 
-
-
-
+        self._leftWindow1.Bind(wx.EVT_SASH_DRAGGED_RANGE, self.OnFoldPanelBarDrag,
+                               id=100, id2=103)
+        self._leftWindow1.SetOrientation(wx.LAYOUT_VERTICAL)
+        self._leftWindow1.SetAlignment(wx.LAYOUT_LEFT)
+        self._leftWindow1.SetSashVisible(wx.SASH_RIGHT, True)
+        self._leftWindow1.SetExtraBorderSize(3)
+        self.Bind(wx.EVT_SIZE, self.OnSize)
         '''
         #--------------main Part of window------->>>>
-        #self.P_main=wx.Panel(self,-1)
-        #self.P_tooBar=wx.Panel(self)
-        #self.P_mainWindow=wx.Panel(self)
-        self.P_main=wx.Panel(self,  id=-1, pos=(0,0), size=(500,500), style=wx.TAB_TRAVERSAL|wx.NO_BORDER, name="zzz") 
-
-        '''
-        '''
-        self.P_sceneWindow=wx.Panel(self)
-        self.P_fileManager=wx.Panel(self)
-        self.P_sceneManager=wx.Panel(self)
-
-        '''
-        '''
-        #---scene window
-        self.sceneWindow=mainGlCanvas(self)
-        #---resource manager
-        self.resManager=TestTreeCtrlPanel(self)
-        #---scene manager
-        self.sceneManager=TestTreeCtrlPanel(self)
-        self.log="sss"
-        self.b2=wx.Button(self,label="xxxaaxxxxxxx")
-        
-
-        #self.log = log
-        tID = wx.NewId()
-        self.tr = MyTreeCtrl(self,tID, (400,0) , wx.DefaultSize,
-                               wx.TR_HAS_BUTTONS
-                                |wx.TR_TWIST_BUTTONS
-                                | wx.TR_SINGLE
-                                | wx.TR_MULTIPLE
-                                |wx.TR_NO_LINES
-                                |wx.TR_FULL_ROW_HIGHLIGHT
-                                |wx.TR_EDIT_LABELS
-                                |wx.TR_EXTENDED
-                               #|wx.TR_NO_BUTTONS
-                               #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
-                               )
-
-        
-        #---layout
-        #---BoxSizer
-        self.mainBox=wx.BoxSizer(wx.HORIZONTAL)
-
-        self.mainBox.Add(self.b2,1, wx.EXPAND)
-
-        self.mainBox.Add(self.sceneWindow )#,1, wx.EXPAND
-        self.mainBox.Add(self.tr)
-        #self.mainBox.Add(self.sceneManager )
+        self.P_main=wx.Panel(self)
  
-  
+        #---scene window
+        self.sceneWindow=mainGlCanvas(self.P_main)
+        #---resource manager
+        self.resManager=TestTreeCtrlPanel(self.P_main)
+        #---scene manager
+        self.sceneManager=TestTreeCtrlPanel(self.P_main)
+        #---toolBar
+        #self.mainToolBar=wx.Panel(self)
+
+        self.dir3 = wx.GenericDirCtrl(self.P_main, -1, size=(200,225), style=wx.DIRCTRL_SHOW_FILTERS,
+                                filter="All files (*.*)|*.*|Python files (*.py)|*.py")
+
+        self.dir3.SetPath(ROOT_DIR)
+        #self.dir3.SetDefaultPath(ROOT_DIR)
+        self.box = wx.BoxSizer(wx.HORIZONTAL)
+        self.box.Add(self.sceneWindow, 3, wx.EXPAND|wx.ALL ,border=2)
+        self.box.Add(self.resManager, 1, wx.EXPAND|wx.ALL ,border=1)
+        self.box.Add(self.dir3, 1, wx.EXPAND|wx.ALL ,border=1)
+
+        self.b = wx.Button(self.P_main, -1, label=u'打开')  
+        self.mainBox=wx.BoxSizer(wx.VERTICAL)
+        self.mainBox.Add(self.b, 0, border=1)
+        self.mainBox.Add(self.box,1,wx.EXPAND|wx.ALL ,border=1)
+        
 
 
         self.P_main.SetSizer(self.mainBox)
-        #self.tbox=wx.BoxSizer(wx.VERTICAL)
-        #self.tbox.add()
-        #self.
-        #P_tooBar.add()
+        self.mainBox.Fit(self.P_main)
+        self.Fit()
 
+
+    def OnSize(self, event):
+
+        wx.LayoutAlgorithm().LayoutWindow(self, self.remainingSpace)
+        event.Skip()
+    def OnFoldPanelBarDrag(self, event):
+
+        if event.GetDragStatus() == wx.SASH_STATUS_OUT_OF_RANGE:
+            return
+
+        if event.GetId() == self.ID_WINDOW_LEFT1:
+            self._leftWindow1.SetDefaultSize(wx.Size(event.GetDragRect().width, 1000))
+
+
+        # Leaves bits of itself behind sometimes
+        wx.LayoutAlgorithm().LayoutWindow(self, self.remainingSpace)
+        self.remainingSpace.Refresh()
+
+        event.Skip()
         
-    '''
-
-
-
-        #---file project
-        #self.tre = TestTreeCtrlPanel(self)
-        #---openGl 3D window
-        self.gl=mainGlCanvas(self)
-        self.gl.Bind(wx.EVT_MIDDLE_UP,  self.close)
-
-        
-        #---ect
-        #self.b = wx.Button(self, -1, "test", (50,50))
-        #self.b.Bind(wx.EVT_BUTTON, self.OnButton, self.b)
-
-
-        '''
-        self.SetAutoLayout(True)
-
-        lgl = wx.LayoutConstraints()
-
-
-        lgl.top.PercentOf(self, wx.Top,1) 
-        lgl.left.PercentOf(self, wx.Left, 1) 
-        lgl.right.PercentOf(self,wx.Right,60) 
-        lgl.bottom.PercentOf(self,wx.Bottom,100)
-
-        lc = wx.LayoutConstraints()
-        lc.top.PercentOf(self, wx.Top, 90)
-        lc.left.PercentOf(self, wx.Left, 50)
-        lc.bottom.PercentOf(self,wx.Bottom,50)
-        #lc.bottom.SameAs(self, wx.Bottom, 100)
-        lc.right.PercentOf(self, wx.Right, 50)
-       
-        '''
-
-        
-        #self.tre.SetConstraints(lc)             
-        #self.gl.SetConstraints(lgl )
-
-        
-    def makeSimpleBox3(win):
-        box = wx.BoxSizer(wx.HORIZONTAL)
-        box.Add(SampleWindow(win, "one"), 0, wx.EXPAND)
-        box.Add(SampleWindow(win, "two"), 0, wx.EXPAND)
-        box.Add(SampleWindow(win, "three"), 0, wx.EXPAND)
-        box.Add(SampleWindow(win, "four"), 0, wx.EXPAND)
-        box.Add(SampleWindow(win, "five"), 1, wx.EXPAND)
-        return box
-
     def CreateMenuBar(self):
 
         # Make a menubar
