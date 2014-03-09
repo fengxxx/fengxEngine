@@ -44,7 +44,7 @@ TARGET_POS=[0,0,0]
 ANGLE = -90
 ANGLE_UP=-90
 PI=3.14159
-SPEED=0.1
+SPEED=0.5
 class openGL_BasicCanvas(glcanvas.GLCanvas):
     global ANGLE
     global EYE_POS
@@ -96,6 +96,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.InitGL()
             self.init = True
         self.OnDraw()
+       
 
 
     def OnMouseDown(self, evt):
@@ -184,19 +185,26 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             #TARGET_POS[1] = EYE_POS[1];
             self.move()
         if key=="E":
-            a=0.1
-            EYE_POS[1] +=a
-            TARGET_POS[1] += a
+            
+            EYE_POS[1] +=SPEED
+            TARGET_POS[1] +=SPEED
             self.move()
         if key=="Q":
-            a=0.1
-            EYE_POS[1] -=a
-            TARGET_POS[1] -= a
+            EYE_POS[1] -=SPEED
+            TARGET_POS[1] -= SPEED
             self.move()
         if key=="F":
             EYE_POS=[1,1,1]
             TARGET_POS=[0,0,0]
             self.move()
+
+        if key=="-":
+            global SPEED
+            SPEED-=0.1
+
+        if key=="=":
+            global SPEED
+            SPEED+=0.1
     def OnKeyUp(self, evt):
         key=evt.GetKeyCode()
         print chr(key)
@@ -215,7 +223,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glMatrixMode(GL_PROJECTION)
         size = self.size =self.GetClientSize()
         #a=min( size.width, size.height)/max( size.width, size.height)
-        glFrustum(-1, 1, -1, 1, 1.0, 15)
+        glFrustum(-1, 1, -1, 1, 1.0, 1000)
         # position viewer
         glMatrixMode(GL_MODELVIEW)
         glTranslatef(0.0, 0.0, -2.0)
@@ -275,7 +283,66 @@ class mainGlCanvas(openGL_BasicCanvas):
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         # draw six faces of a cube
+
+        self.box()
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        glScale(0.1,0.1,0.2)
+        glTranslatef(1,0.2,0)
+        
+        glPopMatrix()
+        if self.size is None:
+            self.size = self.GetClientSize()
+ 
+        w, h = self.size
+        w = max(w, 1.0)
+        h = max(h, 1.0)
+        xScale = 180.0 / w
+        yScale = 180.0 / h
+        glTranslatef(5,0,0)
+        #glRotatef((self.y - self.lasty) * yScale, 1.0, 0.0, 0.0);
+        #glRotatef((self.x - self.lastx) * xScale, 0.0, 1.0, 0.0);
+   
+        xl=10
+        yl=10
+        zl=10
+
+
+        glBegin(GL_LINES)
+        self.xyz()
+        self.grid()
+        glEnd()
+ 
+
+        tpos=[0,0,0]
+        sc=1.2
+        big=1
+        glScale(big,big,big)
+        glTranslatef(-xl*sc/2,-yl*sc/2,-zl*sc/2)
+        for ix in range(0,xl):
+            for iy in range(0,yl):
+                for iz in range(0,zl):
+                    glColor3f(ix*0.1,iy*0.1,iz*0.1)
+                    glTranslatef((ix-tpos[0])*sc,(iy-tpos[1])*sc,(iz-tpos[2])*sc)
+                    
+                    tpos=[ix,iy,iz]
+                    self.box()
+                    
+
+
+        #glMatrixMode(GL_MODELVIEW)
+
+
        
+
+  
+        #self.OnDraw()
+
+        self.SwapBuffers()
+
+    def box(self):
+
         glBegin(GL_QUADS)
         #glColor3f(0.78,0.78,0.78)
         glNormal3f( 0.0, 0.0, 1.0)
@@ -315,30 +382,6 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3f(-0.5, 0.5, 0.5)
         glVertex3f(-0.5, 0.5,-0.5)
         glEnd()
-
-        #glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        #glLoadIdentity()
-        glScale(0.9,0.9,0.2)
-        glPopMatrix()
-        if self.size is None:
-            self.size = self.GetClientSize()
- 
-        w, h = self.size
-        w = max(w, 1.0)
-        h = max(h, 1.0)
-        xScale = 180.0 / w
-        yScale = 180.0 / h
-        #glRotatef((self.y - self.lasty) * yScale, 1.0, 0.0, 0.0);
-        #glRotatef((self.x - self.lastx) * xScale, 0.0, 1.0, 0.0);
-        glBegin(GL_LINES)
-        self.xyz()
-        self.grid()
-        glEnd()
-
-        self.SwapBuffers()
-
-
     def xyz(self):
         a=15
         glColor3f(0,0,1)
@@ -352,8 +395,8 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3d(0, a, 0)
 
     def grid(self):
-        num=80
-        j=0.08#l/10
+        num=200
+        j=num*0.001#0.08#l/10
         l=j*(num-1)/2
         for i in range(num):
             if i == ((num-1)/2):
@@ -736,3 +779,5 @@ newFrame.SetBackgroundColour(MAIN_BG_COLOR)
 #print dir(newFrame)
 mainApp.MainLoop()
 
+class gameObject():
+    print "xxx"
