@@ -780,13 +780,13 @@ newFrame.SetBackgroundColour(MAIN_BG_COLOR)
 mainApp.MainLoop()
 
 
-class Vector3():
+
 
 class gameObject():
 
 
     class transform():
-        position=(0,0,0)
+        position=
         rotation=(0,0,0)
         scale=(0,0,0)
 
