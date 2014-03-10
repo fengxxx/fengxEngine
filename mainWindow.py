@@ -779,5 +779,78 @@ newFrame.SetBackgroundColour(MAIN_BG_COLOR)
 #print dir(newFrame)
 mainApp.MainLoop()
 
+
+class Vector3():
+
 class gameObject():
-    print "xxx"
+
+
+    class transform():
+        position=(0,0,0)
+        rotation=(0,0,0)
+        scale=(0,0,0)
+
+
+        
+        def move():
+            print "move"
+        def rotate():
+            print "rotate"
+        def scale():
+            print "scale"
+
+    class mesh():
+        print "mesh"
+
+    class meshRender():
+        print "meshRender"
+
+
+
+
+    def createPrimitives(objectType):
+        if objectType=="box":
+            print "box"
+            glBegin(GL_QUADS)
+            #glColor3f(0.78,0.78,0.78)
+            glNormal3f( 0.0, 0.0, 1.0)
+            glVertex3f( 0.5, 0.5, 0.5)
+            glVertex3f(-0.5, 0.5, 0.5)
+            glVertex3f(-0.5,-0.5, 0.5)
+            glVertex3f( 0.5,-0.5, 0.5)
+            #glColor3f(0,0.6,0)
+            glNormal3f( 0.0, 0.0,-1.0)
+            glVertex3f(-0.5,-0.5,-0.5)
+            glVertex3f(-0.5, 0.5,-0.5)
+            glVertex3f( 0.5, 0.5,-0.5)
+            glVertex3f( 0.5,-0.5,-0.5)
+            #glColor3f(0.4,0,0)
+            glNormal3f( 0.0, 1.0, 0.0)
+            glVertex3f( 0.5, 0.5, 0.5)
+            glVertex3f( 0.5, 0.5,-0.5)
+            glVertex3f(-0.5, 0.5,-0.5)
+            glVertex3f(-0.5, 0.5, 0.5)
+            #glColor3f(0,0.5,0.5)
+            glNormal3f( 0.0,-1.0, 0.0)
+            glVertex3f(-0.5,-0.5,-0.5)
+            glVertex3f( 0.5,-0.5,-0.5)
+            glVertex3f( 0.5,-0.5, 0.5)
+            glVertex3f(-0.5,-0.5, 0.5)
+
+            glNormal3f( 1.0, 0.0, 0.0)
+            glVertex3f( 0.5, 0.5, 0.5)
+            glVertex3f( 0.5,-0.5, 0.5)
+            glVertex3f( 0.5,-0.5,-0.5)
+            glVertex3f( 0.5, 0.5,-0.5)
+            #glColor3f(0.5,0.5,0.5)
+            
+            glNormal3f(-1.0, 0.0, 0.0)
+            glVertex3f(-0.5,-0.5,-0.5)
+            glVertex3f(-0.5,-0.5, 0.5)
+            glVertex3f(-0.5, 0.5, 0.5)
+            glVertex3f(-0.5, 0.5,-0.5)
+            glEnd()
+
+
+
+
