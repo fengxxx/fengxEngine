@@ -3,7 +3,7 @@ import wx
 from  _globalData import *
 
 
-class MyTreeCtrl(wx.TreeCtrl):
+class sceneTree(wx.TreeCtrl):
     def __init__(self, parent, id, pos, size, style):
         wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
         #self.log = log
@@ -19,18 +19,9 @@ class MyTreeCtrl(wx.TreeCtrl):
         if t1 < t2: return -1
         if t1 == t2: return 0
         return 1
+                     
 
-
-'''
-(TR_EXTENDED 'TR_DEFAULT_STYLE', 'TR_EDIT_LABELS', 'TR_EXTENDED', 'TR_FULL_ROW_HIGHLIGHT',
-'TR_HAS_BUTTONS', 'TR_HAS_VARIABLE_ROW_HEIGHT', 'TR_HIDE_ROOT', 'TR_LINES_AT_ROOT', 'TR_MAC_BUTTONS',
-'TR_MULTIPLE', 'TR_NO_BUTTONS', 'TR_NO_LINES', 'TR_ROW_LINES', 'TR_SINGLE', 'TR_TWIST_BUTTONS')
-
-
-
-'''                           
-
-class TestTreeCtrlPanel(wx.Panel):
+class sceneTreePanel(wx.Panel):
     def __init__(self, parent):
         # Use the WANTS_CHARS style so the panel doesn't eat the Return key.
         wx.Panel.__init__(self, parent, -1, style=wx.WANTS_CHARS)
@@ -39,15 +30,16 @@ class TestTreeCtrlPanel(wx.Panel):
         #self.log = log
         tID = wx.NewId()
 
-        self.tree = MyTreeCtrl(self, tID, (0,0) , (100,100),
+        self.tree = sceneTree(self, tID, (0,0) , (100,100),
                                wx.TR_HAS_BUTTONS
                                 |wx.TR_TWIST_BUTTONS
-                                #| wx.TR_SINGLE
+                                | wx.TR_SINGLE
                                 | wx.TR_MULTIPLE
                                 |wx.TR_NO_LINES
                                 |wx.TR_FULL_ROW_HIGHLIGHT
                                 |wx.TR_EDIT_LABELS
-                                #|wx.TR_EXTENDED
+                                #|wx.TR_HIDE_ROOT
+                                |wx.TR_EXTENDED
                                #|wx.TR_NO_BUTTONS
                                #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
                                )
@@ -70,29 +62,30 @@ class TestTreeCtrlPanel(wx.Panel):
         #        we don't need any real data, so we'll just use None below for
         #        the item data.
 
-        self.root = self.tree.AddRoot("project")
+        self.root = self.tree.AddRoot("scene")
         self.tree.SetPyData(self.root, None)
-        self.tree.SetItemImage(self.root, fldridx, wx.TreeItemIcon_Normal)
-        self.tree.SetItemImage(self.root, fldropenidx, wx.TreeItemIcon_Expanded)
+        #self.tree.SetItemImage(self.root, fldridx, wx.TreeItemIcon_Normal)
+        #self.tree.SetItemImage(self.root, fldropenidx, wx.TreeItemIcon_Expanded)
+
 
 
         for x in range(2):
             child = self.tree.AppendItem(self.root, "Item %d" % x)
             self.tree.SetPyData(child, None)
-            self.tree.SetItemImage(child, fldridx, wx.TreeItemIcon_Normal)
-            self.tree.SetItemImage(child, fldropenidx, wx.TreeItemIcon_Expanded)
+            #self.tree.SetItemImage(child, fldridx, wx.TreeItemIcon_Normal)
+            #self.tree.SetItemImage(child, fldropenidx, wx.TreeItemIcon_Expanded)
 
             for y in range(2):
                 last = self.tree.AppendItem(child, "item %d-%s" % (x, chr(ord("a")+y)))
                 self.tree.SetPyData(last, None)
-                self.tree.SetItemImage(last, fldridx, wx.TreeItemIcon_Normal)
-                self.tree.SetItemImage(last, fldropenidx, wx.TreeItemIcon_Expanded)
+                #self.tree.SetItemImage(last, fldridx, wx.TreeItemIcon_Normal)
+                #self.tree.SetItemImage(last, fldropenidx, wx.TreeItemIcon_Expanded)
 
                 for z in range(2):
                     item = self.tree.AppendItem(last,  "item %d-%s-%d" % (x, chr(ord("a")+y), z))
                     self.tree.SetPyData(item, None)
-                    self.tree.SetItemImage(item, fileidx, wx.TreeItemIcon_Normal)
-                    self.tree.SetItemImage(item, smileidx, wx.TreeItemIcon_Selected)
+                    #self.tree.SetItemImage(item, fileidx, wx.TreeItemIcon_Normal)
+                    #self.tree.SetItemImage(item, smileidx, wx.TreeItemIcon_Selected)
 
         self.tree.Expand(self.root)
         self.Bind(wx.EVT_TREE_ITEM_EXPANDED, self.OnItemExpanded, self.tree)
@@ -203,3 +196,9 @@ class TestTreeCtrlPanel(wx.Panel):
 
 
 #---------------------------------------------------------------------------
+'''
+(TR_EXTENDED 'TR_DEFAULT_STYLE', 'TR_EDIT_LABELS', 'TR_EXTENDED', 'TR_FULL_ROW_HIGHLIGHT',
+'TR_HAS_BUTTONS', 'TR_HAS_VARIABLE_ROW_HEIGHT', 'TR_HIDE_ROOT', 'TR_LINES_AT_ROOT', 'TR_MAC_BUTTONS',
+'TR_MULTIPLE', 'TR_NO_BUTTONS', 'TR_NO_LINES', 'TR_ROW_LINES', 'TR_SINGLE', 'TR_TWIST_BUTTONS')
+
+'''      

@@ -156,10 +156,14 @@ class Transform(object):
 	def scale():
 		print "scale"
 
+
+
 class GameObject(object):
 	tag=0
 	id=1
 	name="GameObject"
+	Parent=[]
+	childs=[]
 	transform=Transform("xx")
 	mesh=Mesh("xx")
 
@@ -173,7 +177,7 @@ class GameObject(object):
 			glVertex3f(-0.5, 0.5, 0.5)
 			glVertex3f(-0.5,-0.5, 0.5)
 			glVertex3f( 0.5,-0.5, 0.5)
-			#glColor3f(0,0.6,0)
+			#glColor3f(0,0.6,0) 
 			glNormal3f( 0.0, 0.0,-1.0)
 			glVertex3f(-0.5,-0.5,-0.5)
 			glVertex3f(-0.5, 0.5,-0.5)

@@ -50,7 +50,7 @@ class mainFrame(wx.Frame):
         #---scene window
         self.sceneWindow=mainGlCanvas(self.P_main)
         #---resource manager
-        self.resManager=TestTreeCtrlPanel(self.P_main)
+        self.resManager=sceneTreePanel(self.P_main)
         #---scene manager
         #self.sceneManager=TestTreeCtrlPanel(self.P_main)
         #---inspect panel

@@ -411,4 +411,4 @@ def loadOBJ(filename):
     return vertsOut, normsOut
 
 
-print loadOBJ("C:\\Users\\fengx\Desktop\\temp.obj")[0]
+#print loadOBJ("C:\\Users\\fengx\Desktop\\temp.obj")[0]
