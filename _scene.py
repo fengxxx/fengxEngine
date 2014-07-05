@@ -2,7 +2,8 @@ from  _globalData import *
 import math
 import wx
 from _core import *
-
+from _data import *
+import _import_obj as objFile
 
 try:
     from wx import glcanvas
@@ -96,12 +97,12 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             ANGLE_UP +=ey*0.2
             rad =PI*ANGLE/180.0
             rad_UP =PI*ANGLE_UP/180.0
-            print ex
-            print TARGET_POS
+            #print ex
+            #print TARGET_POS
             TARGET_POS[1] = EYE_POS[1] + 100*(-math.cos(rad_UP))
             TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
             TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)   
-            print TARGET_POS
+            #print TARGET_POS
 
             self.move()
 
@@ -180,7 +181,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             SPEED+=0.1
     def OnKeyUp(self, evt):
         key=evt.GetKeyCode()
-        print chr(key)
+        #print chr(key)
 
 
     def  move(self):
@@ -256,6 +257,9 @@ class mainGlCanvas(openGL_BasicCanvas):
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         # draw six faces of a cube
+        self.importObjFile("D:/desktop/testObj.obj")
+        for s in Objects:
+            self.drawObject(s)
 
         self.box()
         glMatrixMode(GL_MODELVIEW)
@@ -280,8 +284,8 @@ class mainGlCanvas(openGL_BasicCanvas):
         xl=10
         yl=10
         zl=10
-
-
+        #self.drawObject()
+        #self.drawObjFile("D:/desktop/testObj.obj")
         glBegin(GL_LINES)
         self.xyz()
         self.grid()
@@ -291,6 +295,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         tpos=[0,0,0]
         sc=1.2
         big=1
+        '''
         glScale(big,big,big)
         glTranslatef(-xl*sc/2,-yl*sc/2,-zl*sc/2)
         for ix in range(0,xl):
@@ -302,7 +307,7 @@ class mainGlCanvas(openGL_BasicCanvas):
                     tpos=[ix,iy,iz]
                     self.box()
                     
-
+        '''
 
         #glMatrixMode(GL_MODELVIEW)
 
@@ -313,7 +318,29 @@ class mainGlCanvas(openGL_BasicCanvas):
         #self.OnDraw()
 
         self.SwapBuffers()
+    def drawObject(self,obj):
+        if type(obj)==Object:
+            if obj.renderEnable==True:
+                glBegin(GL_QUADS)
+                glColor3f(0.3,0.3,0.3)
+                i=0
+                for s in obj.mesh.faces:
+                    #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
+                    glVertex3f(obj.mesh.vertexs[s][0],obj.mesh.vertexs[s][1],obj.mesh.vertexs[s][2])
+                    i+=1
 
+                glEnd()
+                ''' 
+                glBegin(GL_LINES)
+                glColor3f(1.0,1.0,1.0)
+                i=0
+                for s in vters:
+                    #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
+                    glVertex3f(s[0],s[1],s[2])
+                    i+=1
+                
+                glEnd()
+                '''
     def box(self):
 
         glBegin(GL_QUADS)
@@ -356,7 +383,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3f(-0.5, 0.5,-0.5)
         glEnd()
     def xyz(self):
-        a=15
+        a=3
         glColor3f(0,0,1)
         glVertex3d(0, 0, -a)
         glVertex3d(0, 0, a)
@@ -368,7 +395,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3d(0, a, 0)
 
     def grid(self):
-        num=200
+        num=60
         j=num*0.001#0.08#l/10
         l=j*(num-1)/2
         for i in range(num):
@@ -381,34 +408,34 @@ class mainGlCanvas(openGL_BasicCanvas):
                 glVertex3d(i * j - l, 0,l)
                 glVertex3d(i * j - l, 0,-l)
 
+    def importObjFile(self,filePath):
+        o=Object()
+        f=objFile.loadOBJ(filePath)
+        o.mesh.vertexs=f[0]
+        o.mesh.faces=f[1]
+        Objects.append(o)
+        '''
+        vters,norms=objFile.loadOBJ(filePath)
+    
+        glBegin(GL_QUADS)
+        glColor3f(0.3,0.3,0.3)
+        i=0
+        for s in vters:
+            #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
+            glVertex3f(s[0],s[1],s[2])
+            i+=1
 
-
-def loadOBJ(filename): 
-    numVerts = 0 
-    verts = [] 
-    norms = [] 
-    vertsOut = [] 
-    normsOut = [] 
-    for line in open(filename, "r"): 
-        #vals = line.split(" ") 
-        l=line.split("\n")
-        #print l
-        vals=l[0].split(" ")
-        if vals[0] == "v": 
-            v = map(float, vals[2:5]) 
-            verts.append(v) 
-        if vals[0] == "vn": 
-            n = map(float, vals[2:5]) 
-            norms.append(n) 
-        if vals[0] == "f": 
-            for f in vals[1:]: 
-                w = f.split("/") 
-                # OBJ Files are 1-indexed so we must subtract 1 below 
-                vertsOut.append(list(verts[int(w[0])-1])) 
-                normsOut.append(list(norms[int(w[2])-1])) 
-                numVerts += 1
+        glEnd()
+         
+        glBegin(GL_LINES)
+        glColor3f(1.0,1.0,1.0)
+        i=0
+        for s in vters:
+            #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
+            glVertex3f(s[0],s[1],s[2])
+            i+=1
         
-    return vertsOut, normsOut
-
+        glEnd()
+        '''
 
 #print loadOBJ("C:\\Users\\fengx\Desktop\\temp.obj")[0]

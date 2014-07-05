@@ -37,11 +37,18 @@ class Vector4(object):
 		self._w = value
 
 class Vector3(object):
+	'''
+	def __new__(self):
+		self._x=0.0
+		self._y=0.0
+		self._z=0.0
+	'''
+
 	def __init__(self,x,y,z):
-		if x!=None: self._x=x
-		if x!=None: self._y=y
-		if x!=None: self._z=z
-	def __str__(self):	   
+		if x!=None: self._x=x 
+		if y!=None: self._y=y
+		if z!=None: self._z=z
+	def __str__(self):
 		return ("(" + str(self.x)+ "," + str(self.y) + "," + str(self.z)+")")
 	@property
 	def x(self):
@@ -129,6 +136,10 @@ class Mesh(object):
 	def __init__(self, arg):
 		super( Mesh, self).__init__()
 		self.arg = arg
+	renderEnable=True
+	vertexs=[]
+	faces=[]
+
 		
 class Material(object):
 	name=""
@@ -155,8 +166,6 @@ class Transform(object):
 		print "rotate"
 	def scale():
 		print "scale"
-
-
 
 class GameObject(object):
 	tag=0
@@ -211,6 +220,12 @@ class GameObject(object):
 			glEnd()
 
 
+class Object(object):
+	renderEnable=True
+	transform=Transform("ss")
+	mesh=Mesh("s")
+	material=Material("ss")
+
 
 a=GameObject()
 print a.transform.position.x
@@ -226,4 +241,4 @@ class Singleton(object):
 		return cls._singletons[cls]	
 
 
-c=Singleton
+#c=Singleton

@@ -158,5 +158,6 @@ mainApp = wx.PySimpleApp()
 newFrame = mainFrame(parent=None, id=-1)
 newFrame.Show()
 newFrame.SetBackgroundColour(MAIN_BG_COLOR)
+
 #print dir(newFrame)
 mainApp.MainLoop()
