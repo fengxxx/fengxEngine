@@ -52,7 +52,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         b=size.width/(size.height+0.0)
         #print b
         #gluPerspective(0,b,1,60)
-        wx.CallAfter(self.DoSetViewport)
+        #wx.CallAfter(self.DoSetViewport)
         event.Skip()
 
     def DoSetViewport(self):
@@ -256,12 +256,8 @@ class mainGlCanvas(openGL_BasicCanvas):
     def OnDraw(self):
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        #importObjFile("D:/desktop/testObj.obj")
         # draw six faces of a cube
-        self.importObjFile("D:/desktop/testObj.obj")
-        for s in Objects:
-            self.drawObject(s)
-
-        self.box()
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
@@ -277,7 +273,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         h = max(h, 1.0)
         xScale = 180.0 / w
         yScale = 180.0 / h
-        glTranslatef(5,0,0)
+        #glTranslatef(5,0,0)
         #glRotatef((self.y - self.lasty) * yScale, 1.0, 0.0, 0.0);
         #glRotatef((self.x - self.lastx) * xScale, 0.0, 1.0, 0.0);
    
@@ -290,6 +286,11 @@ class mainGlCanvas(openGL_BasicCanvas):
         self.xyz()
         self.grid()
         glEnd()
+
+        for s in Objects:
+            drawObject(s)
+
+        #self.box()
  
 
         tpos=[0,0,0]
@@ -318,29 +319,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         #self.OnDraw()
 
         self.SwapBuffers()
-    def drawObject(self,obj):
-        if type(obj)==Object:
-            if obj.renderEnable==True:
-                glBegin(GL_QUADS)
-                glColor3f(0.3,0.3,0.3)
-                i=0
-                for s in obj.mesh.faces:
-                    #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
-                    glVertex3f(obj.mesh.vertexs[s][0],obj.mesh.vertexs[s][1],obj.mesh.vertexs[s][2])
-                    i+=1
 
-                glEnd()
-                ''' 
-                glBegin(GL_LINES)
-                glColor3f(1.0,1.0,1.0)
-                i=0
-                for s in vters:
-                    #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
-                    glVertex3f(s[0],s[1],s[2])
-                    i+=1
-                
-                glEnd()
-                '''
     def box(self):
 
         glBegin(GL_QUADS)
@@ -407,35 +386,58 @@ class mainGlCanvas(openGL_BasicCanvas):
                 glVertex3d(l, 0,i * j - l)
                 glVertex3d(i * j - l, 0,l)
                 glVertex3d(i * j - l, 0,-l)
+def drawObject(obj):
+    if type(obj)==Object:
+        if obj.renderEnable==True:
+            glBegin(GL_QUADS)
+            glColor3f(1,1,1)
+            i=0
+            for s in obj.mesh.faces:
+                glNormal3f(obj.mesh.normals[s][0],obj.mesh.normals[s][1],obj.mesh.normals[s][2])
+                glVertex3f(obj.mesh.vertexs[s][0],obj.mesh.vertexs[s][1],obj.mesh.vertexs[s][2])
+                
+                i+=1
 
-    def importObjFile(self,filePath):
-        o=Object()
-        f=objFile.loadOBJ(filePath)
-        o.mesh.vertexs=f[0]
-        o.mesh.faces=f[1]
-        Objects.append(o)
-        '''
-        vters,norms=objFile.loadOBJ(filePath)
+            glEnd()
+            ''' 
+            glBegin(GL_LINES)
+            glColor3f(1.0,1.0,1.0)
+            i=0
+            for s in vters:
+                #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
+                glVertex3f(s[0],s[1],s[2])
+                i+=1
+            glEnd()
+            '''
+def importObjFile(filePath):
+    o=Object()
+    f=objFile.loadOBJ(filePath)
+    o.mesh.vertexs=f[0]
+    o.mesh.faces=f[1]
+    o.mesh.normals=f[2]
+    Objects.append(o)
+    '''
+    vters,norms=objFile.loadOBJ(filePath)
+
+    glBegin(GL_QUADS)
+    glColor3f(0.3,0.3,0.3)
+    i=0
+    for s in vters:
+        #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
+        glVertex3f(s[0],s[1],s[2])
+        i+=1
+
+    glEnd()
+     
+    glBegin(GL_LINES)
+    glColor3f(1.0,1.0,1.0)
+    i=0
+    for s in vters:
+        #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
+        glVertex3f(s[0],s[1],s[2])
+        i+=1
     
-        glBegin(GL_QUADS)
-        glColor3f(0.3,0.3,0.3)
-        i=0
-        for s in vters:
-            #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
-            glVertex3f(s[0],s[1],s[2])
-            i+=1
-
-        glEnd()
-         
-        glBegin(GL_LINES)
-        glColor3f(1.0,1.0,1.0)
-        i=0
-        for s in vters:
-            #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
-            glVertex3f(s[0],s[1],s[2])
-            i+=1
-        
-        glEnd()
-        '''
+    glEnd()
+    '''
 
 #print loadOBJ("C:\\Users\\fengx\Desktop\\temp.obj")[0]

@@ -77,7 +77,7 @@ class mainFrame(wx.Frame):
 
         self.P_main.SetSizer(self.mainBox)
         self.mainBox.Fit(self.P_main)
-        self.Fit()
+        #self.Fit()
 
 
     def OnSize(self, event):
@@ -114,14 +114,16 @@ class mainFrame(wx.Frame):
         TEST_RUANJI = wx.NewId()
         TEST_LIULING = wx.NewId()
 
+        TEST_IMPORT = wx.NewId()
 
         file_menu.Append(TEST_QUIT, "&Exit")
+        file_menu.Append(TEST_IMPORT,"&Import")
         help_menu.Append(TEST_ABOUT, "&About")
         #file_menu.Append(TEST_RUANJI,"&阮籍", "时无英雄，使竖子成名")
     
         menu_bar = wx.MenuBar()
 
-        menu_bar.Append(file_menu, "&ThreeKindom")
+        menu_bar.Append(file_menu, "&File")
         menu_bar.Append(help_menu, "&Help")
         '''
         menu_bar.Append(t2_menu,)
@@ -139,12 +141,27 @@ class mainFrame(wx.Frame):
 
         #self.Bind(wx.EVT_MENU, self.OnAbout, id=TEST_ABOUT)
         self.Bind(wx.EVT_MENU, self.close, id=TEST_QUIT)
+        self.Bind(wx.EVT_MENU, self.importFile, id=TEST_IMPORT)
         #self.Bind(wx.EVT_CLOSE, self.OnQuit)
         return menu_bar
     def close(self,event):
         self.Close()
 
-
+    def importFile(self,event):
+        print "sss"
+        #p=wx.openFileDialog()
+        file_wildcard = "OBJ files(*.obj)|*.obj|All files(*.*)|*.*"   
+        dlg = wx.FileDialog(self, "Open paint file...",  
+                            os.getcwd(),   
+                            style = wx.OPEN,  
+                            wildcard = file_wildcard)  
+        if dlg.ShowModal() == wx.ID_OK:  
+            self.filename = dlg.GetPath()  
+            
+            
+        dlg.Destroy()  
+        #if dlg.GetPath() !="":
+        importObjFile(self.filename)#"D://desktop//testObj.obj")
     def OnButton(self, evt):
         dlg = wx.ColourDialog(self)
         dlg.GetColourData().SetChooseFull(True)
@@ -158,6 +175,6 @@ mainApp = wx.PySimpleApp()
 newFrame = mainFrame(parent=None, id=-1)
 newFrame.Show()
 newFrame.SetBackgroundColour(MAIN_BG_COLOR)
-
+#importObjFile("D://desktop//testObj.obj")
 #print dir(newFrame)
 mainApp.MainLoop()

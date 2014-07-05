@@ -139,6 +139,7 @@ class Mesh(object):
 	renderEnable=True
 	vertexs=[]
 	faces=[]
+	normals=[]
 
 		
 class Material(object):
