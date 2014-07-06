@@ -118,7 +118,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         global ANGLE
         global TARGET_POS 
         global EYE_POS
-        
+        global SPEED
         if key=="D":
             ANGLE +=1.1
             rad =PI*ANGLE/180.0
@@ -173,11 +173,11 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.move()
 
         if key=="-":
-            global SPEED
+            #global SPEED
             SPEED-=0.1
 
         if key=="=":
-            global SPEED
+            #global SPEED
             SPEED+=0.1
     def OnKeyUp(self, evt):
         key=evt.GetKeyCode()
@@ -389,32 +389,40 @@ class mainGlCanvas(openGL_BasicCanvas):
 def drawObject(obj):
     if type(obj)==Object:
         if obj.renderEnable==True:
-            glBegin(GL_QUADS)
+            #glScale(obj.transform.scale)
+            #glTranslatef(obj.transform.position)
+            #glRotationf(obj.transform.rotation)
             glColor3f(1,1,1)
             i=0
             for s in obj.mesh.faces:
-                glNormal3f(obj.mesh.normals[s][0],obj.mesh.normals[s][1],obj.mesh.normals[s][2])
-                glVertex3f(obj.mesh.vertexs[s][0],obj.mesh.vertexs[s][1],obj.mesh.vertexs[s][2])
-                
-                i+=1
-
-            glEnd()
-            ''' 
-            glBegin(GL_LINES)
-            glColor3f(1.0,1.0,1.0)
-            i=0
-            for s in vters:
-                #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
-                glVertex3f(s[0],s[1],s[2])
-                i+=1
-            glEnd()
-            '''
+                if len(s)==3:
+                    glBegin(GL_TRIANGLE_STRIP)#GL_QUADS)
+                    for i in s:
+                        f=i[0]-1
+                        
+                        if len(i)>1:
+                            n=i[2]-1
+                            glNormal3f(obj.mesh.normals[n][0],obj.mesh.normals[n][1],obj.mesh.normals[n][2])
+                        
+                        glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
+                    glEnd()
+                if len(s)==4:
+                    glBegin(GL_QUADS)
+                    for i in s:
+                        f=i[0]-1
+                        
+                        if len(i)>1:
+                            n=i[2]-1
+                            glNormal3f(obj.mesh.normals[n][0],obj.mesh.normals[n][1],obj.mesh.normals[n][2])
+                        
+                        glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
+                    glEnd()
 def importObjFile(filePath):
     o=Object()
     f=objFile.loadOBJ(filePath)
     o.mesh.vertexs=f[0]
-    o.mesh.faces=f[1]
-    o.mesh.normals=f[2]
+    o.mesh.normals=f[1]
+    o.mesh.faces=f[2]
     Objects.append(o)
     '''
     vters,norms=objFile.loadOBJ(filePath)
