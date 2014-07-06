@@ -48,18 +48,19 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
 
 
     def OnSize(self, event):
-        size=self.GetClientSize()
-        b=size.width/(size.height+0.0)
+        self.size=self.GetClientSize()
+        b=self.size.width/(self.size.height+0.0)
         #print b
-        #gluPerspective(0,b,1,60)
-        #wx.CallAfter(self.DoSetViewport)
+        gluPerspective(120,b,1,1000)
+        #glFrustum(-0.1*b, 0.1*b, -0.1, 0.1, 0.1, 1000)
+        wx.CallAfter(self.DoSetViewport)
         event.Skip()
 
     def DoSetViewport(self):
-        size = self.size =self.GetClientSize()
-        a=min( size.width, size.height)
-        b=size.width/(size.height+0.0)
-        glViewport(0, 0, a, a)
+        
+        self.size=self.GetClientSize()
+
+        glViewport(0, 0, self.size.width, self.size.height)
         #glViewport(0,0,1000,1000)
 
 
@@ -125,7 +126,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
             #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
             #TARGET_POS[1] = EYE_POS[1];
-            EYE_POS[2] -= math.cos(rad) * SPEED 
+            #EYE_POS[2] -= math.cos(rad) * SPEED 
             EYE_POS[0] -= -math.sin(rad) * SPEED
             self.move()
 
@@ -145,9 +146,9 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             rad =PI*ANGLE/180.0
             EYE_POS[2] += math.sin(rad) * SPEED
             EYE_POS[0] += math.cos(rad) * SPEED
-            #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
-            #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
-            #TARGET_POS[1] = EYE_POS[1];
+            TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
+            TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
+            TARGET_POS[1] = EYE_POS[1];
             self.move()
         if key=="S":
  
@@ -195,12 +196,13 @@ class mainGlCanvas(openGL_BasicCanvas):
     def InitGL(self):
         # set viewing projection
         glMatrixMode(GL_PROJECTION)
-        size = self.size =self.GetClientSize()
+        self.size =self.GetClientSize()
         #a=min( size.width, size.height)/max( size.width, size.height)
-        glFrustum(-1, 1, -1, 1, 1.0, 1000)
+        b=self.size.width/(self.size.height+0.0)
+        glFrustum(-0.1, 0.1, -0.1, 0.1*b, 0.1*b, 1000)
         # position viewer
         glMatrixMode(GL_MODELVIEW)
-        glTranslatef(0.0, 0.0, -2.0)
+        #glTranslatef(0.0, 0.0, -2.0)
 
         # position object
         #glRotatef(self.y, 1.0, 0.0, 0.0)
@@ -247,8 +249,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, Light_Model_Ambient)
 
 
-        glEnable(GL_LIGHT1)
-        glEnable(GL_LIGHTING)
+
         glEnable(GL_COLOR_MATERIAL)
         #-----------------------light
 
@@ -256,70 +257,48 @@ class mainGlCanvas(openGL_BasicCanvas):
     def OnDraw(self):
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        #importObjFile("D:/desktop/testObj.obj")
-        # draw six faces of a cube
+
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-        glScale(0.1,0.1,0.2)
-        glTranslatef(1,0.2,0)
+
         
         glPopMatrix()
-        if self.size is None:
-            self.size = self.GetClientSize()
- 
-        w, h = self.size
-        w = max(w, 1.0)
-        h = max(h, 1.0)
-        xScale = 180.0 / w
-        yScale = 180.0 / h
-        #glTranslatef(5,0,0)
-        #glRotatef((self.y - self.lasty) * yScale, 1.0, 0.0, 0.0);
-        #glRotatef((self.x - self.lastx) * xScale, 0.0, 1.0, 0.0);
-   
-        xl=10
-        yl=10
-        zl=10
-        #self.drawObject()
-        #self.drawObjFile("D:/desktop/testObj.obj")
+
+        glDisable(GL_LIGHT1)
+        glDisable(GL_LIGHTING)
         glBegin(GL_LINES)
-        self.xyz()
+        #self.xyz()
         self.grid()
+
+
         glEnd()
+        self.drawEye()
+        if len(Objects)>0:
+            for s in Objects:
+                glEnable(GL_LIGHT1)
+                glEnable(GL_LIGHTING)
+                drawObject(s)
 
-        for s in Objects:
-            drawObject(s)
 
-        #self.box()
- 
 
         tpos=[0,0,0]
         sc=1.2
         big=1
-        '''
-        glScale(big,big,big)
-        glTranslatef(-xl*sc/2,-yl*sc/2,-zl*sc/2)
-        for ix in range(0,xl):
-            for iy in range(0,yl):
-                for iz in range(0,zl):
-                    glColor3f(ix*0.1,iy*0.1,iz*0.1)
-                    glTranslatef((ix-tpos[0])*sc,(iy-tpos[1])*sc,(iz-tpos[2])*sc)
-                    
-                    tpos=[ix,iy,iz]
-                    self.box()
-                    
-        '''
-
-        #glMatrixMode(GL_MODELVIEW)
-
-
-       
-
-  
-        #self.OnDraw()
 
         self.SwapBuffers()
 
+    def drawEye(self):
+        glBegin(GL_POINTS)
+        glColor3f(1,0,0)
+        glVertex3d(EYE_POS[0], EYE_POS[1], EYE_POS[2])
+        glVertex3d(TARGET_POS[0], TARGET_POS[1], TARGET_POS[2])
+        glEnd()
+        glBegin(GL_LINES)
+        glColor3f(1,0,0)
+        glVertex3d(EYE_POS[0], EYE_POS[1], EYE_POS[2])
+        glVertex3d(TARGET_POS[0], TARGET_POS[1], TARGET_POS[2])
+        glEnd()
     def box(self):
 
         glBegin(GL_QUADS)
@@ -361,25 +340,32 @@ class mainGlCanvas(openGL_BasicCanvas):
         glVertex3f(-0.5, 0.5, 0.5)
         glVertex3f(-0.5, 0.5,-0.5)
         glEnd()
+    '''
     def xyz(self):
-        a=3
+        a=15
         glColor3f(0,0,1)
         glVertex3d(0, 0, -a)
         glVertex3d(0, 0, a)
         glColor3f(0,1,0)
         glVertex3d(a, 0, 0)
         glVertex3d(-a, 0, 0)
-        glColor3f(1,0,0)
-        glVertex3d(0, -a, 0)
-        glVertex3d(0, a, 0)
-
+        #glColor3f(1,0,0)
+        #glVertex3d(0, -a, 0)
+        #glVertex3d(0, a, 0)
+    '''
     def grid(self):
-        num=60
-        j=num*0.001#0.08#l/10
+
+        num=21
+        j=num*0.1#l/10
         l=j*(num-1)/2
         for i in range(num):
             if i == ((num-1)/2):
-                glColor3f(0.1,0.1,0.1)
+                glColor3f(1.0,0.0,0.0)
+                glVertex3d(-l, 0, i * j - l)
+                glVertex3d(l, 0,i * j - l)
+                glColor3f(0.0,0.0,1.0)
+                glVertex3d(i * j - l, 0,l)
+                glVertex3d(i * j - l, 0,-l)
             else:
                 glColor3f(0.6,0.6,0.6)
                 glVertex3d(-l, 0, i * j - l)
@@ -392,11 +378,14 @@ def drawObject(obj):
             #glScale(obj.transform.scale)
             #glTranslatef(obj.transform.position)
             #glRotationf(obj.transform.rotation)
+            glPointSize(5)
+            glLineWidth(2)
             glColor3f(1,1,1)
             i=0
             for s in obj.mesh.faces:
                 if len(s)==3:
                     glBegin(GL_TRIANGLE_STRIP)#GL_QUADS)
+                    glColor3f(0.5,1,1)
                     for i in s:
                         f=i[0]-1
                         
@@ -406,8 +395,17 @@ def drawObject(obj):
                         
                         glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
                     glEnd()
+
+                    glBegin(GL_LINE_LOOP)#GL_QUADS)
+                    glColor3f(0.6,0.5,0.1)
+                    for i in s:
+                        f=i[0]-1
+                        glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
+                    glEnd()
+
                 if len(s)==4:
                     glBegin(GL_QUADS)
+                    glColor3f(1,1,0.5)
                     for i in s:
                         f=i[0]-1
                         
@@ -417,12 +415,30 @@ def drawObject(obj):
                         
                         glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
                     glEnd()
+
+
+                    glBegin(GL_LINE_LOOP)#GL_QUADS)
+                    glColor3f(0,0.0,0)
+                    for i in s:
+                        f=i[0]-1
+                        glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
+                    glEnd()
+
+
+                glBegin(GL_POINTS)
+                glColor3f(0,0.8,0)
+                for i in s:
+                    f=i[0]-1
+                    glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
+                glEnd()
+            glLineWidth(1)
 def importObjFile(filePath):
     o=Object()
     f=objFile.loadOBJ(filePath)
     o.mesh.vertexs=f[0]
     o.mesh.normals=f[1]
     o.mesh.faces=f[2]
+    o.name="fengxxx"
     Objects.append(o)
     '''
     vters,norms=objFile.loadOBJ(filePath)

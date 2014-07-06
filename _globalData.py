@@ -6,7 +6,7 @@ import os
 
 #---dir
 ROOT_DIR=os.getcwd() #--root dir
-ICON_PATH=ROOT_DIR+"\\App.ico"
+ICON_PATH=ROOT_DIR+"\\fengxEngine.ico"
 
 
 #----color

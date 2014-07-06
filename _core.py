@@ -223,6 +223,7 @@ class GameObject(object):
 
 class Object(object):
 	renderEnable=True
+	name=""
 	transform=Transform("ss")
 	mesh=Mesh("s")
 	material=Material("ss")

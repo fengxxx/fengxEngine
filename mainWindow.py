@@ -12,7 +12,7 @@ class mainFrame(wx.Frame):
     global MAIN_BG_COLOR
 
     def __init__(self, parent, id):
-        wx.Frame.__init__(self, parent, id, 'fengx', size=MAIN_WINDOW_SIZE,style=wx.DEFAULT_FRAME_STYLE)
+        wx.Frame.__init__(self, parent, id, 'fengxEngine', size=MAIN_WINDOW_SIZE,style=wx.DEFAULT_FRAME_STYLE)
         
         #---------------main Window settings----->>>>
         self.SetBackgroundColour(MAIN_BG_COLOR)
@@ -20,36 +20,17 @@ class mainFrame(wx.Frame):
         self.SetIcon(self.icon)
         
 
-        #--------------main MenuBar--------------->>>>
-        self.menuBar = wx.MenuBar()
-        self.SetMenuBar(self.CreateMenuBar())
-        #--------------main MenuBar--------------<<<<<
         self.CreateStatusBar()
         self.SetStatusText("fengxEngine")
-        '''
-        self._leftWindow1 = wx.SashLayoutWindow(self, 101, wx.DefaultPosition,
-                                                wx.Size(200, 1000), wx.NO_BORDER |
-                                                wx.SW_3D | wx.CLIP_CHILDREN)
-        
-        self.ID_WINDOW_TOP = 100
-        self.ID_WINDOW_LEFT1 = 101
-        self.ID_WINDOW_RIGHT1 = 102
-        self.ID_WINDOW_BOTTOM = 103
 
-        self._leftWindow1.Bind(wx.EVT_SASH_DRAGGED_RANGE, self.OnFoldPanelBarDrag,
-                               id=100, id2=103)
-        self._leftWindow1.SetOrientation(wx.LAYOUT_VERTICAL)
-        self._leftWindow1.SetAlignment(wx.LAYOUT_LEFT)
-        self._leftWindow1.SetSashVisible(wx.SASH_RIGHT, True)
-        self._leftWindow1.SetExtraBorderSize(3)
-        self.Bind(wx.EVT_SIZE, self.OnSize)
-        '''
         #--------------main Part of window------->>>>
         self.P_main=wx.Panel(self)
  
         #---scene window
+        
         self.sceneWindow=mainGlCanvas(self.P_main)
         #---resource manager
+        #importObjFile("E:\\Desktop\\testobj.obj")    
         self.resManager=sceneTreePanel(self.P_main)
         #---scene manager
         #self.sceneManager=TestTreeCtrlPanel(self.P_main)
@@ -58,20 +39,60 @@ class mainFrame(wx.Frame):
         #---toolBar
         #self.mainToolBar=wx.Panel(self)
 
+        #--------------main MenuBar--------------->>>>
+        self.menuBar = wx.MenuBar()
+        self.SetMenuBar(self.CreateMenuBar())
+        #--------------main MenuBar--------------<<<<<
+
+
+
         self.dir3 = wx.GenericDirCtrl(self.P_main, -1, size=(200,225), style=wx.DIRCTRL_SHOW_FILTERS,
                                 filter="All files (*.*)|*.*|Python files (*.py)|*.py")
 
         #self.dir3.SetPath(ROOT_DIR)
         #self.dir3.SetDefaultPath(ROOT_DIR)
+
+
+        self.tc = wx.TextCtrl(self.P_main, -1, "", size=(30, 120), style=wx.TE_MULTILINE|wx.TE_PROCESS_ENTER)
+        #self.Bind(wx.EVT_TEXT, self.EvtText, t2)
+        self.bce=wx.Button(self.P_main, -1, label=u'Enter') 
+        self.Bind(wx.EVT_BUTTON, self.execComd, self.bce)
+
         self.box = wx.BoxSizer(wx.HORIZONTAL)
         self.box.Add(self.sceneWindow, 3, wx.EXPAND|wx.ALL ,border=2)
         self.box.Add(self.resManager, 1, wx.EXPAND|wx.ALL ,border=1)
         self.box.Add(self.dir3, 1, wx.EXPAND|wx.ALL ,border=1)
 
-        self.b = wx.Button(self.P_main, -1, label=u'打开')  
+        '''
+        self.tbm = wx.ToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize,
+                        wx.TB_FLAT | wx.TB_NODIVIDER)
+        self.tbm.SetToolBitmapSize(wx.Size(32,32))
+        self.tbm_bmp1 = wx.ArtProvider_GetBitmap(wx.ART_QUESTION, wx.ART_OTHER, wx.Size(32, 32))
+        self.tbm.AddLabelTool(101, "Test", self.tbm_bmp1)
+        #self.tbm.AddLabelTool(101, "Test", self.tbm_bmp1)
+        #self.tbm.AddLabelTool(101, "Test", self.tbm_bmp1)
+        #self.tbm.AddLabelTool(101, "Test", self.tbm_bmp1)
+        
+        self.tbm.AddSeparator()
+        self.tbm.AddLabelTool(101, "Test", tbm_bmp1)
+        self.tbm.AddLabelTool(101, "Test", tbm_bmp1)
+        self.tbm.AddSeparator()
+        self.tbm.AddLabelTool(101, "Test", tbm_bmp1)
+        self.tbm.AddLabelTool(101, "Test", tbm_bmp1)
+        self.tbm.AddLabelTool(101, "Test", tbm_bmp1)
+        self.tbm.AddLabelTool(101, "Test", tbm_bmp1)
+        self.tbm.Realize()
+        '''
+        #self.b = wx.Button(self.P_main, -1, label=u'打开')  
+
+        self.conmmadBox=wx.BoxSizer(wx.HORIZONTAL)
+        self.conmmadBox.Add(self.tc, 8, wx.EXPAND|wx.ALL,border=1)
+        self.conmmadBox.Add(self.bce, 1, wx.EXPAND|wx.ALL,border=1)
+
         self.mainBox=wx.BoxSizer(wx.VERTICAL)
-        self.mainBox.Add(self.b, 0, border=1)
-        self.mainBox.Add(self.box,1,wx.EXPAND|wx.ALL ,border=1)
+        self.mainBox.Add(self.box,20,wx.EXPAND|wx.ALL ,border=1)
+        self.mainBox.Add(self.conmmadBox,1,wx.EXPAND|wx.ALL ,border=1)
+        
         
 
 
@@ -79,7 +100,11 @@ class mainFrame(wx.Frame):
         self.mainBox.Fit(self.P_main)
         #self.Fit()
 
-
+    def execComd(self,event):
+        sc=self.tc.GetValue()
+        if sc!="":
+            exec(sc)
+            self.tc.Clear()
     def OnSize(self, event):
 
         wx.LayoutAlgorithm().LayoutWindow(self, self.remainingSpace)
@@ -139,29 +164,30 @@ class mainFrame(wx.Frame):
         self.menuBar.Append(self.menu1, "&魏晋")
         '''
 
-        #self.Bind(wx.EVT_MENU, self.OnAbout, id=TEST_ABOUT)
+        self.Bind(wx.EVT_MENU, self.resManager.updateTree, id=TEST_ABOUT)
         self.Bind(wx.EVT_MENU, self.close, id=TEST_QUIT)
         self.Bind(wx.EVT_MENU, self.importFile, id=TEST_IMPORT)
         #self.Bind(wx.EVT_CLOSE, self.OnQuit)
         return menu_bar
     def close(self,event):
+        
         self.Close()
 
     def importFile(self,event):
-        print "sss"
+        #print "sss"
         #p=wx.openFileDialog()
         file_wildcard = "OBJ files(*.obj)|*.obj|All files(*.*)|*.*"   
+        #os.getcwd()
         dlg = wx.FileDialog(self, "Open paint file...",  
-                            os.getcwd(),   
+                            "E:\\Desktop\\",   
                             style = wx.OPEN,  
                             wildcard = file_wildcard)  
         if dlg.ShowModal() == wx.ID_OK:  
             self.filename = dlg.GetPath()  
-            
-            
         dlg.Destroy()  
+        importObjFile(self.filename)    
         #if dlg.GetPath() !="":
-        importObjFile(self.filename)#"D://desktop//testObj.obj")
+        #self.resManager.updateTree()
     def OnButton(self, evt):
         dlg = wx.ColourDialog(self)
         dlg.GetColourData().SetChooseFull(True)
@@ -175,6 +201,6 @@ mainApp = wx.PySimpleApp()
 newFrame = mainFrame(parent=None, id=-1)
 newFrame.Show()
 newFrame.SetBackgroundColour(MAIN_BG_COLOR)
-#importObjFile("D://desktop//testObj.obj")
+
 #print dir(newFrame)
 mainApp.MainLoop()

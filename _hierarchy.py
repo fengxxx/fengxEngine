@@ -1,7 +1,7 @@
 import wx.lib.mvctree  as  tree
 import wx
 from  _globalData import *
-
+from  _data import *
 
 class sceneTree(wx.TreeCtrl):
     def __init__(self, parent, id, pos, size, style):
@@ -66,15 +66,30 @@ class sceneTreePanel(wx.Panel):
         self.tree.SetPyData(self.root, None)
         #self.tree.SetItemImage(self.root, fldridx, wx.TreeItemIcon_Normal)
         #self.tree.SetItemImage(self.root, fldropenidx, wx.TreeItemIcon_Expanded)
+        for s in Objects:
+                child = self.tree.AppendItem(self.root, s.name)
+                self.tree.SetPyData(child, None)
 
 
+        self.tree.Expand(self.root)
+        self.Bind(wx.EVT_TREE_ITEM_EXPANDED, self.OnItemExpanded, self.tree)
+        self.Bind(wx.EVT_TREE_ITEM_COLLAPSED, self.OnItemCollapsed, self.tree)
+        self.Bind(wx.EVT_TREE_SEL_CHANGED, self.updateTree,self.tree)#OnSelChanged, self.tree)
+        self.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.OnBeginEdit, self.tree)
+        self.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.OnEndEdit, self.tree)
+        self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate, self.tree)
 
-        for x in range(2):
-            child = self.tree.AppendItem(self.root, "Item %d" % x)
-            self.tree.SetPyData(child, None)
-            #self.tree.SetItemImage(child, fldridx, wx.TreeItemIcon_Normal)
-            #self.tree.SetItemImage(child, fldropenidx, wx.TreeItemIcon_Expanded)
-
+        self.tree.Bind(wx.EVT_LEFT_DCLICK, self.OnLeftDClick)
+        self.tree.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
+        self.tree.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
+    def updateTree(self,event):
+        if len(Objects)>0:
+            for s in Objects:
+                child = self.tree.AppendItem(self.root, s.name)
+                self.tree.SetPyData(child, None)
+                #self.tree.SetItemImage(child, fldridx, wx.TreeItemIcon_Normal)
+                #self.tree.SetItemImage(child, fldropenidx, wx.TreeItemIcon_Expanded)
+        '''
             for y in range(2):
                 last = self.tree.AppendItem(child, "item %d-%s" % (x, chr(ord("a")+y)))
                 self.tree.SetPyData(last, None)
@@ -86,20 +101,7 @@ class sceneTreePanel(wx.Panel):
                     self.tree.SetPyData(item, None)
                     #self.tree.SetItemImage(item, fileidx, wx.TreeItemIcon_Normal)
                     #self.tree.SetItemImage(item, smileidx, wx.TreeItemIcon_Selected)
-
-        self.tree.Expand(self.root)
-        self.Bind(wx.EVT_TREE_ITEM_EXPANDED, self.OnItemExpanded, self.tree)
-        self.Bind(wx.EVT_TREE_ITEM_COLLAPSED, self.OnItemCollapsed, self.tree)
-        self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnSelChanged, self.tree)
-        self.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.OnBeginEdit, self.tree)
-        self.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.OnEndEdit, self.tree)
-        self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate, self.tree)
-
-        self.tree.Bind(wx.EVT_LEFT_DCLICK, self.OnLeftDClick)
-        self.tree.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
-        self.tree.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
-
-
+        '''
     def OnRightDown(self, event):
         pt = event.GetPosition();
         item, flags = self.tree.HitTest(pt)
