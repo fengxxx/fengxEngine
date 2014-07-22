@@ -100,15 +100,12 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             rad_UP =PI*ANGLE_UP/180.0
             #print ex
             #print TARGET_POS
-            TARGET_POS[1] = EYE_POS[1] + 100*(-math.cos(rad_UP))
+            TARGET_POS[1] = EYE_POS[1] + 100*(-math.cos(-rad_UP))
             TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
             TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)   
             #print TARGET_POS
 
             self.move()
-
-
-
             self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
 
@@ -120,35 +117,75 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         global TARGET_POS 
         global EYE_POS
         global SPEED
+
         if key=="D":
             ANGLE +=1.1
             rad =PI*ANGLE/180.0
+            
+            v=[(TARGET_POS[0]-EYE_POS[0]),(TARGET_POS[2]-EYE_POS[2])]
+            a=(math.pi*0.5-math.atan(v[1]/v[0]))
+            print "v  a ",v,a
+            print "speed ",SPEED
+            xe=SPEED/math.cos(a)
+            print "s e",SPEED,xe
+            print (SPEED*SPEED-xe*xe)
+            ye=math.sqrt(abs(SPEED*SPEED-xe*xe))
+            xe-=EYE_POS[0]
+            ye-=EYE_POS[2]
+            
+            xt=xe+v[0]
+            yt=ye+v[1]
+
+
+
+            EYE_POS[0]=xe
+            EYE_POS[2]=ye
+            TARGET_POS[0]=xt
+            TARGET_POS[2]=yt
+
+
+            #newv=[x,y]
+
             #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
             #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
             #TARGET_POS[1] = EYE_POS[1];
             #EYE_POS[2] -= math.cos(rad) * SPEED 
-            EYE_POS[0] -= -math.sin(rad) * SPEED
+            #EYE_POS[0] -= -math.sin(rad) * SPEED
             self.move()
 
         if key=="A":
             ANGLE -=1.1
             rad =PI*ANGLE/180.0
+            
+            
+
+            EYE_POS[0]+=SPEED
+            EYE_POS[2]+=SPEED
+            TARGET_POS[0]+=SPEED
+            TARGET_POS[2]+=SPEED
+            '''
+            x=(EYE_POS[0]-TARGET_POS[0])*math.cos(ANGLE)-(EYE_POS[2]-TARGET_POS[2])*math.sin(ANGLE)+TARGET_POS[0]    
+            y=(EYE_POS[0]-TARGET_POS[0])*math.sin(ANGLE)-(EYE_POS[2]-TARGET_POS[2])*math.cos(ANGLE)+TARGET_POS[2]
+
+
+            TARGET_POS[0]=x
+            TARGET_POS[2]=y
+            '''
             #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
             #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
             #TARGET_POS[1] = EYE_POS[1];
-            EYE_POS[0] += math.sin(rad) * SPEED
+            #EYE_POS[0] += math.sin(rad) * SPEED
             #EYE_POS[2] += math.sin(rad) * SPEED
 
 
             self.move()
         if key=="W":
-
             rad =PI*ANGLE/180.0
             EYE_POS[2] += math.sin(rad) * SPEED
             EYE_POS[0] += math.cos(rad) * SPEED
             TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
             TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
-            TARGET_POS[1] = EYE_POS[1];
+            #TARGET_POS[1] = EYE_POS[1];
             self.move()
         if key=="S":
  
@@ -397,7 +434,7 @@ def drawObject(obj):
                     glEnd()
 
                     glBegin(GL_LINE_LOOP)#GL_QUADS)
-                    glColor3f(0.6,0.5,0.1)
+                    glColor3f(0.1,0.5,0.8)
                     for i in s:
                         f=i[0]-1
                         glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
@@ -405,7 +442,7 @@ def drawObject(obj):
 
                 if len(s)==4:
                     glBegin(GL_QUADS)
-                    glColor3f(1,1,0.5)
+                    glColor3f(0.1,0.1,0.6)
                     for i in s:
                         f=i[0]-1
                         
@@ -464,4 +501,17 @@ def importObjFile(filePath):
     glEnd()
     '''
 
+def importFile():
+    #print "sss"
+    #p=wx.openFileDialog()
+    file_wildcard = "OBJ files(*.obj)|*.obj|All files(*.*)|*.*"   
+    #os.getcwd()
+    dlg = wx.FileDialog(self, "Open paint file...",  
+                        "E:\\Desktop\\",   
+                        style = wx.OPEN,  
+                        wildcard = file_wildcard)  
+    if dlg.ShowModal() == wx.ID_OK:  
+        self.filename = dlg.GetPath()  
+    dlg.Destroy()  
+    importObjFile(self.filename) 
 #print loadOBJ("C:\\Users\\fengx\Desktop\\temp.obj")[0]

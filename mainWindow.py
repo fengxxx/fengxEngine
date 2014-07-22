@@ -5,7 +5,7 @@ import math
 from _hierarchy import *
 from _globalData import *
 from _scene import *
-
+import sys
 class mainFrame(wx.Frame):
     global MAIN_WINDOW_SIZE
     global ICON_PATH
@@ -57,6 +57,7 @@ class mainFrame(wx.Frame):
         #self.Bind(wx.EVT_TEXT, self.EvtText, t2)
         self.bce=wx.Button(self.P_main, -1, label=u'Enter') 
         self.Bind(wx.EVT_BUTTON, self.execComd, self.bce)
+        self.tc.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
 
         self.box = wx.BoxSizer(wx.HORIZONTAL)
         self.box.Add(self.sceneWindow, 3, wx.EXPAND|wx.ALL ,border=2)
@@ -102,9 +103,27 @@ class mainFrame(wx.Frame):
 
     def execComd(self,event):
         sc=self.tc.GetValue()
+        print sc
+
         if sc!="":
             exec(sc)
-            self.tc.Clear()
+            print "out:  ",sys.stdout.getvalue()
+            #self.tc=.Clear()
+
+    def OnKeyDown(self,event):
+        #print "test"
+        #print event.GetKeyCode()
+
+        
+        if event.GetKeyCode()==370 :
+            print self.tc.getvalue()
+            #sc=self.tc.GetValue()
+            #if sc!="":
+
+            print "xxxx"
+            #exec(sc)
+            #print "out:  ",sys.stdout.getvalue()
+            #self.tc.Clear()
     def OnSize(self, event):
 
         wx.LayoutAlgorithm().LayoutWindow(self, self.remainingSpace)
