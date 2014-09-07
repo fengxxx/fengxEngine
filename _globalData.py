@@ -11,7 +11,7 @@ ICON_PATH=ROOT_DIR+"\\fengxEngine.ico"
 
 #----color
 MAIN_BG_COLOR=(37,37,37)
-
+CONSOLE_BG_COLOR=(48,10,3)
 
 #----data
 MAIN_WINDOW_SIZE=(900,900)

@@ -173,10 +173,11 @@ class sceneTreePanel(wx.Panel):
     def OnLeftDClick(self, event):
         pt = event.GetPosition();
         item, flags = self.tree.HitTest(pt)
+        
         if item:
             print ("OnLeftDClick: %s\n" % self.tree.GetItemText(item))
             p=self.tree.GetItemText(item)+".obj"
-            _scene.importObjFile(p)
+            #_scene.importObjFile(p)
             parent = self.tree.GetItemParent(item)
             if parent.IsOk():
                 self.tree.SortChildren(parent)

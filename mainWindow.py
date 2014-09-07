@@ -5,33 +5,35 @@ import math
 from _hierarchy import *
 from _globalData import *
 from _scene import *
+from _data import *
 import sys
 class mainFrame(wx.Frame):
     global MAIN_WINDOW_SIZE
     global ICON_PATH
     global MAIN_BG_COLOR
-
     def __init__(self, parent, id):
         wx.Frame.__init__(self, parent, id, 'fengxEngine', size=MAIN_WINDOW_SIZE,style=wx.DEFAULT_FRAME_STYLE)
         
         #---------------main Window settings----->>>>
-        self.SetBackgroundColour(MAIN_BG_COLOR)
+        self.SetBackgroundColour((225,225,225))#MAIN_BG_COLOR)
         self.icon = wx.Icon(ICON_PATH, wx.BITMAP_TYPE_ICO)
         self.SetIcon(self.icon)
         
 
-        self.CreateStatusBar()
-        self.SetStatusText("fengxEngine")
+        #self.CreateStatusBar()
+        #self.SetStatusText("fengxEngine")
 
         #--------------main Part of window------->>>>
         self.P_main=wx.Panel(self)
  
         #---scene window
         
+        
         self.sceneWindow=mainGlCanvas(self.P_main)
         #---resource manager
         #importObjFile("E:\\Desktop\\testobj.obj")    
         self.resManager=sceneTreePanel(self.P_main)
+        self.resManager.SetBackgroundColour(MAIN_BG_COLOR)
         #---scene manager
         #self.sceneManager=TestTreeCtrlPanel(self.P_main)
         #---inspect panel
@@ -42,27 +44,35 @@ class mainFrame(wx.Frame):
         #--------------main MenuBar--------------->>>>
         self.menuBar = wx.MenuBar()
         self.SetMenuBar(self.CreateMenuBar())
+
         #--------------main MenuBar--------------<<<<<
 
 
 
-        self.dir3 = wx.GenericDirCtrl(self.P_main, -1, size=(200,225), style=wx.DIRCTRL_SHOW_FILTERS,
-                                filter="All files (*.*)|*.*|Python files (*.py)|*.py")
+        #self.dir3 = wx.GenericDirCtrl(self.P_main, -1, size=(200,225), style=wx.DIRCTRL_SHOW_FILTERS,
+        #                        filter="All files (*.*)|*.*|Python files (*.py)|*.py")
 
         #self.dir3.SetPath(ROOT_DIR)
         #self.dir3.SetDefaultPath(ROOT_DIR)
 
 
-        self.tc = wx.TextCtrl(self.P_main, -1, "", size=(30, 120), style=wx.TE_MULTILINE|wx.TE_PROCESS_ENTER)
+        self.tc = wx.TextCtrl(self.P_main, -1, "", size=(25, 20), style=wx.TE_MULTILINE|wx.TE_PROCESS_ENTER)
         #self.Bind(wx.EVT_TEXT, self.EvtText, t2)
+        self.tc.SetBackgroundColour((48.825,48.825,48.825))
+        #self.tc.SetOwnBackgroundColour(MAIN_BG_COLOR)
+        self.tc.SetForegroundColour((120,120,120))
+        self.tc.SetTransparent(2)
         self.bce=wx.Button(self.P_main, -1, label=u'Enter') 
+        self.bce.SetBackgroundColour((100,100,100))
+        #self.bce.SetForegroundColour(MAIN_BG_COLOR)
+        
         self.Bind(wx.EVT_BUTTON, self.execComd, self.bce)
-        self.tc.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        #self.tc.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
 
         self.box = wx.BoxSizer(wx.HORIZONTAL)
-        self.box.Add(self.sceneWindow, 3, wx.EXPAND|wx.ALL ,border=2)
-        self.box.Add(self.resManager, 1, wx.EXPAND|wx.ALL ,border=1)
-        self.box.Add(self.dir3, 1, wx.EXPAND|wx.ALL ,border=1)
+        self.box.Add(self.sceneWindow, 3, wx.EXPAND|wx.ALL ,border=0)
+        #self.box.Add(self.resManager, 1, wx.EXPAND|wx.ALL ,border=0)
+        #self.box.Add(self.dir3, 1, wx.EXPAND|wx.ALL ,border=1)
 
         '''
         self.tbm = wx.ToolBar(self, -1, wx.DefaultPosition, wx.DefaultSize,
@@ -87,12 +97,12 @@ class mainFrame(wx.Frame):
         #self.b = wx.Button(self.P_main, -1, label=u'打开')  
 
         self.conmmadBox=wx.BoxSizer(wx.HORIZONTAL)
-        self.conmmadBox.Add(self.tc, 8, wx.EXPAND|wx.ALL,border=1)
-        self.conmmadBox.Add(self.bce, 1, wx.EXPAND|wx.ALL,border=1)
+        self.conmmadBox.Add(self.tc, 9, wx.EXPAND|wx.ALL,border=0)
+        self.conmmadBox.Add(self.bce, 1, wx.EXPAND|wx.ALL,border=0)
 
         self.mainBox=wx.BoxSizer(wx.VERTICAL)
-        self.mainBox.Add(self.box,20,wx.EXPAND|wx.ALL ,border=1)
-        self.mainBox.Add(self.conmmadBox,1,wx.EXPAND|wx.ALL ,border=1)
+        self.mainBox.Add(self.box,20,wx.EXPAND|wx.ALL ,border=0)
+        self.mainBox.Add(self.conmmadBox,2,wx.EXPAND|wx.ALL ,border=0)
         
         
 
@@ -107,7 +117,7 @@ class mainFrame(wx.Frame):
 
         if sc!="":
             exec(sc)
-            print "out:  ",sys.stdout.getvalue()
+            #print "out:  ",sys.stdout.getvalue()
             #self.tc=.Clear()
 
     def OnKeyDown(self,event):
@@ -157,46 +167,39 @@ class mainFrame(wx.Frame):
         TEST_JIKANG = wx.NewId()
         TEST_RUANJI = wx.NewId()
         TEST_LIULING = wx.NewId()
-
+        RestAll=wx.NewId()
         TEST_IMPORT = wx.NewId()
 
         file_menu.Append(TEST_QUIT, "&Exit")
         file_menu.Append(TEST_IMPORT,"&Import")
+        file_menu.Append(RestAll,"&RestAll")
         help_menu.Append(TEST_ABOUT, "&About")
-        #file_menu.Append(TEST_RUANJI,"&阮籍", "时无英雄，使竖子成名")
+
     
         menu_bar = wx.MenuBar()
 
         menu_bar.Append(file_menu, "&File")
         menu_bar.Append(help_menu, "&Help")
-        '''
-        menu_bar.Append(t2_menu,)
-        menu_bar.Append(t1_menu, "&魏晋")
-        t1_menu.Append(TEST_JIKANG, "&嵇康", "广陵散")
-        t1_menu.Append(TEST_RUANJI, "&阮籍", "时无英雄，使竖子成名")
-        t1_menu.Append(TEST_LIULING, "&刘伶", "常乘鹿车，携一壶酒，使人荷锸而随之，谓曰：“死便埋我。")
-        self.m_2= wx.Menu()
-        self.m_2.Append(m_2_1, "&楚南宫", "This the text in the Statusbar")
-        self.m_2.Append(m_2_2, "&重耳", "")
-        self.m_2.Append(m_2_3, "&商臣", "You may select Earth too")
-        #self.menuBar.Append(self.m_2, "&战国")
-        self.menuBar.Append(self.menu1, "&魏晋")
-        '''
+
 
         self.Bind(wx.EVT_MENU, self.resManager.updateTree, id=TEST_ABOUT)
         self.Bind(wx.EVT_MENU, self.close, id=TEST_QUIT)
         self.Bind(wx.EVT_MENU, self.importFile, id=TEST_IMPORT)
+        self.Bind(wx.EVT_MENU, self.restAll, id=RestAll)
         #self.Bind(wx.EVT_CLOSE, self.OnQuit)
+        #menu_bar.SetBackgroundColour(MAIN_BG_COLOR)
         return menu_bar
+    def restAll(self,event):
+        print "wip"
+        #import _data as d
+        #d.ModelObjects=[]
+
     def close(self,event):
         
         self.Close()
 
     def importFile(self,event):
-        #print "sss"
-        #p=wx.openFileDialog()
-        file_wildcard = "OBJ files(*.obj)|*.obj|All files(*.*)|*.*"   
-        #os.getcwd()
+        file_wildcard = "BigWorld model files(*.primitives)|*.primitives|OBJ files(*.obj)|*.obj|All files(*.*)|*.*"   
         dlg = wx.FileDialog(self, "Open paint file...",  
                             "E:\\Desktop\\",   
                             style = wx.OPEN,  
@@ -204,7 +207,13 @@ class mainFrame(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:  
             self.filename = dlg.GetPath()  
         dlg.Destroy()  
-        importObjFile(self.filename)    
+        fileE=os.path.splitext(self.filename)[1]
+        if fileE==".obj" or  fileE==".OBJ":
+            importObjFile(self.filename) 
+        elif  fileE==".primitives":  
+            #po.to_OBJFile(self.filename)
+            #importObjFile(self.filename.replace(".primitives",".obj"))
+            BigworldModels.append(po.getModelInfo(self.filename,"H:\\testPrimitives\\temp\\"))   
         #if dlg.GetPath() !="":
         #self.resManager.updateTree()
     def OnButton(self, evt):

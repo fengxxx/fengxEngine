@@ -138,19 +138,30 @@ class Mesh(object):
 		self.arg = arg
 	renderEnable=True
 	vertexs=[]
-	faces=[]
+	colors=[]
 	normals=[]
+	uvs=[]
+	faces=[]
 
-		
+class Line(object):
+	def __init__(self, arg):
+		super( Line, self).__init__()
+		self.arg = arg
+	name="line"
+	renderEnable=True
+	vertexs=[]
+	colors=[]
+	index=[]
+	
 class Material(object):
-	name=""
+	name="material"
 	def __init__(self,n):
 		if n!=None: self.name=n
 
 	shader="shader"
 
 class Transform(object):
-	name=""
+	name="transform"
 	active=True
 
 	position=Vector3(0,0,0)
@@ -221,26 +232,15 @@ class GameObject(object):
 			glEnd()
 
 
-class Object(object):
+
+class ModelObject(object):
+	#i=0
+	#def __init__(self):
+	#	self.i+=1
+	name="mdoelObject"
 	renderEnable=True
-	name=""
-	transform=Transform("ss")
-	mesh=Mesh("s")
-	material=Material("ss")
-
-
-a=GameObject()
-print a.transform.position.x
-a.mesh=Mesh("ss")
-print dir(a)
-
-
-class Singleton(object):
-	_singletons = {}
-	def __new__(cls, *args, **kwds):
-		if not cls._singletons.has_key(cls):		   
-		 cls._singletons[cls] = object.__new__(cls)  
-		return cls._singletons[cls]	
-
-
-#c=Singleton
+	transform=Transform("transform")
+	#transform.position.x=i
+	mesh=Mesh("mesh")
+	line=Line("line")
+	material=Material("material")

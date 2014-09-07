@@ -4,4 +4,23 @@ Slection=[]
 
 Scenes=[]
 
-Objects=[]
+Helpers=[]
+
+ModelObjects=[]
+
+
+BigworldModels=[]
+
+
+def test():
+	for s in ModelObjects:
+		print s.name
+		print len(s.mesh.faces)/3
+		
+
+
+
+
+
+
+

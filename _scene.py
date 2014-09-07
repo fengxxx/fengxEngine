@@ -3,8 +3,10 @@ import math
 import wx
 from _core import *
 from _data import *
-import _import_obj as objFile
 
+import _import_obj as objFile
+import primitives2obj_tool as po 
+import os
 try:
     from wx import glcanvas
     haveGLCanvas = True
@@ -61,6 +63,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         self.size=self.GetClientSize()
 
         glViewport(0, 0, self.size.width, self.size.height)
+
         #glViewport(0,0,1000,1000)
 
 
@@ -104,7 +107,6 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
             TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)   
             #print TARGET_POS
-
             self.move()
             self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
@@ -117,66 +119,57 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         global TARGET_POS 
         global EYE_POS
         global SPEED
-
+        global data
         if key=="D":
-            ANGLE +=1.1
-            rad =PI*ANGLE/180.0
+            mSpeed=1
+            bx=TARGET_POS[2]-EYE_POS[2]
+            bz=TARGET_POS[0]-EYE_POS[0]
             
-            v=[(TARGET_POS[0]-EYE_POS[0]),(TARGET_POS[2]-EYE_POS[2])]
-            a=(math.pi*0.5-math.atan(v[1]/v[0]))
-            print "v  a ",v,a
-            print "speed ",SPEED
-            xe=SPEED/math.cos(a)
-            print "s e",SPEED,xe
-            print (SPEED*SPEED-xe*xe)
-            ye=math.sqrt(abs(SPEED*SPEED-xe*xe))
-            xe-=EYE_POS[0]
-            ye-=EYE_POS[2]
-            
-            xt=xe+v[0]
-            yt=ye+v[1]
+            cx=math.sqrt( (bx**2+bz**2)/((bx**2/bz**2)+1))
+            cz=cx/(abs(bz)/abs(bx))
+
+
+            lx=math.sqrt((mSpeed*cz**2)/cx**2)
+            lz=math.sqrt(abs(mSpeed**2-lx**2))
 
 
 
-            EYE_POS[0]=xe
-            EYE_POS[2]=ye
-            TARGET_POS[0]=xt
-            TARGET_POS[2]=yt
+            if bx*bz>=0:
+                rv=[lx,-lz]
+            else:
+                rv=[-lx,lz]
 
+            #lv=[lx*(bx/abs(bx)),lz]
 
-            #newv=[x,y]
+            print rv 
 
-            #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
-            #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
-            #TARGET_POS[1] = EYE_POS[1];
-            #EYE_POS[2] -= math.cos(rad) * SPEED 
-            #EYE_POS[0] -= -math.sin(rad) * SPEED
+            TARGET_POS[0]+=rv[0]
+            TARGET_POS[2]+=rv[1]
+            EYE_POS[0]+=rv[0]
+            EYE_POS[2]+=rv[1]
             self.move()
 
         if key=="A":
-            ANGLE -=1.1
-            rad =PI*ANGLE/180.0
+            mSpeed=1
+            bx=TARGET_POS[2]-EYE_POS[2]
+            bz=TARGET_POS[0]-EYE_POS[0]
             
-            
-
-            EYE_POS[0]+=SPEED
-            EYE_POS[2]+=SPEED
-            TARGET_POS[0]+=SPEED
-            TARGET_POS[2]+=SPEED
-            '''
-            x=(EYE_POS[0]-TARGET_POS[0])*math.cos(ANGLE)-(EYE_POS[2]-TARGET_POS[2])*math.sin(ANGLE)+TARGET_POS[0]    
-            y=(EYE_POS[0]-TARGET_POS[0])*math.sin(ANGLE)-(EYE_POS[2]-TARGET_POS[2])*math.cos(ANGLE)+TARGET_POS[2]
+            cx=math.sqrt( (bx**2+bz**2)/((bx**2/bz**2)+1))
+            cz=cx/(abs(bz)/abs(bx))
 
 
-            TARGET_POS[0]=x
-            TARGET_POS[2]=y
-            '''
-            #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
-            #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
-            #TARGET_POS[1] = EYE_POS[1];
-            #EYE_POS[0] += math.sin(rad) * SPEED
-            #EYE_POS[2] += math.sin(rad) * SPEED
+            lx=math.sqrt((mSpeed*cz**2)/cx**2)
+            lz=math.sqrt(abs(mSpeed**2-lx**2))
 
+            if bx*bz<=0:
+                rv=[lx,-lz]
+            else:
+                rv=[-lx,lz]
+
+            TARGET_POS[0]+=rv[0]
+            TARGET_POS[2]+=rv[1]
+            EYE_POS[0]+=rv[0]
+            EYE_POS[2]+=rv[1]
 
             self.move()
         if key=="W":
@@ -206,17 +199,19 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             TARGET_POS[1] -= SPEED
             self.move()
         if key=="F":
-            EYE_POS=[1,1,1]
+            EYE_POS=[5,5,5]
             TARGET_POS=[0,0,0]
             self.move()
 
         if key=="-":
             #global SPEED
-            SPEED-=0.1
+            SPEED-=0.5
 
         if key=="=":
             #global SPEED
-            SPEED+=0.1
+            SPEED+=0.5
+
+
     def OnKeyUp(self, evt):
         key=evt.GetKeyCode()
         #print chr(key)
@@ -237,28 +232,16 @@ class mainGlCanvas(openGL_BasicCanvas):
         #a=min( size.width, size.height)/max( size.width, size.height)
         b=self.size.width/(self.size.height+0.0)
         glFrustum(-0.1, 0.1, -0.1, 0.1*b, 0.1*b, 1000)
+
         # position viewer
         glMatrixMode(GL_MODELVIEW)
-        #glTranslatef(0.0, 0.0, -2.0)
-
-        # position object
-        #glRotatef(self.y, 1.0, 0.0, 0.0)
-        #glRotatef(self.x, 0.0, 1.0, 0.0)
-
 
         a = 0.217
         b = 0.342
         c = 0.537
         d = 0.24
-
         glClearColor (a,a,a,1)
-
         glEnable(GL_DEPTH_TEST)
-        #glEnable(GL_LIGHTING)
-        #glEnable(GL_LIGHT1)
-
-
-   
 
         glShadeModel(GL_FLAT)
         glShadeModel(GL_SMOOTH)
@@ -284,9 +267,6 @@ class mainGlCanvas(openGL_BasicCanvas):
         glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse)
         glLightfv(GL_LIGHT1, GL_POSITION,LightPosition)
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, Light_Model_Ambient)
-
-
-
         glEnable(GL_COLOR_MATERIAL)
         #-----------------------light
 
@@ -294,216 +274,169 @@ class mainGlCanvas(openGL_BasicCanvas):
     def OnDraw(self):
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-
-        
         glPopMatrix()
+        
+        glEnable(GL_LIGHT1)
+        glEnable(GL_LIGHTING)
+        if len(Helpers)>0:
+            for s in Helpers:
+                #glDisable(GL_LIGHT1)
+                #glDisable(GL_LIGHTING)
+                drawModelObject(s)
+        if len(ModelObjects)>0:
+            #print len(ModelObjects)
+            for s in ModelObjects:
+                drawModelObject(s)
+        #elif len(ModelObjects)==3:
+        #    print "xxxx"
+            #import _data as d
+            #d.ModelObjects=[]
+        if len(BigworldModels)>0:
+            i=0
+            for s in BigworldModels:
+                i+=3
+                glTranslatef(i,0,0)
+                drawObjectFromBigworld(s)
 
-        glDisable(GL_LIGHT1)
-        glDisable(GL_LIGHTING)
-        glBegin(GL_LINES)
-        #self.xyz()
-        self.grid()
 
-
-        glEnd()
-        self.drawEye()
-        if len(Objects)>0:
-            for s in Objects:
-                glEnable(GL_LIGHT1)
-                glEnable(GL_LIGHTING)
-                drawObject(s)
-
-
-
-        tpos=[0,0,0]
-        sc=1.2
-        big=1
 
         self.SwapBuffers()
 
-    def drawEye(self):
-        glBegin(GL_POINTS)
-        glColor3f(1,0,0)
-        glVertex3d(EYE_POS[0], EYE_POS[1], EYE_POS[2])
-        glVertex3d(TARGET_POS[0], TARGET_POS[1], TARGET_POS[2])
-        glEnd()
+
+
+def drawLine(obj):
+    if type(obj)==Line:
+        #glLineWidth(2)
+        i=0
         glBegin(GL_LINES)
-        glColor3f(1,0,0)
-        glVertex3d(EYE_POS[0], EYE_POS[1], EYE_POS[2])
-        glVertex3d(TARGET_POS[0], TARGET_POS[1], TARGET_POS[2])
+        for s in obj.index:
+            glColor3f(obj.colors[obj.index[i]][0],obj.colors[obj.index[i]][1],obj.colors[obj.index[i]][2])
+            glVertex3f(obj.vertexs[obj.index[i]][0],obj.vertexs[obj.index[i]][1],obj.vertexs[obj.index[i]][2])
+            i+=1    
         glEnd()
-    def box(self):
-
-        glBegin(GL_QUADS)
-        #glColor3f(0.78,0.78,0.78)
-        glNormal3f( 0.0, 0.0, 1.0)
-        glVertex3f( 0.5, 0.5, 0.5)
-        glVertex3f(-0.5, 0.5, 0.5)
-        glVertex3f(-0.5,-0.5, 0.5)
-        glVertex3f( 0.5,-0.5, 0.5)
-        #glColor3f(0,0.6,0)
-        glNormal3f( 0.0, 0.0,-1.0)
-        glVertex3f(-0.5,-0.5,-0.5)
-        glVertex3f(-0.5, 0.5,-0.5)
-        glVertex3f( 0.5, 0.5,-0.5)
-        glVertex3f( 0.5,-0.5,-0.5)
-        #glColor3f(0.4,0,0)
-        glNormal3f( 0.0, 1.0, 0.0)
-        glVertex3f( 0.5, 0.5, 0.5)
-        glVertex3f( 0.5, 0.5,-0.5)
-        glVertex3f(-0.5, 0.5,-0.5)
-        glVertex3f(-0.5, 0.5, 0.5)
-        #glColor3f(0,0.5,0.5)
-        glNormal3f( 0.0,-1.0, 0.0)
-        glVertex3f(-0.5,-0.5,-0.5)
-        glVertex3f( 0.5,-0.5,-0.5)
-        glVertex3f( 0.5,-0.5, 0.5)
-        glVertex3f(-0.5,-0.5, 0.5)
-
-        glNormal3f( 1.0, 0.0, 0.0)
-        glVertex3f( 0.5, 0.5, 0.5)
-        glVertex3f( 0.5,-0.5, 0.5)
-        glVertex3f( 0.5,-0.5,-0.5)
-        glVertex3f( 0.5, 0.5,-0.5)
-        #glColor3f(0.5,0.5,0.5)
-        
-        glNormal3f(-1.0, 0.0, 0.0)
-        glVertex3f(-0.5,-0.5,-0.5)
-        glVertex3f(-0.5,-0.5, 0.5)
-        glVertex3f(-0.5, 0.5, 0.5)
-        glVertex3f(-0.5, 0.5,-0.5)
-        glEnd()
-    '''
-    def xyz(self):
-        a=15
-        glColor3f(0,0,1)
-        glVertex3d(0, 0, -a)
-        glVertex3d(0, 0, a)
-        glColor3f(0,1,0)
-        glVertex3d(a, 0, 0)
-        glVertex3d(-a, 0, 0)
-        #glColor3f(1,0,0)
-        #glVertex3d(0, -a, 0)
-        #glVertex3d(0, a, 0)
-    '''
-    def grid(self):
-
-        num=21
-        j=num*0.1#l/10
-        l=j*(num-1)/2
-        for i in range(num):
-            if i == ((num-1)/2):
-                glColor3f(1.0,0.0,0.0)
-                glVertex3d(-l, 0, i * j - l)
-                glVertex3d(l, 0,i * j - l)
-                glColor3f(0.0,0.0,1.0)
-                glVertex3d(i * j - l, 0,l)
-                glVertex3d(i * j - l, 0,-l)
-            else:
-                glColor3f(0.6,0.6,0.6)
-                glVertex3d(-l, 0, i * j - l)
-                glVertex3d(l, 0,i * j - l)
-                glVertex3d(i * j - l, 0,l)
-                glVertex3d(i * j - l, 0,-l)
-def drawObject(obj):
-    if type(obj)==Object:
-        if obj.renderEnable==True:
-            #glScale(obj.transform.scale)
-            #glTranslatef(obj.transform.position)
-            #glRotationf(obj.transform.rotation)
-            glPointSize(5)
-            glLineWidth(2)
-            glColor3f(1,1,1)
-            i=0
-            for s in obj.mesh.faces:
-                if len(s)==3:
-                    glBegin(GL_TRIANGLE_STRIP)#GL_QUADS)
-                    glColor3f(0.5,1,1)
-                    for i in s:
-                        f=i[0]-1
-                        
-                        if len(i)>1:
-                            n=i[2]-1
-                            glNormal3f(obj.mesh.normals[n][0],obj.mesh.normals[n][1],obj.mesh.normals[n][2])
-                        
-                        glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
-                    glEnd()
-
-                    glBegin(GL_LINE_LOOP)#GL_QUADS)
-                    glColor3f(0.1,0.5,0.8)
-                    for i in s:
-                        f=i[0]-1
-                        glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
-                    glEnd()
-
-                if len(s)==4:
-                    glBegin(GL_QUADS)
-                    glColor3f(0.1,0.1,0.6)
-                    for i in s:
-                        f=i[0]-1
-                        
-                        if len(i)>1:
-                            n=i[2]-1
-                            glNormal3f(obj.mesh.normals[n][0],obj.mesh.normals[n][1],obj.mesh.normals[n][2])
-                        
-                        glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
-                    glEnd()
-
-
-                    glBegin(GL_LINE_LOOP)#GL_QUADS)
-                    glColor3f(0,0.0,0)
-                    for i in s:
-                        f=i[0]-1
-                        glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
-                    glEnd()
-
-
-                glBegin(GL_POINTS)
-                glColor3f(0,0.8,0)
+        glLineWidth(1) 
+def drawMeshx(obj):
+    if type(obj)==Mesh:
+        glPointSize(5)
+        glLineWidth(2)
+        glColor3f(0.5,0.5,0.5)
+        i=0
+        for s in obj.faces:
+            if len(s)==3:
+                glBegin(GL_TRIANGLES)#GL_QUADS)
+                #glColor3f(0.5,1,1)
                 for i in s:
                     f=i[0]-1
-                    glVertex3f(obj.mesh.vertexs[f][0],obj.mesh.vertexs[f][1],obj.mesh.vertexs[f][2])
+                    
+                    if len(i)>1:
+                        n=i[2]-1
+                        glNormal3f(obj.normals[n][0],obj.normals[n][1],obj.normals[n][2])
+                    
+                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
                 glEnd()
-            glLineWidth(1)
+
+                '''
+                glBegin(GL_LINE_LOOP)#GL_QUADS)
+                glColor3f(0.1,0.5,0.8)
+                for i in s:
+                    f=i[0]-1
+                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
+                glEnd()
+                '''
+            if len(s)==4:
+                glBegin(GL_QUADS)
+                #glColor3f(0.1,0.1,0.6)
+                for i in s:
+                    f=i[0]-1
+                    
+                    if len(i)>1:
+                        n=i[2]-1
+                        glNormal3f(obj.normals[n][0],obj.normals[n][1],obj.normals[n][2])
+                    
+                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
+                glEnd()
+
+                '''
+                glBegin(GL_LINE_LOOP)#GL_QUADS)
+                glColor3f(0,0.0,0)
+                for i in s:
+                    f=i[0]-1
+                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
+                glEnd()
+                '''
+            '''
+            glBegin(GL_POINTS)
+            glColor3f(0,0.8,0)
+            for i in s:
+                f=i[0]-1
+                glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
+            glEnd()
+            '''
+        glLineWidth(1)
+def drawMesh(obj):
+    if type(obj)==Mesh:
+        glColor3f(0.5,0.5,0.5)
+        i=0
+        glBegin(GL_QUADS)
+        for s in obj.faces:
+            if len(s)==4:
+                #glColor3f(0.1,0.1,0.6)
+                for i in s:
+                    f=i[0]-1
+                    if len(i)>1:
+                        n=i[2]-1
+                        glNormal3f(obj.normals[n][0],obj.normals[n][1],obj.normals[n][2])
+                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
+        glEnd()
+        '''
+        glLineWidth(2)
+        glBegin(GL_LINE_LOOP)#GL_QUADS)
+        glColor3f(0.1,0.5,0.8)
+        lon=1
+        i=0
+        for s in obj.faces:
+            glVertex3f(obj.vertexs[i][0],obj.vertexs[i][1],obj.vertexs[i][2])
+            #glVertex3f(obj.vertexs[i+lon][0],obj.vertexs[i+lon][1],obj.vertexs[i+lon][2])
+            lon=-lon
+            i+=1    
+        glEnd()
+        glLineWidth(1)
+        '''
+        glBegin(GL_TRIANGLES)
+        for s in obj.faces:
+            if len(s)==3:
+                #glColor3f(0.1,0.1,0.6)
+                for i in s:
+                    f=i[0]-1
+                    if len(i)>1:
+                        n=i[2]-1
+                        glNormal3f(obj.normals[n][0],obj.normals[n][1],obj.normals[n][2])
+                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
+        glEnd()
+def drawModelObject(obj):
+    if obj.renderEnable==True:
+        #glMatrixMode(GL_objVIEW)
+        glTranslatef(obj.transform.position.x, obj.transform.position.y, obj.transform.position.z)
+        #glRotatef(self.x, 0.0, 1.0, 0.0)
+        drawMesh(obj.mesh)
+
+        drawLine(obj.line)         
+
 def importObjFile(filePath):
-    o=Object()
+    obj=ModelObject()
     f=objFile.loadOBJ(filePath)
-    o.mesh.vertexs=f[0]
-    o.mesh.normals=f[1]
-    o.mesh.faces=f[2]
-    o.name="fengxxx"
-    Objects.append(o)
-    '''
-    vters,norms=objFile.loadOBJ(filePath)
-
-    glBegin(GL_QUADS)
-    glColor3f(0.3,0.3,0.3)
-    i=0
-    for s in vters:
-        #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
-        glVertex3f(s[0],s[1],s[2])
-        i+=1
-
-    glEnd()
-     
-    glBegin(GL_LINES)
-    glColor3f(1.0,1.0,1.0)
-    i=0
-    for s in vters:
-        #glNormal3f(norms[i][0],norms[i][1],norms[i][2])
-        glVertex3f(s[0],s[1],s[2])
-        i+=1
-    
-    glEnd()
-    '''
-
+    obj.mesh.vertexs=f[0]
+    obj.mesh.normals=f[1]
+    obj.mesh.faces=f[2]
+    obj.name=os.path.split(filePath)[1].replace(".obj","").replace(".OBJ","")
+    test()
+    import _data as da
+    da.ModelObjects.append(obj)
+    test()
 def importFile():
-    #print "sss"
-    #p=wx.openFileDialog()
     file_wildcard = "OBJ files(*.obj)|*.obj|All files(*.*)|*.*"   
     #os.getcwd()
     dlg = wx.FileDialog(self, "Open paint file...",  
@@ -514,4 +447,53 @@ def importFile():
         self.filename = dlg.GetPath()  
     dlg.Destroy()  
     importObjFile(self.filename) 
-#print loadOBJ("C:\\Users\\fengx\Desktop\\temp.obj")[0]
+
+
+def drawObjectFromBigworld(modelInfo):
+    #a=po.getModelInfo(filePath,"H:\\testPrimitives\\bghm_jztj_yw0040_2545")
+    vertexs=modelInfo[1]
+    indexs=modelInfo[2]
+    glPointSize(5)
+    glLineWidth(2)
+    glColor3f(0.5,0.5,0.5)    
+    glBegin(GL_TRIANGLES)#_STRIP)
+    for i in range(0,(len(indexs)-1)):
+        #print vertexs[indexs[i]]
+        glNormal3f(vertexs[indexs[i]][2][0],vertexs[indexs[i]][2][1],vertexs[indexs[i]][2][2])
+        glVertex3f(vertexs[indexs[i]][0][0],vertexs[indexs[i]][0][1],vertexs[indexs[i]][0][2])
+    glEnd()
+
+
+def createGridModel():
+    grid=ModelObject()
+
+
+    num=21
+    j=num*0.1#l/10
+    l=j*(num-1)/2
+    for i in range(num):
+        if i == ((num-1)/2):
+            grid.line.colors.append((1.0,0.0,0.0))
+            grid.line.vertexs.append((-l, 0, i * j - l))
+            grid.line.colors.append((1.0,0.0,0.0))
+            grid.line.vertexs.append((l, 0,i * j - l))
+            grid.line.colors.append((0.0,0.0,1.0))
+            grid.line.vertexs.append((i * j - l, 0,l))
+            grid.line.colors.append((0.0,0.0,1.0))
+            grid.line.vertexs.append((i * j - l, 0,-l))
+        else:
+            grid.line.colors.append((0.6,0.6,0.6))
+            grid.line.vertexs.append((-l, 0, i * j - l))
+            grid.line.colors.append((0.6,0.6,0.6))
+            grid.line.vertexs.append((l, 0,i * j - l))
+            grid.line.colors.append((0.6,0.6,0.6))
+            grid.line.vertexs.append((i * j - l, 0,l))
+            grid.line.colors.append((0.6,0.6,0.6))
+            grid.line.vertexs.append((i * j - l, 0,-l))
+    grid.name="grid"
+    for s in range(0,(len(grid.line.vertexs))):
+        grid.line.index.append(s)
+
+
+    Helpers.append(grid)
+createGridModel()

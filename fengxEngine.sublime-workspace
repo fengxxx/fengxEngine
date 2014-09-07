@@ -1,0 +1,485 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"IM",
+				"TEST_IMPORT"
+			],
+			[
+				"ss",
+				"ss"
+			],
+			[
+				"dra",
+				"drawObject"
+			],
+			[
+				"Obje",
+				"Objects"
+			],
+			[
+				"object",
+				"Object"
+			],
+			[
+				"ob",
+				"object"
+			],
+			[
+				"ver",
+				"Vector3"
+			],
+			[
+				"mat",
+				"Material"
+			],
+			[
+				"me",
+				"Mesh"
+			],
+			[
+				"y",
+				"y"
+			],
+			[
+				"pos",
+				"posM"
+			],
+			[
+				"try",
+				"try	Try/Except"
+			],
+			[
+				"s",
+				"small"
+			],
+			[
+				"python",
+				"Python"
+			],
+			[
+				"show",
+				"showALL_FRAME"
+			],
+			[
+				"pp_hi",
+				"pp_HIDE_OTHER"
+			],
+			[
+				"scr",
+				"SCREEN_POS"
+			],
+			[
+				"scre",
+				"SCREEN_POS"
+			],
+			[
+				"is",
+				"IsShown"
+			],
+			[
+				"all",
+				"ALL_FRAME"
+			],
+			[
+				"save",
+				"saveData"
+			],
+			[
+				"new",
+				"newFrame"
+			],
+			[
+				"ma",
+				"mainFrame"
+			],
+			[
+				"min",
+				"minScale"
+			],
+			[
+				"hide",
+				"onHide"
+			],
+			[
+				"ge",
+				"getDragFIles"
+			],
+			[
+				"cli",
+				"getClipboardText"
+			],
+			[
+				"main",
+				"mainData"
+			],
+			[
+				"a",
+				"argv"
+			],
+			[
+				"f",
+				"f"
+			],
+			[
+				"xm",
+				"xmlPath"
+			],
+			[
+				"files",
+				"files"
+			],
+			[
+				"file",
+				"files"
+			],
+			[
+				"xml",
+				"xmlP"
+			],
+			[
+				"clp",
+				"clpFlies"
+			],
+			[
+				"n",
+				"n"
+			],
+			[
+				"tP",
+				"tPath"
+			],
+			[
+				"get",
+				"getroot"
+			],
+			[
+				"Ele",
+				"ElementTree"
+			],
+			[
+				"id",
+				"ID"
+			],
+			[
+				"p",
+				"p"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/E/GitHub/fengxEngine/mainWindow.py",
+		"/E/GitHub/fengxEngine/_scene.py",
+		"/E/GitHub/fengxEngine/fengxEngine.sublime-project",
+		"/D/desktop/testObj.obj",
+		"/E/GitHub/fengxEngine/_import_obj.py",
+		"/E/GitHub/fengxEngine/wx_Global_value_list_2.txt",
+		"/E/myProject/slj_wjmy0810_wb.obj",
+		"/E/SVN/fengxEngine/_data.py",
+		"/E/SVN/VisualFengx_3dmax/openInExplorer.py",
+		"/E/SVN/fengxEngine/mainWindow.py",
+		"/E/SVN/fengxEngine/_globalData.py",
+		"/E/SVN/fengxEngine/_scene.py",
+		"/E/SVN/fengxEngine/_core.py",
+		"/E/SVN/fengxEngine/_import_obj.py",
+		"/D/Program Files/Blender Foundation/Blender/2.71/scripts/addons/io_scene_obj/import_obj.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/UIExt.py",
+		"/E/SVN/VisualFengx_3dmax/openByModelEditor.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/DrawFloraFunctor.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/BigBangDirector.py",
+		"/E/SVN/fengxEngine/_project.py",
+		"/E/SVN/fengxEngine/_inspector.py",
+		"/E/SVN/fengxEngine/_hierarchy.py",
+		"/D/desktop/test.c",
+		"/D/Program Files/Blender Foundation/Blender/2.71/scripts/addons/io_scene_obj/export_obj.py",
+		"/E/SVN/fengxEngine/layoutTest..py",
+		"/E/SVN/fengxEngine/images.py",
+		"/D/Program Files/Blender Foundation/Blender/2.71/scripts/addons/add_mesh_extra_objects/add_mesh_teapot.py",
+		"/D/Program Files/Blender Foundation/Blender/2.71/scripts/addons/add_mesh_extra_objects/add_mesh_twisted_torus.py",
+		"/D/Program Files/Blender Foundation/Blender/2.71/scripts/addons/add_mesh_solid.py",
+		"/D/Program Files/Blender Foundation/Blender/2.71/scripts/addons/add_mesh_BoltFactory/createMesh.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/VisualFengx.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/data/gui.xml",
+		"/C/Program Files/Autodesk/3ds Max 2012/Scripts/VisualFengx/VisualFileXML.py",
+		"/C/Program Files/Autodesk/3ds Max 2012/Scripts/VisualFengx/openInExplorer.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/BigBangDirector2.py",
+		"/C/Program Files/Autodesk/3ds Max 2012/Scripts/VisualFengx/openByModelEditor.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/Actions.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/TerrainUIAdapter.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/AshesDirector.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/keys.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/BigBangDirector1.py",
+		"/E/SVN/chunkChange.py",
+		"/E/SVN/VisualFengx_3dmax/VisualFengx/VisualFengx/VisualFileXML.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/ResCheck.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/PlaceFlora.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/Personality.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/NtesFilter.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/ChunkManager.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/DrawFloraFunctor_huahai.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/Ecotypes.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/gatherAllData.py",
+		"/E/mf_pangu/bigworld/tools/worldeditor/resources/scripts/ItemUIAdapter.py",
+		"/E/SVN/batchChange.py",
+		"/E/SVN/ftp.py",
+		"/C/Program Files (x86)/Autodesk/3ds Max 9/Scripts/VisualFengx/visualfengx.ms",
+		"/E/SVN/network_Test/test/client.py",
+		"/E/SVN/network_Test/socke server_server.py",
+		"/E/SVN/network_Test/socket_server.py",
+		"/D/desktop/test.py",
+		"/E/SVN/drag to me.py",
+		"/C/Users/HIH-D-670/Documents/New Unity Project/Assets/Underwater Plants/Meshes/Coral_Big.obj",
+		"/C/Users/HIH-D-670/Documents/New Unity Project/Assets/Underwater Plants/Materials/Coral 01 Mat.mat",
+		"/E/SVN/ImagePin.py",
+		"/E/SVN/ImagePin/ImagePin.py",
+		"/E/SVN/popo_add_emotion/popo_add_emotion.py",
+		"/D/desktop/temp.py",
+		"/E/SVN/VisualFengx_3dmax/VisualFengx/VisualFengx/openByModelEditor.py",
+		"/D/desktop/t/popo_add_emotion.py"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"openFileDialog",
+			"open",
+			"openF",
+			"saved",
+			"savep",
+			"saveP",
+			"getSave",
+			"save",
+			"view",
+			"a,a",
+			"fit",
+			"size",
+			"mainGlCanvas",
+			"glViewport",
+			"print",
+			"	",
+			"box",
+			"bo",
+			"mut",
+			"多人",
+			"qu",
+			"qui",
+			"exit",
+			"exi",
+			"Exi",
+			"for",
+			"bd",
+			"SHIFT",
+			"heightFunctor.falloff",
+			"updatestate",
+			"update",
+			"bd.heightFunctor.falloff",
+			"updateState",
+			"toerrain/height/brushFallff",
+			"self.heightTool",
+			"terrainTool",
+			"KEY_5",
+			"##############",
+			"KEY_5",
+			"key_5",
+			"Tool paintColor",
+			"Tool paintColor\"",
+			"ownKeyEvent",
+			" ownKeyEvent",
+			"    ",
+			"self.alphaTool",
+			"KEY_X",
+			"line",
+			"mouseRevealer",
+			"BigBang.clo",
+			"BingBang.clo",
+			"BingBang.clon",
+			"Key_V",
+			"BigBang.clon",
+			"BigBang.co",
+			"BigBang.c",
+			"KEY_V",
+			"BigBang.clo",
+			"KEY_C",
+			"KEY_DELETE",
+			"KEY_X",
+			"ObjInfo",
+			"KEY_X",
+			"cNum",
+			"os.path",
+			"    ",
+			")\n",
+			"time",
+			"s[",
+			"miniStat",
+			"saveData",
+			" saveData",
+			"saveData",
+			"saveSet",
+			"miniState",
+			"M",
+			"grap",
+			"GRAP",
+			"grap",
+			"GRAP",
+			"grap",
+			"    ",
+			"abs",
+			"win32clipboard",
+			"name",
+			"iles",
+			"    ",
+			"xmlPath",
+			"tFilePath",
+			"n",
+			"GRAP_MAP_RECT",
+			"GRAP_MAP_DATA",
+			"GRAP_RECT"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"    ",
+			"	"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 235.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "fengxEngine.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
