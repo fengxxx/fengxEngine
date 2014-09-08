@@ -20,8 +20,8 @@ class mainFrame(wx.Frame):
         self.SetIcon(self.icon)
         
 
-        #self.CreateStatusBar()
-        #self.SetStatusText("fengxEngine")
+        self.CreateStatusBar()
+        self.SetStatusText("fengxEngine: tartPos: "+str(TARGET_POS)+"eyePos: "+str(EYE_POS) )
 
         #--------------main Part of window------->>>>
         self.P_main=wx.Panel(self)
@@ -56,7 +56,7 @@ class mainFrame(wx.Frame):
         #self.dir3.SetDefaultPath(ROOT_DIR)
 
 
-        self.tc = wx.TextCtrl(self.P_main, -1, "", size=(25, 20), style=wx.TE_MULTILINE|wx.TE_PROCESS_ENTER)
+        self.tc = wx.TextCtrl(self.P_main, -1, "self.t()", size=(25, 20), style=wx.TE_MULTILINE|wx.TE_PROCESS_ENTER)
         #self.Bind(wx.EVT_TEXT, self.EvtText, t2)
         self.tc.SetBackgroundColour((48.825,48.825,48.825))
         #self.tc.SetOwnBackgroundColour(MAIN_BG_COLOR)
@@ -112,6 +112,10 @@ class mainFrame(wx.Frame):
         #self.Fit()
 
     def execComd(self,event):
+        #self.SetStatusText("fengxEngine: tartPos: "+str(TARGET_POS)+"eyePos: "+str(EYE_POS) )
+        
+        #exec("print(str(TARGET_POS) + str(EYE_POS) )")
+        
         sc=self.tc.GetValue()
         print sc
 
@@ -119,7 +123,11 @@ class mainFrame(wx.Frame):
             exec(sc)
             #print "out:  ",sys.stdout.getvalue()
             #self.tc=.Clear()
+    def t(self):
 
+        a="E:\mf_pangu\\tw2\\res\\scene\\common\\wj\\wjgy\\cjsd_wjgy0320_5301.primitives"
+        print a
+        BigworldModels.append(po.getModelInfo(a,"H:\\testPrimitives\\temp\\"))  
     def OnKeyDown(self,event):
         #print "test"
         #print event.GetKeyCode()
@@ -230,5 +238,5 @@ newFrame = mainFrame(parent=None, id=-1)
 newFrame.Show()
 newFrame.SetBackgroundColour(MAIN_BG_COLOR)
 
-#print dir(newFrame)
+#sssssssssss dir(newFrame)
 mainApp.MainLoop()

@@ -1,6 +1,6 @@
 import math
-
-
+from vector3 import*
+from vector2 import*
 class Vector4(object):
 	def __init__(self,x,y,z,w):
 		if x!=None: self._x=x
@@ -36,7 +36,7 @@ class Vector4(object):
 	def w(self, value):
 		self._w = value
 
-class Vector3(object):
+class Vector3x(object):
 	'''
 	def __new__(self):
 		self._x=0.0
@@ -121,7 +121,7 @@ class Vectorx(object):
         return Vector2(self.x - rhs.x, self.y - rhs.y)
 '''
 
-class Vector2(object):
+class Vector2c(object):
 	def __init__(self,x=0.0,y=0.0):
 		self.x=x
 		self.y=y
@@ -325,10 +325,10 @@ class ModelObject(object):
 
 #test
 
-a=Vectorx(31.0,9.0)
+#a=Vectorx(31.0,9.0)
 
 
-print a.grow(4)
+#print a.grow(4)
 #print a.getLength()
 
 

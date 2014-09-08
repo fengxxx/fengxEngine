@@ -84,31 +84,51 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
 
     def OnMouseUp(self, evt):
         #self.ReleaseMouse()
-        print ""
+        ()
 
     def OnMouseMotion(self, evt):
-        global ANGLE
-        global ANGLE_UP
         global SPEED
+        global rSPEED
+        global EYE_POS
+        global TARGET_POS
         if evt.Dragging() and evt.RightIsDown():
-            
             self.x, self.y = evt.GetPosition()
-
             ex=self.x-self.lastx
             ey=self.y-self.lasty
+            uDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[0]-EYE_POS[0])
 
-            ANGLE +=ex*0.2
-            ANGLE_UP +=ey*0.2
-            rad =PI*ANGLE/180.0
-            rad_UP =PI*ANGLE_UP/180.0
-            #print ex
-            #print TARGET_POS
-            TARGET_POS[1] = EYE_POS[1] + 100*(-math.cos(-rad_UP))
-            TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
-            TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)   
-            #print TARGET_POS
+            lDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[2]-EYE_POS[2])
+
+            rDir=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2])
+
+            uDir=uDir.rotate(-rSPEED*ey)
+            rDir=rDir.rotate(rSPEED*ex)
+            lDir=lDir.rotate(rSPEED*ey)
+            TARGET_POS[1]=uDir.x+EYE_POS[1]
+            TARGET_POS[0]=uDir.y+EYE_POS[0]
+
+            TARGET_POS[1]=uDir.x+EYE_POS[1]
+            TARGET_POS[2]=uDir.y+EYE_POS[2]
+            
+
+            TARGET_POS[0]=rDir.x+EYE_POS[0]
+            TARGET_POS[2]=rDir.y+EYE_POS[2]
+
             self.move()
             self.lastx, self.lasty = evt.GetPosition()
+            self.Refresh(False)
+        
+        if  evt.LeftIsDown():
+            TARGET_POS=[0,0,0]
+            #EYE_POS=[5,5,5]
+            
+            a=Vector2(EYE_POS[0],EYE_POS[2])
+            a=a.rotate(SPEED)
+
+            EYE_POS[0]=a.x
+            EYE_POS[2]=a.y
+
+            self.move()
             self.Refresh(False)
 
 
@@ -119,78 +139,66 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         global TARGET_POS 
         global EYE_POS
         global SPEED
-        global data
+        global rSPEED
+        if key=="A":  
+            by=TARGET_POS[2]-EYE_POS[2]
+            bx=TARGET_POS[0]-EYE_POS[0]
+            
+            if bx==0 and by==0:
+                bx=0.001
+
+            dirVector=Vector2(bx,by)
+            dirVector.normalise()
+            dirVector=dirVector.rotate(-90.0)
+            dirVector=dirVector.grow((SPEED-1))
+
+            
+            EYE_POS=[(EYE_POS[0]+dirVector.x),EYE_POS[1],(EYE_POS[2]+dirVector.y)]
+            TARGET_POS=[(TARGET_POS[0]+dirVector.x),EYE_POS[1],(TARGET_POS[2]-dirVector.y)]
+         
+            self.move()
+            #print ("fengxEngine: tartPos: "+str(TARGET_POS)+"eyePos: "+str(EYE_POS) )
         if key=="D":
-            mSpeed=1
-            bx=TARGET_POS[2]-EYE_POS[2]
-            bz=TARGET_POS[0]-EYE_POS[0]
+            by=TARGET_POS[2]-EYE_POS[2]
+            bx=TARGET_POS[0]-EYE_POS[0]
             
-            cx=math.sqrt( (bx**2+bz**2)/((bx**2/bz**2)+1))
-            cz=cx/(abs(bz)/abs(bx))
+            if bx==0 and by==0:
+                bx=0.001
+
+            dirVector=Vector2(bx,by)
+            dirVector.normalise()
+            dirVector=dirVector.rotate(90.0)
+            dirVector=dirVector.grow((SPEED-1))
 
 
-            lx=math.sqrt((mSpeed*cz**2)/cx**2)
-            lz=math.sqrt(abs(mSpeed**2-lx**2))
-
-
-
-            if bx*bz>=0:
-                rv=[lx,-lz]
-            else:
-                rv=[-lx,lz]
-
-            #lv=[lx*(bx/abs(bx)),lz]
-
-            print rv 
-
-            TARGET_POS[0]+=rv[0]
-            TARGET_POS[2]+=rv[1]
-            EYE_POS[0]+=rv[0]
-            EYE_POS[2]+=rv[1]
-            self.move()
-
-        if key=="A":
-            mSpeed=1
-            bx=TARGET_POS[2]-EYE_POS[2]
-            bz=TARGET_POS[0]-EYE_POS[0]
-            
-            cx=math.sqrt( (bx**2+bz**2)/((bx**2/bz**2)+1))
-            cz=cx/(abs(bz)/abs(bx))
-
-
-            lx=math.sqrt((mSpeed*cz**2)/cx**2)
-            lz=math.sqrt(abs(mSpeed**2-lx**2))
-
-            if bx*bz<=0:
-                rv=[lx,-lz]
-            else:
-                rv=[-lx,lz]
-
-            TARGET_POS[0]+=rv[0]
-            TARGET_POS[2]+=rv[1]
-            EYE_POS[0]+=rv[0]
-            EYE_POS[2]+=rv[1]
+            EYE_POS=[(EYE_POS[0]+dirVector.x),EYE_POS[1],(EYE_POS[2]+dirVector.y)]
+            TARGET_POS=[(TARGET_POS[0]+dirVector.x),EYE_POS[1],(TARGET_POS[2]-dirVector.y)]
 
             self.move()
+            #print ("fengxEngine: tartPos: "+str(TARGET_POS)+"eyePos: "+str(EYE_POS) )
         if key=="W":
-            rad =PI*ANGLE/180.0
-            EYE_POS[2] += math.sin(rad) * SPEED
-            EYE_POS[0] += math.cos(rad) * SPEED
-            TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
-            TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
-            #TARGET_POS[1] = EYE_POS[1];
+            by=TARGET_POS[2]-EYE_POS[2]
+            bx=TARGET_POS[0]-EYE_POS[0]
+            if bx==0 and by==0:
+                bx=0.001
+            dirVector=Vector2(bx,by)
+            dirVector.normalise()
+            dirVector=dirVector.grow((SPEED-1))
+            EYE_POS=[(EYE_POS[0]+dirVector.x),EYE_POS[1],(EYE_POS[2]+dirVector.y)]
+            TARGET_POS=[(TARGET_POS[0]+dirVector.x),EYE_POS[1],(TARGET_POS[2]-dirVector.y)]
             self.move()
         if key=="S":
- 
-            rad =PI*ANGLE/180.0
-            EYE_POS[2] -= math.sin(rad) * SPEED
-            EYE_POS[0] -= math.cos(rad) * SPEED
-            #TARGET_POS[0] = EYE_POS[0] + 100*math.cos(rad)    
-            #TARGET_POS[2] = EYE_POS[2] + 100*math.sin(rad)
-            #TARGET_POS[1] = EYE_POS[1];
+            by=TARGET_POS[2]-EYE_POS[2]
+            bx=TARGET_POS[0]-EYE_POS[0]
+            if bx==0 and by==0:
+                bx=0.001
+            dirVector=Vector2(bx,by)
+            dirVector.normalise()
+            dirVector=dirVector.grow((-SPEED-1))
+            EYE_POS=[(EYE_POS[0]+dirVector.x),EYE_POS[1],(EYE_POS[2]+dirVector.y)]
+            TARGET_POS=[(TARGET_POS[0]+dirVector.x),EYE_POS[1],(TARGET_POS[2]-dirVector.y)]
             self.move()
         if key=="E":
-            
             EYE_POS[1] +=SPEED
             TARGET_POS[1] +=SPEED
             self.move()
@@ -203,13 +211,26 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             TARGET_POS=[0,0,0]
             self.move()
 
+        if key=="P":
+            TARGET_POS=[0,0,0]
+            #EYE_POS=[5,5,5]
+            
+            a=Vector2(EYE_POS[0],EYE_POS[2])
+            a=a.rotate(SPEED)
+
+            EYE_POS[0]=a.x
+            EYE_POS[2]=a.y
+
+            self.move()
+
         if key=="-":
             #global SPEED
             SPEED-=0.5
-
+            rSPEED-=0.1
         if key=="=":
             #global SPEED
             SPEED+=0.5
+            rSPEED+=0.1
 
 
     def OnKeyUp(self, evt):
@@ -241,6 +262,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         c = 0.537
         d = 0.24
         glClearColor (a,a,a,1)
+
         glEnable(GL_DEPTH_TEST)
 
         glShadeModel(GL_FLAT)
@@ -278,7 +300,6 @@ class mainGlCanvas(openGL_BasicCanvas):
         glPushMatrix()
         glLoadIdentity()
         glPopMatrix()
-        
         glEnable(GL_LIGHT1)
         glEnable(GL_LIGHTING)
         if len(Helpers)>0:
@@ -286,19 +307,21 @@ class mainGlCanvas(openGL_BasicCanvas):
                 #glDisable(GL_LIGHT1)
                 #glDisable(GL_LIGHTING)
                 drawModelObject(s)
+
         if len(ModelObjects)>0:
-            #print len(ModelObjects)
+
+            glEnable(GL_LIGHT1)
+            glEnable(GL_LIGHTING)
             for s in ModelObjects:
                 drawModelObject(s)
-        #elif len(ModelObjects)==3:
-        #    print "xxxx"
-            #import _data as d
-            #d.ModelObjects=[]
+
         if len(BigworldModels)>0:
             i=0
+            glEnable(GL_LIGHT1)
+            glEnable(GL_LIGHTING)
             for s in BigworldModels:
                 i+=3
-                glTranslatef(i,0,0)
+                #glTranslatef(i,0,0)
                 drawObjectFromBigworld(s)
 
 
@@ -453,8 +476,8 @@ def drawObjectFromBigworld(modelInfo):
     #a=po.getModelInfo(filePath,"H:\\testPrimitives\\bghm_jztj_yw0040_2545")
     vertexs=modelInfo[1]
     indexs=modelInfo[2]
-    glPointSize(5)
-    glLineWidth(2)
+    #glPointSize(5)
+    #glLineWidth(2)
     glColor3f(0.5,0.5,0.5)    
     glBegin(GL_TRIANGLES)#_STRIP)
     for i in range(0,(len(indexs)-1)):
@@ -466,8 +489,6 @@ def drawObjectFromBigworld(modelInfo):
 
 def createGridModel():
     grid=ModelObject()
-
-
     num=21
     j=num*0.1#l/10
     l=j*(num-1)/2
@@ -491,6 +512,21 @@ def createGridModel():
             grid.line.colors.append((0.6,0.6,0.6))
             grid.line.vertexs.append((i * j - l, 0,-l))
     grid.name="grid"
+    grid.line.colors.append((0.0,1.0,0.0))
+    grid.line.vertexs.append((0.0, l,0.0))
+    grid.line.colors.append((0.0,1.0,0.0))
+    grid.line.vertexs.append((0.0, -l,0.0))
+
+
+    a=Vector2(0.0,21)
+    for s in range(1,360):
+        b=a.rotate(s)    
+        t=3*math.sin(s*10/180.0*math.pi)
+        grid.line.colors.append((b.x,1.0,b.y))
+        grid.line.vertexs.append((b.x,t,b.y))
+
+
+
     for s in range(0,(len(grid.line.vertexs))):
         grid.line.index.append(s)
 
