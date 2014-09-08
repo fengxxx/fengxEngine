@@ -74,7 +74,7 @@ class Vector3(object):
 	def distance(a,b):
 		return math.sqrt((b.x-a.x)^2+(b.y-a.y)^2+(b.z-a.z)^2)
 
-class Vector2(object):
+class Vectorx(object):
 	def __init__(self,x,y):
 		if x!=None: self._x=x
 		if x!=None: self._y=y
@@ -97,7 +97,80 @@ class Vector2(object):
 
 	def distance(a,b):
 		return math.sqrt((b.x-a.x)^2+(b.y-a.y)^2)
+	def growx(self,l):
+		nx=l/math.sqrt(self.x**2(self.y**2-1)-self.y**2+1)
+		ny=nx*self.x/self.y
+		nv=Vector2(nx,ny)
+	@classmethod
+	def test(self):
+		return self.x
+	def grow(self,l):
+		print math.sqrt(self.x**2*(self.y**2-1)-self.y**2+1) 
+		nx=l/math.sqrt(self.x**2*(self.y**2-1)-self.y**2+1)
+		ny=nx*self.x/self.y
+		return Vectorx(nx,ny)
+		'''
+	len
+	    def __add__(self, rhs):
+        return Vector2(self.x + rhs.x, self.y + rhs.y)
+    def __sub__(self, rhs):
+        return Vector2(self.x - rhs.x, self.y - rhs.y)
+     def __add__(self, rhs):
+        return Vector2(self.x + rhs.x, self.y + rhs.y)
+    def __sub__(self, rhs):
+        return Vector2(self.x - rhs.x, self.y - rhs.y)
+'''
 
+class Vector2(object):
+	def __init__(self,x=0.0,y=0.0):
+		self.x=x
+		self.y=y
+	
+
+	def __str__(self):
+		return ("(" + str(self.x)+ "," + str(self.y) +")")
+
+
+
+	@classmethod
+	def pointToVector(self,p1,p2):
+		return self(p1[0]-p2[0],p1[1]-p2[1])
+	def getLength(self):
+		return math.sqrt(self.x**2+self.y**2) 
+	def normalize(self):
+		l=self.get_Length
+		self.x/=l
+		self.y/=l
+
+	@property
+	def x(self):
+		return self._x
+	@x.setter
+	def x(self, value):
+		self._x = value
+		
+	@property
+	def y(self):
+		return self._y
+	@y.setter
+	def y(self, value):
+		self._y = value
+
+
+	def distance(a,b):
+		return math.sqrt((b.x-a.x)^2+(b.y-a.y)^2)
+	def growx(self,l):
+		nx=l/math.sqrt(self.x**2(self.y**2-1)-self.y**2+1)
+		ny=nx*self.x/self.y
+		nv=Vector2(nx,ny)
+	@classmethod
+	def test(self):
+		print str(self.x)
+		#print self._x
+	def grow(self,length):
+		print length/math.sqrt(self.x**2*(self.y**2-1)-self.y**2+1)
+		#ny=nx*self.x/self.y
+		#return Vector2(nx,ny)
 class Size(object):
 	def __init__(self,x,y):
 		if x!=None: self._x=x
@@ -244,3 +317,19 @@ class ModelObject(object):
 	mesh=Mesh("mesh")
 	line=Line("line")
 	material=Material("material")
+
+
+
+
+
+
+#test
+
+a=Vectorx(31.0,9.0)
+
+
+print a.grow(4)
+#print a.getLength()
+
+
+
