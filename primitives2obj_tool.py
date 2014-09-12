@@ -26,28 +26,7 @@ def cleanDir( Dir ):
             if filePath[-4:].lower() == ".svn".lower():
                continue
             shutil.rmtree(filePath,True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ##################
-
-
-
-
 
 #######binsesc
 import os, struct, sys
@@ -148,12 +127,7 @@ def create(fname, dirname):
 
 #########binsec
 
-
-
-
 ##############primitivesHandle
-
-
 def getFourPatch(number):
    excessFour = number%4
    if(excessFour == 0):
@@ -623,9 +597,6 @@ def to_OBJFile(pPath):
    #for s in  modelData[3]:
       #for 
 
-
-
-   
    #print modelData[3]
    i=0
    uvIndex=0
@@ -654,7 +625,13 @@ def to_OBJFile(pPath):
 if __name__ == "__main__":
    #getModelInfo("H:\\testPrimitives\\bghm_jztj_yw0040_2545.primitives","H:\\testPrimitives\\bghm_jztj_yw0040_2545")
    #to_OBJFile("H:\\testPrimitives\\jz_jzsj_yw0050_wb.primitives")
-
+   modelData=getModelInfo("E:\\mf_pangu\\tw2\\res\\scene\\Box01_fengx.primitives","w")
+   print modelData
+   
+   f=open("d:\\text.txt","w")
+   f.write(str(modelData))
+   f.close()
+   '''
    helpInfor="only can use -ib<filePath>  to export bigworld file to  obj !"
    try:
       sys.argv[1]
@@ -662,13 +639,10 @@ if __name__ == "__main__":
       print helpInfor
       raw_input("press  Enter to Exit!")
    else:
-      #print sys.argv[1]
       if sys.argv[1][:3]=="-ib":#"-explorer-clipboard" or sys.argv[1]=="-ec" :
-
          to_OBJFile(sys.argv[1][3:]) 
-         
-         #to_OBJFile()
-         #print getText()
-         #raw_input("press  Enter to Exit!")
       else:
          print helpInfor
+         
+         
+   '''

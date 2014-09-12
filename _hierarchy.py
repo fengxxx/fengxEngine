@@ -85,10 +85,12 @@ class sceneTreePanel(wx.Panel):
         self.tree.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
 
         #self.getTheObj()
-    def updateTree(self,event):
-        if len(Objects)>0:
-            for s in Objects:
-                child = self.tree.AppendItem(self.root, s.name)
+    def updateTree(self):
+        print "x"
+        if len(ModelObjects)>0:
+            for s in ModelObjects:
+                print "xxxxxxxxxxx"
+                child = self.tree.AppendItem(self.root, s.mesh.name)
                 self.tree.SetPyData(child, None)
                 #self.tree.SetItemImage(child, fldridx, wx.TreeItemIcon_Normal)
                 #self.tree.SetItemImage(child, fldropenidx, wx.TreeItemIcon_Expanded)

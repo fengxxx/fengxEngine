@@ -3,7 +3,9 @@ import math
 import wx
 from _core import *
 from _data import *
-
+import array
+import Image
+import random
 import _import_obj as objFile
 import primitives2obj_tool as po 
 import os
@@ -244,6 +246,28 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         self.Refresh(False)
 
 
+class Texture( object ):
+	"""Texture either loaded from a file or initialised with random colors."""
+	def __init__( self ):
+		self.xSize, self.ySize = 0, 0
+		self.rawRefence = None
+
+class RandomTexture( Texture ):
+	"""Image with random RGB values."""
+	def __init__( self, xSizeP, ySizeP ):
+		self.xSize, self.ySize = xSizeP, ySizeP
+		tmpList = [ random.randint(0, 255) \
+			for i in range( 3 * self.xSize * self.ySize ) ]
+		self.textureArray = array.array( 'B', tmpList )
+		self.rawReference = self.textureArray.tostring( )
+
+class FileTexture( Texture ):
+	"""Texture loaded from a file."""
+	def __init__( self, fileName ):
+		im = Image.open( fileName )
+		self.xSize = im.size[0]
+		self.ySize = im.size[1]
+		self.rawReference = im.tostring("raw", "RGB", 0, -1)
 
 class mainGlCanvas(openGL_BasicCanvas):
     def InitGL(self):
@@ -291,8 +315,24 @@ class mainGlCanvas(openGL_BasicCanvas):
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, Light_Model_Ambient)
         glEnable(GL_COLOR_MATERIAL)
         #-----------------------light
-
-
+        
+        #-----------------------texture
+        fileName="jz_jzsj_yw0020_d_wb.png"
+        try:
+            texture = FileTexture( fileName )
+        except:
+            print 'could not open ', fileName, '; using random texture'
+            texture = RandomTexture( 256, 256 )
+        #glClearColor ( 0, 0, 0, 0 )
+        glShadeModel( GL_SMOOTH )
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT )
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT )
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR )
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR )
+        glTexImage2D( GL_TEXTURE_2D, 0, 3, texture.xSize, texture.ySize, 0,
+                     GL_RGB, GL_UNSIGNED_BYTE, texture.rawReference )
+        glEnable( GL_TEXTURE_2D )
+        #-----------------------texture    
     def OnDraw(self):
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -302,6 +342,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glPopMatrix()
         glEnable(GL_LIGHT1)
         glEnable(GL_LIGHTING)
+   
         if len(Helpers)>0:
             for s in Helpers:
                 #glDisable(GL_LIGHT1)
@@ -314,7 +355,7 @@ class mainGlCanvas(openGL_BasicCanvas):
             glEnable(GL_LIGHTING)
             for s in ModelObjects:
                 drawModelObject(s)
-
+        '''
         if len(BigworldModels)>0:
             i=0
             glEnable(GL_LIGHT1)
@@ -323,12 +364,24 @@ class mainGlCanvas(openGL_BasicCanvas):
                 i+=3
                 #glTranslatef(i,0,0)
                 drawObjectFromBigworld(s)
+        '''
 
-
-
+        
         self.SwapBuffers()
 
+def TexFromPNG(self, filename):
+        img = Image.open(filename)
+        img_data = numpy.array(list(img.getdata()), numpy.uint8)
 
+        texture = glGenTextures(1)
+        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+        return texture
 
 def drawLine(obj):
     if type(obj)==Line:
@@ -341,79 +394,55 @@ def drawLine(obj):
             i+=1    
         glEnd()
         glLineWidth(1) 
-def drawMeshx(obj):
-    if type(obj)==Mesh:
-        glPointSize(5)
-        glLineWidth(2)
-        glColor3f(0.5,0.5,0.5)
-        i=0
-        for s in obj.faces:
-            if len(s)==3:
-                glBegin(GL_TRIANGLES)#GL_QUADS)
-                #glColor3f(0.5,1,1)
-                for i in s:
-                    f=i[0]-1
-                    
-                    if len(i)>1:
-                        n=i[2]-1
-                        glNormal3f(obj.normals[n][0],obj.normals[n][1],obj.normals[n][2])
-                    
-                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
-                glEnd()
-
-                '''
-                glBegin(GL_LINE_LOOP)#GL_QUADS)
-                glColor3f(0.1,0.5,0.8)
-                for i in s:
-                    f=i[0]-1
-                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
-                glEnd()
-                '''
-            if len(s)==4:
-                glBegin(GL_QUADS)
-                #glColor3f(0.1,0.1,0.6)
-                for i in s:
-                    f=i[0]-1
-                    
-                    if len(i)>1:
-                        n=i[2]-1
-                        glNormal3f(obj.normals[n][0],obj.normals[n][1],obj.normals[n][2])
-                    
-                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
-                glEnd()
-
-                '''
-                glBegin(GL_LINE_LOOP)#GL_QUADS)
-                glColor3f(0,0.0,0)
-                for i in s:
-                    f=i[0]-1
-                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
-                glEnd()
-                '''
-            '''
-            glBegin(GL_POINTS)
-            glColor3f(0,0.8,0)
-            for i in s:
-                f=i[0]-1
-                glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
-            glEnd()
-            '''
-        glLineWidth(1)
+        
 def drawMesh(obj):
     if type(obj)==Mesh:
         glColor3f(0.5,0.5,0.5)
-        i=0
+        #i=0
+        #---draw the mesh face
         glBegin(GL_QUADS)
         for s in obj.faces:
             if len(s)==4:
-                #glColor3f(0.1,0.1,0.6)
                 for i in s:
-                    f=i[0]-1
-                    if len(i)>1:
-                        n=i[2]-1
-                        glNormal3f(obj.normals[n][0],obj.normals[n][1],obj.normals[n][2])
-                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
+                    v_num=i[0]-1
+                    vt_num=i[1]-1
+                    n_num=i[2]-1
+                    if  i[2]!=0:
+                        glNormal3f(obj.normals[n_num][0],obj.normals[n_num][1],obj.normals[n_num][2])
+                    if  i[1]!=0:
+                        glTexCoord2f(obj.uvs[vt_num][0],obj.uvs[vt_num][1])
+                    glVertex3f(obj.vertexs[v_num][0],obj.vertexs[v_num][1],obj.vertexs[v_num][2])
         glEnd()
+        glBegin(GL_TRIANGLES)
+        
+        for s in obj.faces:
+            if len(s)==3:
+                for i in s:
+                    v_num=i[0]-1
+                    vt_num=i[1]-1
+                    n_num=i[2]-1
+                    if  i[2]!=0:
+                        glNormal3f(obj.normals[n_num][0],obj.normals[n_num][1],obj.normals[n_num][2])
+                    if  i[1]!=0:
+                        glTexCoord2f(obj.uvs[vt_num][0],obj.uvs[vt_num][1])
+                    glVertex3f(obj.vertexs[v_num][0],obj.vertexs[v_num][1],obj.vertexs[v_num][2])
+        glEnd()
+        
+        glBegin(GL_POLYGON)
+        for s in obj.faces:
+            if len(s)>4:
+                #print len(s)
+                for i in s:
+                    v_num=i[0]-1
+                    vt_num=i[1]-1
+                    n_num=i[2]-1
+                    if  i[2]!=0:
+                        glNormal3f(obj.normals[n_num][0],obj.normals[n_num][1],obj.normals[n_num][2])
+                    if  i[1]!=0:
+                        glTexCoord2f(obj.uvs[vt_num][0],obj.uvs[vt_num][1])
+                    glVertex3f(obj.vertexs[v_num][0],obj.vertexs[v_num][1],obj.vertexs[v_num][2])
+        glEnd()
+        #--draw the line
         '''
         glLineWidth(2)
         glBegin(GL_LINE_LOOP)#GL_QUADS)
@@ -427,42 +456,38 @@ def drawMesh(obj):
             i+=1    
         glEnd()
         glLineWidth(1)
-        '''
-        glBegin(GL_TRIANGLES)
-        for s in obj.faces:
-            if len(s)==3:
-                #glColor3f(0.1,0.1,0.6)
-                for i in s:
-                    f=i[0]-1
-                    if len(i)>1:
-                        n=i[2]-1
-                        glNormal3f(obj.normals[n][0],obj.normals[n][1],obj.normals[n][2])
-                    glVertex3f(obj.vertexs[f][0],obj.vertexs[f][1],obj.vertexs[f][2])
-        glEnd()
+        '''       
 def drawModelObject(obj):
     if obj.renderEnable==True:
         #glMatrixMode(GL_objVIEW)
         glTranslatef(obj.transform.position.x, obj.transform.position.y, obj.transform.position.z)
         #glRotatef(self.x, 0.0, 1.0, 0.0)
         drawMesh(obj.mesh)
-
         drawLine(obj.line)         
 
 def importObjFile(filePath):
     obj=ModelObject()
-    f=objFile.loadOBJ(filePath)
-    obj.mesh.vertexs=f[0]
-    obj.mesh.normals=f[1]
-    obj.mesh.faces=f[2]
-    obj.name=os.path.split(filePath)[1].replace(".obj","").replace(".OBJ","")
-    test()
+    meshData=objFile.getVals_from_objFile(filePath)
+    #vs,vt,vn,fs,objectName,groupName,smoothGroup,materials
+    obj.mesh.vertexs=meshData[0]
+    obj.mesh.uvs=meshData[1]
+    obj.mesh.normals=meshData[2]
+    obj.mesh.faces=meshData[3]
+    obj.mesh.groupName=meshData[5]
+    obj.mesh.smoothGroup=meshData[6]
+    obj.mesh.materials=meshData[7]
+    #print meshData[4]
+    if len(meshData[4])>1 :
+        if type(meshData[4][0])==type(" "):
+            obj.mesh.name=meshData[4][0]
+            obj.name=meshData[4][0]
+    #print mesh.normals
     import _data as da
     da.ModelObjects.append(obj)
-    test()
 def importFile():
     file_wildcard = "OBJ files(*.obj)|*.obj|All files(*.*)|*.*"   
     #os.getcwd()
-    dlg = wx.FileDialog(self, "Open paint file...",  
+    dlg = wx.FileDialog(self, "Open Wavefront obj file...",  
                         "E:\\Desktop\\",   
                         style = wx.OPEN,  
                         wildcard = file_wildcard)  
@@ -472,20 +497,30 @@ def importFile():
     importObjFile(self.filename) 
 
 
-def drawObjectFromBigworld(modelInfo):
-    #a=po.getModelInfo(filePath,"H:\\testPrimitives\\bghm_jztj_yw0040_2545")
-    vertexs=modelInfo[1]
-    indexs=modelInfo[2]
-    #glPointSize(5)
-    #glLineWidth(2)
-    glColor3f(0.5,0.5,0.5)    
-    glBegin(GL_TRIANGLES)#_STRIP)
-    for i in range(0,(len(indexs)-1)):
-        #print vertexs[indexs[i]]
-        glNormal3f(vertexs[indexs[i]][2][0],vertexs[indexs[i]][2][1],vertexs[indexs[i]][2][2])
-        glVertex3f(vertexs[indexs[i]][0][0],vertexs[indexs[i]][0][1],vertexs[indexs[i]][0][2])
-    glEnd()
 
+def importBigworldModel(modelInfo):
+    obj=ModelObject()
+    #vs,vt,vn,fs,objectName,groupName,smoothGroup,materials
+    
+    for s in modelInfo[2]:
+        obj.mesh.vertexs.append(modelInfo[1][s][0])
+        obj.mesh.uvs.append(modelInfo[1][s][1])
+        obj.mesh.normals.append(modelInfo[1][s][2])
+        
+    for i in range(0,(len(modelInfo[2])/3)):
+        #print "xxxx",i
+        f_1=[(i*3+1),(i*3+1),(i*3+1)]#(modelInfo[2][i*3]+1),(modelInfo[2][i*3]+1)]
+        f_2=[(i*3+2),(i*3+2),(i*3+2)]#(modelInfo[2][(i*3+1)]+1),(modelInfo[2][(i*3+1)]+1)]
+        f_3=[(i*3+3),(i*3+3),(i*3+3)]#(modelInfo[2][(i*3+2)]+1),(modelInfo[2][(i*3+2)]+1)]
+        obj.mesh.faces.append([f_1,f_2,f_3])
+
+    #obj.mesh.groupName=meshData[5]
+    #obj.mesh.smoothGroup=meshData[6]
+    #obj.mesh.materials=meshData[7]
+    import _data as da
+    da.ModelObjects.append(obj)   
+    
+    
 
 def createGridModel():
     grid=ModelObject()
@@ -533,3 +568,19 @@ def createGridModel():
 
     Helpers.append(grid)
 createGridModel()
+
+
+def drawObjectFromBigworld(modelInfo):
+    #a=po.getModelInfo(filePath,"H:\\testPrimitives\\bghm_jztj_yw0040_2545")
+    vertexs=modelInfo[1]
+    indexs=modelInfo[2]
+    #glPointSize(5)
+    #glLineWidth(2)
+    glColor3f(0.5,0.5,0.5)    
+    glBegin(GL_TRIANGLES)#_STRIP)
+    for i in range(0,(len(indexs)-1)):
+        #print vertexs[indexs[i]]
+        glNormal3f(vertexs[indexs[i]][2][0],vertexs[indexs[i]][2][1],vertexs[indexs[i]][2][2])
+        glVertex3f(vertexs[indexs[i]][0][0],vertexs[indexs[i]][0][1],vertexs[indexs[i]][0][2])
+    glEnd()
+    #print modelInfo
