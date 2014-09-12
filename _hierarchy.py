@@ -9,9 +9,10 @@ class sceneTree(wx.TreeCtrl):
         wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
         #self.log = log
         #print self.SetWindowStyleFlag
-        self.SetForegroundColour((168,168,168))
+        #self.SetForegroundColour((168,168,168))
+        self.SetForegroundColour(MAIN_BG_COLOR)
         #self.SetItemBackgroundColour(MAIN_BG_COLOR)
-        self.SetBackgroundColour(MAIN_BG_COLOR)
+        self.SetBackgroundColour((120,120,120))
     def OnCompareItems(self, item1, item2):
         t1 = self.GetItemText(item1)
         t2 = self.GetItemText(item2)

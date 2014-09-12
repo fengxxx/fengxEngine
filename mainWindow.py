@@ -27,14 +27,16 @@ class mainFrame(wx.Frame):
         self.sceneWindow=mainGlCanvas(self.P_main)
         #---resource manager 
         self.resManager=sceneTreePanel(self.P_main)
-        self.resManager.SetBackgroundColour(MAIN_BG_COLOR)
+        self.resManager.SetBackgroundColour((120,120,120))
         #---scene manager
         #self.sceneManager=TestTreeCtrlPanel(self.P_main)
         #---inspect panel
         #self.inspectorPnale=TestTreeCtrlPanel(self.P_main)
         #---toolBar
-        #self.mainToolBar=wx.Panel(self)
-
+        
+        
+        #self.cmd_Panel=wx.Panel(self)
+    
         #--------------main MenuBar--------------->>>>
         self.menuBar = wx.MenuBar()
         self.SetMenuBar(self.CreateMenuBar())
@@ -51,9 +53,9 @@ class mainFrame(wx.Frame):
 
         self.tc = wx.TextCtrl(self.P_main, -1, "self.t()", size=(25, 20), style=wx.TE_MULTILINE|wx.TE_PROCESS_ENTER)
         #self.Bind(wx.EVT_TEXT, self.EvtText, t2)
-        self.tc.SetBackgroundColour((48.825,48.825,48.825))
+        self.tc.SetBackgroundColour((100,100,100))#(48.825,48.825,48.825))
         #self.tc.SetOwnBackgroundColour(MAIN_BG_COLOR)
-        self.tc.SetForegroundColour((120,120,120))
+        self.tc.SetForegroundColour(MAIN_BG_COLOR)#(120,120,120))
         self.tc.SetTransparent(2)
         self.bce=wx.Button(self.P_main, -1, label=u'Enter') 
         self.bce.SetBackgroundColour((100,100,100))
@@ -67,44 +69,94 @@ class mainFrame(wx.Frame):
         self.box.Add(self.resManager, 1, wx.EXPAND|wx.ALL ,border=0)
         #self.box.Add(self.dir3, 1, wx.EXPAND|wx.ALL ,border=1)
 
-      
+        
         #----------------------main toolbar 
         self.main_toolbar = wx.ToolBar(self.P_main, -1, wx.DefaultPosition, wx.DefaultSize,wx.TB_FLAT | wx.TB_NODIVIDER)
         #self.main_toolbar.SetToolBitmapSize(wx.Size(10,10))
         iconSize=30
+        
+        
         self.Icon_fileOpen = wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER, wx.Size(iconSize, iconSize))
         self.Icon_fileNew = wx.ArtProvider_GetBitmap(wx.ART_NEW, wx.ART_OTHER, wx.Size(iconSize, iconSize))
         self.Icon_close = wx.ArtProvider_GetBitmap(wx.ART_CLOSE, wx.ART_OTHER, wx.Size(iconSize, iconSize))
-
+        #self.Icon_play = wx.ArtProvider_GetBitmap(wx.ART_TOOLBAR, wx.ART_OTHER, wx.Size(iconSize, iconSize))
         self.main_toolbar.AddLabelTool(10, "new file", self.Icon_fileNew)
         self.main_toolbar.AddLabelTool(11, "open file", self.Icon_fileOpen)
+        
+        self.main_toolbar.AddStretchableSpace()
+        self.main_toolbar.AddLabelTool(11, "open file", self.Icon_fileOpen)
+        self.main_toolbar.AddLabelTool(11, "open file", self.Icon_fileOpen)
+        
         #self.main_toolbar.AddSeparator()
         #self.main_toolbar.AddStretchableSpace()
-        self.cbID = wx.NewId()
-        self.main_toolbar.AddControl(wx.ComboBox(self.main_toolbar, self.cbID, "", choices=["54", "1", "2", "fengx"],size=(150,-1), style=wx.CB_DROPDOWN))
+        
+        #self.cbID = wx.NewId()
+        #self.main_toolbar.AddControl(wx.ComboBox(self.main_toolbar, self.cbID, "", choices=["54", "1", "2", "fengx"],size=(150,-1), style=wx.CB_DROPDOWN))
         self.main_toolbar.AddStretchableSpace()
         self.main_toolbar.AddLabelTool(12, "close", self.Icon_close)
         
         self.main_toolbar.Realize()
         self.main_toolbar.SetBackgroundColour((120,120,120))
 
-        self.Bind(wx.EVT_COMBOBOX, self.OnCombo, id=self.cbID)
+        #self.Bind(wx.EVT_COMBOBOX, self.OnCombo, id=self.cbID)
         self.Bind(wx.EVT_TOOL, self.importFile, id=11)
         self.Bind(wx.EVT_TOOL, self.restAll, id=10)
         #self.Bind(wx.EVT_TOOL_RCLICKED, self.importFile, id=11)
         self.Bind(wx.EVT_TOOL, self.close, id=12)
         #self.Bind(wx.EVT_TOOL_RCLICKED, self.close, id=12)
         #----------------------main toolbar 
+        
+        
+        #----------------------main toolbar 
+        self.cmd_toolbar = wx.ToolBar(self.P_main, -1, wx.DefaultPosition, wx.DefaultSize,wx.TB_FLAT | wx.TB_NODIVIDER)
+        #self.main_toolbar.SetToolBitmapSize(wx.Size(10,10))
+        #iconSize=30
+        
+        
+        self.Icon_fileOpen = wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER, wx.Size(iconSize, iconSize))
+        self.Icon_fileNew = wx.ArtProvider_GetBitmap(wx.ART_NEW, wx.ART_OTHER, wx.Size(iconSize, iconSize))
+        self.Icon_close = wx.ArtProvider_GetBitmap(wx.ART_CLOSE, wx.ART_OTHER, wx.Size(iconSize, iconSize))
+        #self.Icon_play = wx.ArtProvider_GetBitmap(wx.ART_TOOLBAR, wx.ART_OTHER, wx.Size(iconSize, iconSize))
+        self.cmd_toolbar.AddLabelTool(101, "new file", self.Icon_fileNew)
+        self.cmd_toolbar.AddLabelTool(111, "open file", self.Icon_fileOpen)
+        
+        self.cmd_toolbar.AddStretchableSpace()
+        self.cmd_toolbar.AddLabelTool(111, "open file", self.Icon_fileOpen)
+        self.cmd_toolbar.AddLabelTool(111, "open file", self.Icon_fileOpen)
+        
+        #self.main_toolbar.AddSeparator()
+        #self.main_toolbar.AddStretchableSpace()
+        
+        self.cbID = wx.NewId()
+        self.cmd_toolbar.AddControl(wx.ComboBox(self.cmd_toolbar, self.cbID, "", choices=["54", "1", "2", "fengx"],size=(150,-1), style=wx.CB_DROPDOWN))
+        self.cmd_toolbar.AddStretchableSpace()
+        self.cmd_toolbar.AddLabelTool(121, "close", self.Icon_close)
+        
+        self.cmd_toolbar.Realize()
+        self.cmd_toolbar.SetBackgroundColour((120,120,120))
 
+        #self.Bind(wx.EVT_COMBOBOX, self.OnCombo, id=self.cbID)
+        self.Bind(wx.EVT_TOOL, self.importFile, id=111)
+        self.Bind(wx.EVT_TOOL, self.restAll, id=101)
+        #self.Bind(wx.EVT_TOOL_RCLICKED, self.importFile, id=11)
+        self.Bind(wx.EVT_TOOL, self.close, id=121)
+        #self.Bind(wx.EVT_TOOL_RCLICKED, self.close, id=12)
+        #----------------------main toolbar 
+
+        
 
         #---------------------layout-------
         self.conmmadBox=wx.BoxSizer(wx.HORIZONTAL)
         self.conmmadBox.Add(self.tc, 9, wx.EXPAND|wx.ALL,border=0)
         self.conmmadBox.Add(self.bce, 1, wx.EXPAND|wx.ALL,border=0)
         self.mainBox=wx.BoxSizer(wx.VERTICAL)
-        self.mainBox.Add(self.main_toolbar,1,wx.ALL|wx.ALL ,border=0)
+        self.mainBox.Add(self.main_toolbar,1,wx.EXPAND|wx.ALL ,border=0)
+        self.mainBox.Add(self.cmd_toolbar,1,wx.EXPAND|wx.ALL ,border=0)
+        #self.mainBox.Add(self.up_Panel,2,wx.EXPAND|wx.ALL ,border=0)
+        
         self.mainBox.Add(self.box,20,wx.EXPAND|wx.ALL ,border=0)
         self.mainBox.Add(self.conmmadBox,2,wx.EXPAND|wx.ALL ,border=0)
+        
         self.P_main.SetSizer(self.mainBox)
         self.mainBox.Fit(self.P_main)
         #self.Fit()
@@ -238,7 +290,7 @@ class mainFrame(wx.Frame):
 mainApp = wx.PySimpleApp()
 newFrame = mainFrame(parent=None, id=-1)
 newFrame.Show()
-newFrame.SetBackgroundColour(MAIN_BG_COLOR)
+newFrame.SetBackgroundColour((120,120,120))
 
 #sssssssssss dir(newFrame)
 mainApp.MainLoop()
