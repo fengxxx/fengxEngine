@@ -4,47 +4,15 @@ from  _globalData import *
 from  _data import *
 import os
 import  _scene 
-class sceneTree(wx.TreeCtrl):
+               
+class sceneTreePanel(wx.TreeCtrl):
     def __init__(self, parent, id, pos, size, style):
         wx.TreeCtrl.__init__(self, parent, id, pos, size, style)
-        #self.log = log
-        #print self.SetWindowStyleFlag
-        #self.SetForegroundColour((168,168,168))
-        self.SetForegroundColour(MAIN_BG_COLOR)
-        #self.SetItemBackgroundColour(MAIN_BG_COLOR)
-        self.SetBackgroundColour((120,120,120))
-    def OnCompareItems(self, item1, item2):
-        t1 = self.GetItemText(item1)
-        t2 = self.GetItemText(item2)
-        print ('compare: ' + t1 + ' <> ' + t2 + '\n')
-        
-        if t1 < t2: return -1
-        if t1 == t2: return 0
-        return 1
-                     
-
-class sceneTreePanel(wx.Panel):
-    def __init__(self, parent):
         # Use the WANTS_CHARS style so the panel doesn't eat the Return key.
-        wx.Panel.__init__(self, parent, -1, style=wx.WANTS_CHARS)
-        self.Bind(wx.EVT_SIZE, self.OnSize)
+        #wx.Panel.__init__(self, parent, -1, style=wx.WANTS_CHARS)
+        #self.Bind(wx.EVT_SIZE, self.OnSize)
 
-        #self.log = log
-        tID = wx.NewId()
-
-        self.tree = sceneTree(self, tID, (0,0) , (100,100),
-                               wx.TR_HAS_BUTTONS
-                                |wx.TR_TWIST_BUTTONS
-                                | wx.TR_SINGLE
-                                | wx.TR_MULTIPLE
-                                |wx.TR_NO_LINES
-                                |wx.TR_FULL_ROW_HIGHLIGHT
-                                |wx.TR_EDIT_LABELS
-                                #|wx.TR_HIDE_ROOT
-                                |wx.TR_EXTENDED
-                               #|wx.TR_NO_BUTTONS
-                               #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
-                               )
+  
 
         isz = (16,16)
         il = wx.ImageList(isz[0], isz[1])
@@ -56,7 +24,7 @@ class sceneTreePanel(wx.Panel):
         
         smileidx    = il.Add(wx.ArtProvider_GetBitmap(wx.ART_TICK_MARK, wx.ART_OTHER, isz))#il.Add(wx.BitmapFromIcon(icon))
 
-        self.tree.SetImageList(il)
+        self.SetImageList(il)
         self.il = il
 
         # NOTE:  For some reason tree items have to have a data object in
@@ -64,36 +32,40 @@ class sceneTreePanel(wx.Panel):
         #        we don't need any real data, so we'll just use None below for
         #        the item data.
 
-        self.root = self.tree.AddRoot("scene")
-        self.tree.SetPyData(self.root, None)
+        self.root = self.AddRoot("scene")
+        self.SetPyData(self.root, None)
         #self.tree.SetItemImage(self.root, fldridx, wx.TreeItemIcon_Normal)
         #self.tree.SetItemImage(self.root, fldropenidx, wx.TreeItemIcon_Expanded)
         #for s in Objects:
-        child = self.tree.AppendItem(self.root, "mainCamera")
-        c_light = self.tree.AppendItem(self.root, "mainLight")
-        self.tree.SetPyData(child, None)
-        self.tree.SetPyData(c_light, None)
+        child = self.AppendItem(self.root, "mainCamera")
+        c_light = self.AppendItem(self.root, "mainLight")
+         
 
-        self.tree.Expand(self.root)
-        self.Bind(wx.EVT_TREE_ITEM_EXPANDED, self.OnItemExpanded, self.tree)
-        self.Bind(wx.EVT_TREE_ITEM_COLLAPSED, self.OnItemCollapsed, self.tree)
-        self.Bind(wx.EVT_TREE_SEL_CHANGED,self.OnSelChanged, self.tree)# self.updateTree,self.tree)#
-        self.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.OnBeginEdit, self.tree)
-        self.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.OnEndEdit, self.tree)
-        self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate, self.tree)
+        self.SetPyData(child, None)
+        self.SetPyData(c_light, None)
 
-        self.tree.Bind(wx.EVT_LEFT_DCLICK, self.OnLeftDClick)
-        self.tree.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
-        self.tree.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
+        self.Expand(self.root)
+  
+        self.Bind(wx.EVT_TREE_ITEM_EXPANDED, self.OnItemExpanded, self)
+        self.Bind(wx.EVT_TREE_ITEM_COLLAPSED, self.OnItemCollapsed, self)
+        self.Bind(wx.EVT_TREE_SEL_CHANGED,self.OnSelChanged, self)# self.updateTree,self.tree)#
+        self.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.OnBeginEdit, self)
+        self.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.OnEndEdit, self)
+        self.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate, self)
+
+ 
+        self.Bind(wx.EVT_LEFT_DCLICK, self.OnRightUp)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightDown)
+        self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
 
         #self.getTheObj()
     def updateTree(self):
-        print "x"
+       
         if len(ModelObjects)>0:
             for s in ModelObjects:
                 print "xxxxxxxxxxx"
-                child = self.tree.AppendItem(self.root, s.mesh.name)
-                self.tree.SetPyData(child, None)
+                child = self.AppendItem(self.root, s.mesh.name)
+                self.SetPyData(child, None)
                 #self.tree.SetItemImage(child, fldridx, wx.TreeItemIcon_Normal)
                 #self.tree.SetItemImage(child, fldropenidx, wx.TreeItemIcon_Expanded)
         '''
@@ -118,47 +90,79 @@ class sceneTreePanel(wx.Panel):
                 print "..................."
                 print os.path.splitext(f)[0]
                 child1 = self.tree.AppendItem(self.root, os.path.splitext(f)[0])
-                self.tree.SetPyData(child1, None)
+                self.SetPyData(child1, None)
                 #self.importObjFile()
 
     
     def OnRightDown(self, event):
         pt = event.GetPosition();
-        item, flags = self.tree.HitTest(pt)
+        item, flags = self.HitTest(pt)
         if item:
             print ("OnRightClick: %s, %s, %s\n" %
-                               (self.tree.GetItemText(item), type(item), item.__class__))
-            self.tree.SelectItem(item)
-
+                               (self.GetItemText(item), type(item), item.__class__))
+            self.SelectItem(item)
 
     def OnRightUp(self, event):
         pt = event.GetPosition();
-        item, flags = self.tree.HitTest(pt)
-        if item:        
-            print ("OnRightUp: %s (manually starting label edit)\n"
-                               % self.tree.GetItemText(item))
-            self.tree.EditLabel(item)
+        item, flags = self.HitTest(pt)
+        print item
+        if not item:
+            event.Skip()
+            return
 
+        #if not self.IsItemEnabled(item):
+        #    event.Skip()
+        #    return
 
+        
+        menu = wx.Menu()
+
+        item1 = menu.Append(wx.ID_ANY, "Change item background colour")
+        item2 = menu.Append(wx.ID_ANY, "Modify item text colour")
+        menu.AppendSeparator()
+
+        item4 = menu.Append(wx.ID_ANY, "Change item font")
+        menu.AppendSeparator()
+
+        #if ishtml:
+        #    strs = "Set item as non-hyperlink"
+        #else:
+        #    strs = "Set item as hyperlink"
+            
+        menu.AppendSeparator()
+
+        item13 = menu.Append(wx.ID_ANY, "Insert separator")
+        menu.AppendSeparator()
+        
+        item7 = menu.Append(wx.ID_ANY, "Disable item")
+        
+        menu.AppendSeparator()
+        item8 = menu.Append(wx.ID_ANY, "Change item icons")
+        menu.AppendSeparator()
+        item9 = menu.Append(wx.ID_ANY, "Get other information for this item")
+        menu.AppendSeparator()
+    
+        self.PopupMenu(menu)
+        menu.Destroy()
 
     def OnBeginEdit(self, event):
         print ("OnBeginEdit\n")
         # show how to prevent edit...
         item = event.GetItem()
-        if item and self.tree.GetItemText(item) == "The Root Item":
+        if item and self.GetItemText(item) == "The Root Item":
             wx.Bell()
             print ("You can't edit this one...\n")
 
             # Lets just see what's visible of its children
             cookie = 0
             root = event.GetItem()
-            (child, cookie) = self.tree.GetFirstChild(root)
+            (child, cookie) = self.GetFirstChild(root)
 
             while child.IsOk():
                 print ("Child [%s] visible = %d" %
-                                   (self.tree.GetItemText(child),
-                                    self.tree.IsVisible(child)))
-                (child, cookie) = self.tree.GetNextChild(root, cookie)
+                                   (self.GetItemText(child),
+                                    self.IsVisible(child)))
+                (child, cookie) = self.GetNextChild(root, cookie)
 
             event.Veto()
 
@@ -176,47 +180,47 @@ class sceneTreePanel(wx.Panel):
 
     def OnLeftDClick(self, event):
         pt = event.GetPosition();
-        item, flags = self.tree.HitTest(pt)
+        item, flags = self.HitTest(pt)
         
         if item:
-            print ("OnLeftDClick: %s\n" % self.tree.GetItemText(item))
-            p=self.tree.GetItemText(item)+".obj"
-            #_scene.importObjFile(p)
-            parent = self.tree.GetItemParent(item)
+            print ("OnLeftDClick: %s\n" % self.GetItemText(item))
+            p=self.GetItemText(item)+".obj"
+            parent = self.GetItemParent(item)
             if parent.IsOk():
-                self.tree.SortChildren(parent)
+                self.SortChildren(parent)
         event.Skip()
 
     def OnSize(self, event):
         w,h = self.GetClientSizeTuple()
-        self.tree.SetDimensions(0, 0, w, h)
+        self.SetDimensions(0, 0, w, h)
 
 
     def OnItemExpanded(self, event):
         item = event.GetItem()
         if item:
-            print ("OnItemExpanded: %s\n" % self.tree.GetItemText(item))
+            print ("OnItemExpanded: %s\n" % self.GetItemText(item))
 
     def OnItemCollapsed(self, event):
         item = event.GetItem()
         if item:
-            print ("OnItemCollapsed: %s\n" % self.tree.GetItemText(item))
+            print ("OnItemCollapsed: %s\n" % self.GetItemText(item))
 
     def OnSelChanged(self, event):
         self.item = event.GetItem()
         if self.item:
-            print ("OnSelChanged: %s\n" % self.tree.GetItemText(self.item))
+            print ("OnSelChanged: %s\n" % self.GetItemText(self.item))
             if wx.Platform == '__WXMSW__':
                 print ("BoundingRect: %s\n" %
-                                   self.tree.GetBoundingRect(self.item, True))
-            #items = self.tree.GetSelections()
-            #print map(self.tree.GetItemText, items)
+                                   self.GetBoundingRect(self.item, True))
+            #items = self.GetSelections()
+            #print map(self.GetItemText, items)
         event.Skip()
 
 
     def OnActivate(self, event):
+        print "OnActive"
         if self.item:
-            print ("OnActivate: %s\n" % self.tree.GetItemText(self.item))
+            print ("OnActivatexxxx: %s\n" % self.GetItemText(self.item))
 
 
 #---------------------------------------------------------------------------

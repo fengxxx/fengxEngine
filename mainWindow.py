@@ -1,18 +1,39 @@
 #coding:utf-8 
-from PyConsole import PyConsoleFrame,PyConsolePanel
 import wx
-import  wx.py   as  py
-#import sys
 import math
+import sys
+
+#from customTree import CustomTreeCtrl
+import wx.lib.agw.customtreectrl as CT
 from _hierarchy import *
 from _globalData import *
 from _scene import *
 from _data import *
-import sys
+from PyConsole import PyConsoleFrame,PyConsolePanel
+
+
+class MyFileDropTarget(wx.FileDropTarget):
+    def __init__(self, window, log):
+        wx.FileDropTarget.__init__(self)
+        self.window = window
+        self.log = log
+
+    def OnDropFiles(self, x, y, filenames):
+        for f in filenames:
+            fileE=os.path.splitext(f)[1]
+            if fileE==".obj" or  fileE==".OBJ":
+                print "import obj file:" ,f
+                importObjFile(f) 
+            elif  fileE==".primitives":   
+                importBigworldModel(po.getModelInfo(f,"temp\\"))  
+                print "import Primitives file:" ,f
+            else:
+                print "can't import file :",f
 class mainFrame(wx.Frame):
     global MAIN_WINDOW_SIZE
     global ICON_PATH
     global MAIN_BG_COLOR
+    log=""
     def __init__(self, parent, id):
         wx.Frame.__init__(self, parent, id, 'fengxEngine', size=MAIN_WINDOW_SIZE,style=wx.DEFAULT_FRAME_STYLE)
         #---------------main Window settings----->>>>
@@ -24,11 +45,32 @@ class mainFrame(wx.Frame):
 
         #--------------main Part of window------->>>>
         self.P_main=wx.Panel(self)
+        
         #---scene window 
         self.sceneWindow=mainGlCanvas(self.P_main)
         #---resource manager 
-        self.resManager=sceneTreePanel(self.P_main)
+              #self.log = log
+ 
+        self.resManager=sceneTreePanel(self.P_main, wx.NewId(), (0,0) , (100,100),
+                               wx.TR_HAS_BUTTONS
+                                |wx.TR_TWIST_BUTTONS
+                                |wx.TR_SINGLE
+                                |wx.TR_MULTIPLE
+                                |wx.TR_NO_LINES
+                                |wx.TR_FULL_ROW_HIGHLIGHT
+                                |wx.TR_EDIT_LABELS
+                                #|wx.TR_HIDE_ROOT
+                                |wx.TR_EXTENDED
+                               #|wx.TR_NO_BUTTONS
+                               #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
+                               )
+        
         self.resManager.SetBackgroundColour((120,120,120))
+        
+
+        dt = MyFileDropTarget(self.P_main, log)
+        self.SetDropTarget( dt ) 
+        
         #---scene manager
         #self.sceneManager=TestTreeCtrlPanel(self.P_main)
         #---inspect panel
@@ -82,7 +124,7 @@ class mainFrame(wx.Frame):
         
         self.main_toolbar.AddStretchableSpace()
         self.main_toolbar.AddLabelTool(13, "pyconsole", self.Icon_fileOpen)
-        self.main_toolbar.AddLabelTool(14, "open file", self.Icon_fileOpen)
+        #self.main_toolbar.AddLabelTool(14, "open file", self.Icon_fileOpen)
         
         #self.main_toolbar.AddSeparator()
         #self.main_toolbar.AddStretchableSpace()
@@ -109,6 +151,7 @@ class mainFrame(wx.Frame):
         #self.Bind(wx.EVT_TOOL_RCLICKED, self.close, id=12)
         #----------------------main toolbar 
         
+        
         #---------------------layout-------
         #self.conmmadBox=wx.BoxSizer(wx.HORIZONTAL)
         #self.conmmadBox.Add(self.tc, 9, wx.EXPAND|wx.ALL,border=0)
@@ -116,7 +159,7 @@ class mainFrame(wx.Frame):
         self.mainBox=wx.BoxSizer(wx.VERTICAL)
         self.mainBox.Add(self.main_toolbar,1,wx.EXPAND|wx.ALL ,border=0)
         self.mainBox.Add(self.box,20,wx.EXPAND|wx.ALL ,border=0)
-        #self.mainBox.Add(self.win,2,wx.EXPAND|wx.ALL ,border=0)
+ 
         self.P_main.SetSizer(self.mainBox)
         self.mainBox.Fit(self.P_main)
         #self.Fit()
