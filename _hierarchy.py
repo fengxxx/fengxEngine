@@ -69,9 +69,10 @@ class sceneTreePanel(wx.Panel):
         #self.tree.SetItemImage(self.root, fldridx, wx.TreeItemIcon_Normal)
         #self.tree.SetItemImage(self.root, fldropenidx, wx.TreeItemIcon_Expanded)
         #for s in Objects:
-        child = self.tree.AppendItem(self.root, "testObj")
+        child = self.tree.AppendItem(self.root, "mainCamera")
+        c_light = self.tree.AppendItem(self.root, "mainLight")
         self.tree.SetPyData(child, None)
-
+        self.tree.SetPyData(c_light, None)
 
         self.tree.Expand(self.root)
         self.Bind(wx.EVT_TREE_ITEM_EXPANDED, self.OnItemExpanded, self.tree)

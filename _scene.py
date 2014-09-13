@@ -284,9 +284,9 @@ class mainGlCanvas(openGL_BasicCanvas):
         a = 0.217
         b = 0.342
         c = 0.537
-        d = 0.24
-        glClearColor (a,a,a,1)
-
+        d = 0.47
+        glClearColor (d,d,d,1)
+        #glClearColor(0.5333,0.53333,0,1)
         glEnable(GL_DEPTH_TEST)
 
         glShadeModel(GL_FLAT)
