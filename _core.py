@@ -212,6 +212,7 @@ class Mesh(object):
     renderEnable=True
     name=" " 
     vertexs=[]
+    egdes=[]
     colors=[]
     normals=[]
     uvs=[]
@@ -326,8 +327,22 @@ class ModelObject(object):
 
 
 
+#f=[(1,2,3,4,5,6,7,8,9),(3,6,5,4),(9,8,6,4)]
+def getEgdeFromFace(faces):
+    egdes=[]
+    for s in faces:
+        for i in range(0,len(s)):
+            if i==len(s)-1:
+                tempE=(s[i][0],s[0][0])
+                if tempE not in egdes:
+                    egdes.append(tempE)               
+            else:
+                tempE=(s[i][0],s[(i+1)][0])
+                if tempE not in egdes:
+                    egdes.append(tempE)
+    return egdes
 
-
+            
 
 #test
 

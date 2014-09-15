@@ -64,7 +64,10 @@ class sceneTreePanel(wx.TreeCtrl):
         if len(ModelObjects)>0:
             for s in ModelObjects:
                 print "xxxxxxxxxxx"
-                child = self.AppendItem(self.root, s.mesh.name)
+                if s.mesh.name=="" or s.mesh.name==" ": 
+                    child = self.AppendItem(self.root, s.name)
+                else:
+                    child = self.AppendItem(self.root, s.mesh.name)
                 self.SetPyData(child, None)
                 #self.tree.SetItemImage(child, fldridx, wx.TreeItemIcon_Normal)
                 #self.tree.SetItemImage(child, fldropenidx, wx.TreeItemIcon_Expanded)

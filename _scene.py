@@ -317,21 +317,20 @@ class mainGlCanvas(openGL_BasicCanvas):
         #-----------------------light
         
         #-----------------------texture
-        fileName="jz_jzsj_yw0020_d_wb.png"
-        try:
-            texture = FileTexture( fileName )
-        except:
-            print 'could not open ', fileName, '; using random texture'
-            texture = RandomTexture( 256, 256 )
-        #glClearColor ( 0, 0, 0, 0 )
-        glShadeModel( GL_SMOOTH )
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT )
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT )
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR )
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR )
-        glTexImage2D( GL_TEXTURE_2D, 0, 3, texture.xSize, texture.ySize, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, texture.rawReference )
-        glEnable( GL_TEXTURE_2D )
+        # fileName="jz_jzsj_yw0020_d_wb.png"
+        # try:
+            # texture = FileTexture( fileName )
+        # except:
+            # print 'could not open ', fileName, '; using random texture'
+            # texture = RandomTexture( 256, 256 )
+        # glShadeModel( GL_SMOOTH )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR )
+        # glTexImage2D( GL_TEXTURE_2D, 0, 3, texture.xSize, texture.ySize, 0,
+                     # GL_RGB, GL_UNSIGNED_BYTE, texture.rawReference )
+        # glEnable( GL_TEXTURE_2D )
         #-----------------------texture    
     def OnDraw(self):
         # clear color and depth buffers
@@ -340,21 +339,29 @@ class mainGlCanvas(openGL_BasicCanvas):
         glPushMatrix()
         glLoadIdentity()
         glPopMatrix()
-        glEnable(GL_LIGHT1)
-        glEnable(GL_LIGHTING)
+        # glEnable(GL_LIGHT1)
+        # glEnable(GL_LIGHTING)
    
         if len(Helpers)>0:
             for s in Helpers:
-                #glDisable(GL_LIGHT1)
-                #glDisable(GL_LIGHTING)
+                # glDisable(GL_LIGHT1)
+                # glDisable(GL_LIGHTING)
                 drawModelObject(s)
+                
 
+                
+        glEnable(GL_LIGHT1)
+        glEnable(GL_LIGHTING)
         if len(ModelObjects)>0:
-
-            glEnable(GL_LIGHT1)
-            glEnable(GL_LIGHTING)
             for s in ModelObjects:
                 drawModelObject(s)
+                
+            glLineWidth(2)   
+            # glDisable(GL_LIGHT1)
+            # glDisable(GL_LIGHTING)
+            for s in ModelObjects:
+                drawMeshLine(s.mesh)
+        glLineWidth(1)   
         '''
         if len(BigworldModels)>0:
             i=0
@@ -394,6 +401,16 @@ def drawLine(obj):
             i+=1    
         glEnd()
         glLineWidth(1) 
+   
+def drawMeshLine(obj):
+    if type(obj)==Mesh:
+        glBegin(GL_LINES)
+        glColor3f(1,0,0)
+        for s in obj.egdes:
+            glVertex3f(obj.vertexs[(s[0]-1)][0],obj.vertexs[(s[0]-1)][1],obj.vertexs[(s[0]-1)][2])
+            glVertex3f(obj.vertexs[(s[1]-1)][0],obj.vertexs[(s[1]-1)][1],obj.vertexs[(s[1]-1)][2])
+        glEnd()
+        
         
 def drawMesh(obj):
     if type(obj)==Mesh:
@@ -442,6 +459,11 @@ def drawMesh(obj):
                         glTexCoord2f(obj.uvs[vt_num][0],obj.uvs[vt_num][1])
                     glVertex3f(obj.vertexs[v_num][0],obj.vertexs[v_num][1],obj.vertexs[v_num][2])
         glEnd()
+        
+
+        
+        
+        
         #--draw the line
         '''
         glLineWidth(2)
@@ -473,6 +495,7 @@ def importObjFile(filePath):
     obj.mesh.uvs=meshData[1]
     obj.mesh.normals=meshData[2]
     obj.mesh.faces=meshData[3]
+    obj.mesh.egdes=getEgdeFromFace(obj.mesh.faces)
     obj.mesh.groupName=meshData[5]
     obj.mesh.smoothGroup=meshData[6]
     obj.mesh.materials=meshData[7]
@@ -513,7 +536,7 @@ def importBigworldModel(modelInfo):
         f_2=[(i*3+2),(i*3+2),(i*3+2)]#(modelInfo[2][(i*3+1)]+1),(modelInfo[2][(i*3+1)]+1)]
         f_3=[(i*3+3),(i*3+3),(i*3+3)]#(modelInfo[2][(i*3+2)]+1),(modelInfo[2][(i*3+2)]+1)]
         obj.mesh.faces.append([f_1,f_2,f_3])
-
+    obj.mesh.egdes=getEgdeFromFace(obj.mesh.faces)
     #obj.mesh.groupName=meshData[5]
     #obj.mesh.smoothGroup=meshData[6]
     #obj.mesh.materials=meshData[7]
