@@ -63,7 +63,9 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
     def DoSetViewport(self):
         
         self.size=self.GetClientSize()
-
+        b=self.size.width/(self.size.height+0.0)
+        #print b
+        gluPerspective(120,b,1,1000)
         glViewport(0, 0, self.size.width, self.size.height)
 
         #glViewport(0,0,1000,1000)
