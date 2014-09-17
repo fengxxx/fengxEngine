@@ -625,7 +625,8 @@ def to_OBJFile(pPath):
 if __name__ == "__main__":
    #getModelInfo("H:\\testPrimitives\\bghm_jztj_yw0040_2545.primitives","H:\\testPrimitives\\bghm_jztj_yw0040_2545")
    #to_OBJFile("H:\\testPrimitives\\jz_jzsj_yw0050_wb.primitives")
-   modelData=getModelInfo("E:\\mf_pangu\\tw2\\res\\scene\\Box01_fengx.primitives","w")
+   testP="E:\\mf_pangu\\tw2\\res\\scene\\common\\Box01_fengx.primitives"
+   modelData=getModelInfo(testP,"w")
    print modelData
    
    f=open("d:\\text.txt","w")

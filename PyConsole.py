@@ -19,10 +19,28 @@ class PyConsoleFrame(wx.Frame):
         self.icon = wx.Icon(ICON_PATH, wx.BITMAP_TYPE_ICO)
         self.SetIcon(self.icon)
         intro = 'Welcome To PyCrust %s - The Flakiest Python Shell' % py.version.VERSION
+        l4 = wx.StaticText(self, -1, "Rich Text")
+        t4 = wx.TextCtrl(self, -1, "If supported by the native control, this is red, and this is a different font.",
+                         style=wx.TE_MULTILINE|wx.TE_RICH2)
+        t4.SetInsertionPoint(0)
+        t4.SetStyle(44, 47, wx.TextAttr((120,120,120), wx.NullColour))
+        points = t4.GetFont().GetPointSize()  # get the current size
+        f = wx.Font(points+3, wx.ROMAN, wx.ITALIC, wx.BOLD, True)
+        t4.SetStyle(63, 77, wx.TextAttr("BLUE", wx.NullColour, f))
+        t4.SetBackgroundColour((67,67,67))
+        t4.SetForegroundColour((120,120,120))
+        
+        box1_title = wx.StaticBox( self, -1, " " )
+        box1 = wx.StaticBoxSizer( box1_title, wx.VERTICAL, )
+        
+        box1.Add( t4, 0, wx.EXPAND|wx.ALL, 5 )
+        self.SetSizer(box1)
+        box1.Fit( self )
+
+        # self.tc=wx.TextCtrl(self, -1, "Multi-line",style=wx.TE_NO_VSCROLL)
+        # self.tc.size=(100,300)
+        # self.bg=wx.Panel(self,size=(900,900))
         self.pyConsole= py.crust.Crust(self)
-
-
-        #self.bg=wx.Panel(self,size=(900,900))
         #self.bg.Bind(wx.EVT_PAINT, self.OnPaint)
         
 

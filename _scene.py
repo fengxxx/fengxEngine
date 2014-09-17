@@ -1,5 +1,5 @@
 from  _globalData import *
-import math
+from math import cos,sin,pi
 import wx
 from _core import *
 from _data import *
@@ -9,6 +9,11 @@ import random
 import _import_obj as objFile
 import primitives2obj_tool as po 
 import os
+
+import time
+
+fps=0.1
+
 try:
     from wx import glcanvas
     haveGLCanvas = True
@@ -57,6 +62,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         #print b
         gluPerspective(120,b,1,1000)
         #glFrustum(-0.1*b, 0.1*b, -0.1, 0.1, 0.1, 1000)
+        glViewport(0, 0, self.size.width, self.size.height)
         wx.CallAfter(self.DoSetViewport)
         event.Skip()
 
@@ -64,11 +70,9 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         
         self.size=self.GetClientSize()
         b=self.size.width/(self.size.height+0.0)
-        #print b
-        gluPerspective(120,b,1,1000)
+        #gluPerspective(120,b/1,1,1000)
         glViewport(0, 0, self.size.width, self.size.height)
 
-        #glViewport(0,0,1000,1000)
 
 
     def OnPaint(self, event):
@@ -99,6 +103,49 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.x, self.y = evt.GetPosition()
             ex=self.x-self.lastx
             ey=self.y-self.lasty
+
+            # uDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[0]-EYE_POS[0]) #z,x
+
+            # lDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[2]-EYE_POS[2]) #z,y
+
+            xyDir=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2]) #x,y
+            xyDir=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2]) #x,y
+            radxy=rSPEED*ex
+            radz=rSPEED*ey
+            newDir=Vector2(xyDir.x*cos(radxy)+xyDir.y*sin(radxy),-sin(radxy)*xyDir.x+xyDir.y*cos(radxy))
+            TARGET_POS[2]=EYE_POS[2]+newDir.y
+            TARGET_POS[0]=EYE_POS[0]+newDir.x
+            
+            faceDir=Vector3(TARGET_POS[1]-EYE_POS[1],0,0) #z,face
+            
+            # faceDir_unit=faceDir.normalise()
+            faceDirX=faceDir.normalise()
+            faceDirY=Vector3(faceDirX.y,-faceDir.x,faceDirX.z)
+            faceDirZ=Vector3(faceDirX.z,faceDir.y,-faceDirX.x)  
+            
+            # TARGET_POS[2]=faceDirX.y  + EYE_POS[2] #new y
+            # TARGET_POS[0]=faceDirX.x*faceDirX.x*cos(ey)+faceDirX.y*faceDirX.z*sin(ey) + EYE_POS[0]# new x
+            # TARGET_POS[1]=faceDirX.x*faceDirZ.x*sin(ey)+faceDirX.y*faceDirZ.z*cos(ey) + EYE_POS[1]# new z
+           
+            # print TARGET_POS
+            
+            # faceDirX.x*cos(ey)  faceDirZ.x*sin(ey)
+            # faceDirX.z*sin(ey)  faceDirZ.z*cos(ey)
+            
+            # zx=z0Dir.x*cos(radz)+z0Dir.y*sin(radz)#+EYE_POS[0]
+            # tempDir=z0Dir*(zx/(z0Dir.length+0.00000001))
+            
+            #TARGET_POS[1]=-sin(radz)*z0Dir.x+z0Dir.y*cos(radz)+EYE_POS[1]
+            
+            
+            self.move()
+            self.lastx, self.lasty = evt.GetPosition()
+            self.Refresh(False)
+
+    '''
+            self.x, self.y = evt.GetPosition()
+            ex=self.x-self.lastx
+            ey=self.y-self.lasty
             uDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[0]-EYE_POS[0])
 
             lDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[2]-EYE_POS[2])
@@ -121,11 +168,12 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.move()
             self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
-        
+    '''
+    '''
         if  evt.LeftIsDown():
             TARGET_POS=[0,0,0]
             #EYE_POS=[5,5,5]
-            
+
             a=Vector2(EYE_POS[0],EYE_POS[2])
             a=a.rotate(SPEED)
 
@@ -135,106 +183,96 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.move()
             self.Refresh(False)
 
-
+    '''
 
     def OnKeyDown(self, evt):
-        key=chr(evt.GetKeyCode())
-        global ANGLE
-        global TARGET_POS 
-        global EYE_POS
-        global SPEED
-        global rSPEED
-        if key=="A":  
-            by=TARGET_POS[2]-EYE_POS[2]
-            bx=TARGET_POS[0]-EYE_POS[0]
-            
-            if bx==0 and by==0:
-                bx=0.001
+        keyCode=evt.GetKeyCode()
+        if 32<keyCode<127:
+            key=chr(keyCode)
+            global ANGLE
+            global TARGET_POS 
+            global EYE_POS
+            global SPEED
+            global rSPEED
+            if key=="D":  
+                by=TARGET_POS[2]-EYE_POS[2]
+                bx=TARGET_POS[0]-EYE_POS[0]
+                bv=Vector2(-by,bx).normalise()*SPEED
+                TARGET_POS[0]+=bv.x
+                EYE_POS[0]+=bv.x
+                TARGET_POS[2]+=bv.y
+                EYE_POS[2]+=bv.y
+                self.move()
+                
+            if key=="A":  
+                by=TARGET_POS[2]-EYE_POS[2]
+                bx=TARGET_POS[0]-EYE_POS[0]
+                bv=Vector2(by,-bx).normalise()*SPEED
+                TARGET_POS[0]+=bv.x
+                EYE_POS[0]+=bv.x
+                TARGET_POS[2]+=bv.y
+                EYE_POS[2]+=bv.y
+                self.move()
+                
+            if key=="W":
+                by=TARGET_POS[2]-EYE_POS[2]
+                bx=TARGET_POS[0]-EYE_POS[0]
+                bz=TARGET_POS[1]-EYE_POS[1]
+                bv=Vector3(bx,by,bz).normalise()*SPEED
+                TARGET_POS[0]+=bv.x
+                TARGET_POS[1]+=bv.z
+                TARGET_POS[2]+=bv.y
+                EYE_POS[0]+=bv.x
+                EYE_POS[1]+=bv.z
+                EYE_POS[2]+=bv.y
+                self.move()
+                
+            if key=="S":
+                by=TARGET_POS[2]-EYE_POS[2]
+                bx=TARGET_POS[0]-EYE_POS[0]
+                bz=TARGET_POS[1]-EYE_POS[1]
+                bv=Vector3(bx,by,bz).normalise()*SPEED
+                TARGET_POS[0]-=bv.x
+                TARGET_POS[1]-=bv.z
+                TARGET_POS[2]-=bv.y
+                EYE_POS[0]-=bv.x
+                EYE_POS[1]-=bv.z
+                EYE_POS[2]-=bv.y
+                self.move()
+                
+            if key=="E":
+                EYE_POS[1] +=SPEED
+                TARGET_POS[1] +=SPEED
+                self.move()
+            if key=="Q":
+                EYE_POS[1] -=SPEED
+                TARGET_POS[1] -= SPEED
+                self.move()
+            if key=="F":
+                EYE_POS=[5,5,5]
+                TARGET_POS=[0,0,0]
+                self.move()
 
-            dirVector=Vector2(bx,by)
-            dirVector.normalise()
-            dirVector=dirVector.rotate(-90.0)
-            dirVector=dirVector.grow((SPEED-1))
+            if key=="P":
+                TARGET_POS=[0,0,0]
+                #EYE_POS=[5,5,5]
+                
+                a=Vector2(EYE_POS[0],EYE_POS[2])
+                a=a.rotate(SPEED)
 
-            
-            EYE_POS=[(EYE_POS[0]+dirVector.x),EYE_POS[1],(EYE_POS[2]+dirVector.y)]
-            TARGET_POS=[(TARGET_POS[0]+dirVector.x),EYE_POS[1],(TARGET_POS[2]-dirVector.y)]
-         
-            self.move()
-            #print ("fengxEngine: tartPos: "+str(TARGET_POS)+"eyePos: "+str(EYE_POS) )
-        if key=="D":
-            by=TARGET_POS[2]-EYE_POS[2]
-            bx=TARGET_POS[0]-EYE_POS[0]
-            
-            if bx==0 and by==0:
-                bx=0.001
+                EYE_POS[0]=a.x
+                EYE_POS[2]=a.y
 
-            dirVector=Vector2(bx,by)
-            dirVector.normalise()
-            dirVector=dirVector.rotate(90.0)
-            dirVector=dirVector.grow((SPEED-1))
+                self.move()
 
-
-            EYE_POS=[(EYE_POS[0]+dirVector.x),EYE_POS[1],(EYE_POS[2]+dirVector.y)]
-            TARGET_POS=[(TARGET_POS[0]+dirVector.x),EYE_POS[1],(TARGET_POS[2]-dirVector.y)]
-
-            self.move()
-            #print ("fengxEngine: tartPos: "+str(TARGET_POS)+"eyePos: "+str(EYE_POS) )
-        if key=="W":
-            by=TARGET_POS[2]-EYE_POS[2]
-            bx=TARGET_POS[0]-EYE_POS[0]
-            if bx==0 and by==0:
-                bx=0.001
-            dirVector=Vector2(bx,by)
-            dirVector.normalise()
-            dirVector=dirVector.grow((SPEED-1))
-            EYE_POS=[(EYE_POS[0]+dirVector.x),EYE_POS[1],(EYE_POS[2]+dirVector.y)]
-            TARGET_POS=[(TARGET_POS[0]+dirVector.x),EYE_POS[1],(TARGET_POS[2]-dirVector.y)]
-            self.move()
-        if key=="S":
-            by=TARGET_POS[2]-EYE_POS[2]
-            bx=TARGET_POS[0]-EYE_POS[0]
-            if bx==0 and by==0:
-                bx=0.001
-            dirVector=Vector2(bx,by)
-            dirVector.normalise()
-            dirVector=dirVector.grow((-SPEED-1))
-            EYE_POS=[(EYE_POS[0]+dirVector.x),EYE_POS[1],(EYE_POS[2]+dirVector.y)]
-            TARGET_POS=[(TARGET_POS[0]+dirVector.x),EYE_POS[1],(TARGET_POS[2]-dirVector.y)]
-            self.move()
-        if key=="E":
-            EYE_POS[1] +=SPEED
-            TARGET_POS[1] +=SPEED
-            self.move()
-        if key=="Q":
-            EYE_POS[1] -=SPEED
-            TARGET_POS[1] -= SPEED
-            self.move()
-        if key=="F":
-            EYE_POS=[5,5,5]
-            TARGET_POS=[0,0,0]
-            self.move()
-
-        if key=="P":
-            TARGET_POS=[0,0,0]
-            #EYE_POS=[5,5,5]
-            
-            a=Vector2(EYE_POS[0],EYE_POS[2])
-            a=a.rotate(SPEED)
-
-            EYE_POS[0]=a.x
-            EYE_POS[2]=a.y
-
-            self.move()
-
-        if key=="-":
-            #global SPEED
-            SPEED-=0.5
-            rSPEED-=0.1
-        if key=="=":
-            #global SPEED
-            SPEED+=0.5
-            rSPEED+=0.1
+            if key=="-":
+                #global SPEED
+                SPEED-=0.5
+                rSPEED-=0.1
+            if key=="=":
+                #global SPEED
+                SPEED+=0.5
+                rSPEED+=0.1
 
 
     def OnKeyUp(self, evt):
@@ -272,6 +310,8 @@ class FileTexture( Texture ):
 		self.rawReference = im.tostring("raw", "RGB", 0, -1)
 
 class mainGlCanvas(openGL_BasicCanvas):
+    last_time=0
+    global fps
     def InitGL(self):
         # set viewing projection
         glMatrixMode(GL_PROJECTION)
@@ -335,12 +375,15 @@ class mainGlCanvas(openGL_BasicCanvas):
         # glEnable( GL_TEXTURE_2D )
         #-----------------------texture    
     def OnDraw(self):
+        self.fps=time.time()-self.last_time
+        self.last_time=time.time()
+        if self.fps!=0: print 1/self.fps
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
-        glPushMatrix()
-        glLoadIdentity()
-        glPopMatrix()
+        # glPushMatrix()
+        # glLoadIdentity()
+        # glPopMatrix()
         # glEnable(GL_LIGHT1)
         # glEnable(GL_LIGHTING)
    
@@ -349,8 +392,6 @@ class mainGlCanvas(openGL_BasicCanvas):
                 # glDisable(GL_LIGHT1)
                 # glDisable(GL_LIGHTING)
                 drawModelObject(s)
-                
-
                 
         glEnable(GL_LIGHT1)
         glEnable(GL_LIGHTING)
@@ -521,8 +562,6 @@ def importFile():
     dlg.Destroy()  
     importObjFile(self.filename) 
 
-
-
 def importBigworldModel(modelInfo):
     obj=ModelObject()
     #vs,vt,vn,fs,objectName,groupName,smoothGroup,materials
@@ -544,9 +583,7 @@ def importBigworldModel(modelInfo):
     #obj.mesh.materials=meshData[7]
     import _data as da
     da.ModelObjects.append(obj)   
-    
-    
-
+       
 def createGridModel():
     grid=ModelObject()
     num=21
@@ -577,11 +614,11 @@ def createGridModel():
     grid.line.colors.append((0.0,1.0,0.0))
     grid.line.vertexs.append((0.0, -l,0.0))
 
-
+    
     a=Vector2(0.0,21)
     for s in range(1,360):
         b=a.rotate(s)    
-        t=3*math.sin(s*10/180.0*math.pi)
+        t=3*sin(s*10/180.0*pi)
         grid.line.colors.append((b.x,1.0,b.y))
         grid.line.vertexs.append((b.x,t,b.y))
 
@@ -590,10 +627,9 @@ def createGridModel():
     for s in range(0,(len(grid.line.vertexs))):
         grid.line.index.append(s)
 
-
+    print "xx"
     Helpers.append(grid)
 createGridModel()
-
 
 def drawObjectFromBigworld(modelInfo):
     #a=po.getModelInfo(filePath,"H:\\testPrimitives\\bghm_jztj_yw0040_2545")
