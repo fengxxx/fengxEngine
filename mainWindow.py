@@ -48,7 +48,7 @@ class mainFrame(wx.Frame):
         
         #---scene window 
         self.sceneWindow=mainGlCanvas(self.P_main)
-        #self.sceneWindow2=mainGlCanvas(self.P_main)
+        self.sceneWindow2=mainGlCanvas(self.P_main)
         #---resource manager 
               #self.log = log
  
@@ -107,7 +107,7 @@ class mainFrame(wx.Frame):
         '''
         self.box = wx.BoxSizer(wx.HORIZONTAL)
         self.box.Add(self.sceneWindow, 3, wx.EXPAND|wx.ALL ,border=0)
-        #self.box.Add(self.sceneWindow2, 3, wx.EXPAND|wx.ALL ,border=0)
+        self.box.Add(self.sceneWindow2, 3, wx.EXPAND|wx.ALL ,border=0)
         
         self.box.Add(self.resManager, 1, wx.EXPAND|wx.ALL ,border=0)
         #self.box.Add(self.dir3, 1, wx.EXPAND|wx.ALL ,border=1)

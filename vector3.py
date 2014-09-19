@@ -1,6 +1,5 @@
 from math import *
 from util import format_number
-
 class Vector3(object):
 
     __slots__ = ('_v',)
@@ -631,6 +630,24 @@ class Vector3(object):
                  z*bx - bz*x,
                  x*by - bx*y )
 
+    def rotate(self,v,a):
+        v=v.normalise()
+        a=a/180*pi
+        ca=cos(a)
+        sa=sin(a)
+        # print sa,ca
+        newx=(ca+(1-ca)*v.x*v.x   , (1-ca)*v.x*v.z+sa*v.z , (1-ca)*v.x*v.z-sa*v.y)
+        newy=((1-ca)*v.x*v.z-sa*v.z , ca+(1-ca)*v.y*v.y   , (1-ca)*v.x*v.y-sa*v.x)
+        newz=((1-ca)*v.x*v.z+sa*v.y , (1-ca)*v.y*v.z-sa*v.x , ca+(1-ca)*v.z*v.z  ) 
+            
+        # print newx,newy,newz
+        x, y, z = self._v
+        
+        newV=(x*newx[0]+y*newx[1]+z*newx[2],x*newy[0]+y*newy[1]+z*newy[2],x*newz[0]+y*newz[1]+z*newz[2])
+        
+        return newV
+        #newMatrix=[(cos(a)+(1-cos(a))*v.x*v.x,(1-cos(a)*v.x*v.y-sin(a)*v.z),(1-cos(a)*v.x*v.z+sin(a)*v.y)),((1-cos(a)*v.x*v.y-sin(a)*v.z)),()(]
+        
 
 def distance3d_squared(p1, p2):
 
@@ -660,64 +677,67 @@ def centre_point3d(points):
 
 if __name__ == "__main__":
 
-    v1 = Vector3(2.2323, 3.43242, 1.)
-
-    print 3*v1
-    print (2, 4, 6)*v1
-
-    print (1, 2, 3)+v1
-    print v1('xxxyyyzzz')
-    print v1[2]
-    print v1.z
-    v1[2]=5.
-    print v1
-    v2= Vector3(1.2, 5, 10)
-    print v2
-    v1 += v2
-    print v1.get_length()
-    print repr(v1)
-    print v1[1]
-
-    p1 = Vector3(1,2,3)
-    print p1
-    print repr(p1)
-
-    for v in p1:
-        print v
-
-    #print p1[6]
-
-    ptest = Vector3( [1,2,3] )
-    print ptest
-
-    z = Vector3()
-    print z
-
-    file("test.txt", "w").write( "\n".join(str(float(n)) for n in range(20)) )
-    f = file("test.txt")
-    v1 = Vector3.from_iter( f )
-    v2 = Vector3.from_iter( f )
-    v3 = Vector3.from_iter( f )
-    print v1, v2, v3
-
-    print "--"
-    print v1
-    print v1 + (10,20,30)
-
-    print v1('xz')
-
-    print -v1
-
-    #print tuple(ptest)
-    #p1.set( (4, 5, 6) )
-    #print p1
-
-    print Vector3(10,10,30)+v1
-
-    print Vector3((0,0,0,1))
+    v1 = Vector3(1,0,0)
     
-    print Vector3(1, 2, 3).scale(3)
+    print v1.rotate(Vector3(0,1,0),pi/2)
+    # v1 = Vector3(2.2323, 3.43242, 1.)
+
+    # print 3*v1
+    # print (2, 4, 6)*v1
+
+    # print (1, 2, 3)+v1
+    # print v1('xxxyyyzzz')
+    # print v1[2]
+    # print v1.z
+    # v1[2]=5.
+    # print v1
+    # v2= Vector3(1.2, 5, 10)
+    # print v2
+    # v1 += v2
+    # print v1.get_length()
+    # print repr(v1)
+    # print v1[1]
+
+    # p1 = Vector3(1,2,3)
+    # print p1
+    # print repr(p1)
+
+    # for v in p1:
+        # print v
+
+    # #print p1[6]
+
+    # ptest = Vector3( [1,2,3] )
+    # print ptest
+
+    # z = Vector3()
+    # print z
+
+    # file("test.txt", "w").write( "\n".join(str(float(n)) for n in range(20)) )
+    # f = file("test.txt")
+    # v1 = Vector3.from_iter( f )
+    # v2 = Vector3.from_iter( f )
+    # v3 = Vector3.from_iter( f )
+    # print v1, v2, v3
+
+    # print "--"
+    # print v1
+    # print v1 + (10,20,30)
+
+    # print v1('xz')
+
+    # print -v1
+
+    # #print tuple(ptest)
+    # #p1.set( (4, 5, 6) )
+    # #print p1
+
+    # print Vector3(10,10,30)+v1
+
+    # print Vector3((0,0,0,1))
     
-    print Vector3(1, 2, 3).scale((2, 4, 6))
+    # print Vector3(1, 2, 3).scale(3)
     
-    print bool(v1)
+    # print Vector3(1, 2, 3).scale((2, 4, 6))
+    
+    # print bool(v1)

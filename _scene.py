@@ -33,7 +33,8 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
     global EYE_POS
     global TARGET_POS
     global PI
-
+    EYE_POS=[1.0,1.0,1.0]
+    TARGET_POS=[0.0,0.0,0.0]
     def __init__(self, parent):
         glcanvas.GLCanvas.__init__(self, parent, -1,size=(100,100))
         self.init = False
@@ -113,16 +114,33 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             radxy=rSPEED*ex
             radz=rSPEED*ey
             newDir=Vector2(xyDir.x*cos(radxy)+xyDir.y*sin(radxy),-sin(radxy)*xyDir.x+xyDir.y*cos(radxy))
+            
             TARGET_POS[2]=EYE_POS[2]+newDir.y
             TARGET_POS[0]=EYE_POS[0]+newDir.x
+           
+            faceDir=Vector3(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2],TARGET_POS[1]-EYE_POS[1])
             
-            faceDir=Vector3(TARGET_POS[1]-EYE_POS[1],0,0) #z,face
+            faceXY=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2])
             
-            # faceDir_unit=faceDir.normalise()
-            faceDirX=faceDir.normalise()
-            faceDirY=Vector3(faceDirX.y,-faceDir.x,faceDirX.z)
-            faceDirZ=Vector3(faceDirX.z,faceDir.y,-faceDirX.x)  
+            faceXY=faceXY.rotate(-pi/2)
             
+            face_zhi=Vector3(faceXY[0],0,faceXY[1])
+            
+            faceDir=faceDir.rotate(face_zhi,ey*0.1)
+            
+            
+            
+            TARGET_POS[0]=faceDir[0]+EYE_POS[0]
+            TARGET_POS[1]=faceDir[1]+EYE_POS[1]
+            TARGET_POS[2]=faceDir[2]+EYE_POS[2]
+            
+            
+            # faceDir=Vector3(TARGET_POS[1]-EYE_POS[1],0,0) #z,face
+            
+            # # faceDir_unit=faceDir.normalise()
+            # faceDirX=faceDir.normalise()
+            # faceDirY=Vector3(faceDirX.y,-faceDir.x,faceDirX.z)
+            # faceDirZ=Vector3(faceDirX.z,faceDir.y,-faceDirX.x)  
             # TARGET_POS[2]=faceDirX.y  + EYE_POS[2] #new y
             # TARGET_POS[0]=faceDirX.x*faceDirX.x*cos(ey)+faceDirX.y*faceDirX.z*sin(ey) + EYE_POS[0]# new x
             # TARGET_POS[1]=faceDirX.x*faceDirZ.x*sin(ey)+faceDirX.y*faceDirZ.z*cos(ey) + EYE_POS[1]# new z
@@ -287,31 +305,33 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
 
 
 class Texture( object ):
-	"""Texture either loaded from a file or initialised with random colors."""
-	def __init__( self ):
-		self.xSize, self.ySize = 0, 0
-		self.rawRefence = None
+    """Texture either loaded from a file or initialised with random colors."""
+    def __init__( self ):
+        self.xSize, self.ySize = 0, 0
+        self.rawRefence = None
 
 class RandomTexture( Texture ):
-	"""Image with random RGB values."""
-	def __init__( self, xSizeP, ySizeP ):
-		self.xSize, self.ySize = xSizeP, ySizeP
-		tmpList = [ random.randint(0, 255) \
-			for i in range( 3 * self.xSize * self.ySize ) ]
-		self.textureArray = array.array( 'B', tmpList )
-		self.rawReference = self.textureArray.tostring( )
+    """Image with random RGB values."""
+    def __init__( self, xSizeP, ySizeP ):
+        self.xSize, self.ySize = xSizeP, ySizeP
+        tmpList = [ random.randint(0, 255) \
+            for i in range( 3 * self.xSize * self.ySize ) ]
+        self.textureArray = array.array( 'B', tmpList )
+        self.rawReference = self.textureArray.tostring( )
 
 class FileTexture( Texture ):
-	"""Texture loaded from a file."""
-	def __init__( self, fileName ):
-		im = Image.open( fileName )
-		self.xSize = im.size[0]
-		self.ySize = im.size[1]
-		self.rawReference = im.tostring("raw", "RGB", 0, -1)
+    """Texture loaded from a file."""
+    def __init__( self, fileName ):
+        im = Image.open( fileName )
+        self.xSize = im.size[0]
+        self.ySize = im.size[1]
+        self.rawReference = im.tostring("raw", "RGB", 0, -1)
 
 class mainGlCanvas(openGL_BasicCanvas):
     last_time=0
     global fps
+    # EYE_POS=[1.0,1.0,1.0]
+    # TARGET_POS=[0.0,0.0,0.0]
     def InitGL(self):
         # set viewing projection
         glMatrixMode(GL_PROJECTION)
@@ -438,6 +458,9 @@ def drawLine(obj):
         #glLineWidth(2)
         i=0
         glBegin(GL_LINES)
+        glColor3f(1,0,0)
+        glVertex3f(TARGET_POS[0],TARGET_POS[1],TARGET_POS[2])
+        glVertex3f(EYE_POS[0],EYE_POS[1],EYE_POS[2])
         for s in obj.index:
             glColor3f(obj.colors[obj.index[i]][0],obj.colors[obj.index[i]][1],obj.colors[obj.index[i]][2])
             glVertex3f(obj.vertexs[obj.index[i]][0],obj.vertexs[obj.index[i]][1],obj.vertexs[obj.index[i]][2])
