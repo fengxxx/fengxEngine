@@ -104,36 +104,49 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.x, self.y = evt.GetPosition()
             ex=self.x-self.lastx
             ey=self.y-self.lasty
-
-            # uDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[0]-EYE_POS[0]) #z,x
-
-            # lDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[2]-EYE_POS[2]) #z,y
-
-            xyDir=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2]) #x,y
-            xyDir=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2]) #x,y
-            radxy=rSPEED*ex
-            radz=rSPEED*ey
-            newDir=Vector2(xyDir.x*cos(radxy)+xyDir.y*sin(radxy),-sin(radxy)*xyDir.x+xyDir.y*cos(radxy))
+         
+            # xyDir=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2]) #x,y
+            # radxy=rSPEED*ex
+            # radz=rSPEED*ey
+            # newDir=Vector2(xyDir.x*cos(radxy)+xyDir.y*sin(radxy),-sin(radxy)*xyDir.x+xyDir.y*cos(radxy))
             
-            TARGET_POS[2]=EYE_POS[2]+newDir.y
-            TARGET_POS[0]=EYE_POS[0]+newDir.x
+            # TARGET_POS[2]=EYE_POS[2]+newDir.y
+            # TARGET_POS[0]=EYE_POS[0]+newDir.x
            
-            faceDir=Vector3(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2],TARGET_POS[1]-EYE_POS[1])
+            EYE_V=Vector3(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2],TARGET_POS[1]-EYE_POS[1])
+           
+            r=EYE_V.get_length()
+            xz_l=sqrt(EYE_V[0]**2+EYE_V[2]**2)
             
-            faceXY=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2])
+            cos_y=xz_l/r
+            sin_y=EYE_V[1]/r
             
-            faceXY=faceXY.rotate(-pi/2)
+            cos_x=EYE_V[0]/xz_l
+            sin_x=EYE_V[2]/xz_l
+            print ((ey*180)/pi)*0.01
+            newAy=acos(cos_y)+ey*180/pi*0.1
+            newAx=acos(cos_x)+ex*180/pi*0.1
+            px=r*cos(newAy)*cos(newAx)
+            py=r*sin(newAy)
+            pz=r*cos(newAy)*sin(newAx)
+           
+            newFace=Vector3(px,pz,py)
+            print newFace.get_length(),newFace
+           
+           
+            TARGET_POS[0]=newFace[0]+EYE_POS[0]
+            TARGET_POS[1]=newFace[1]+EYE_POS[1]
+            TARGET_POS[2]=newFace[2]+EYE_POS[2]
+           
+            # faceDir=Vector3(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2],TARGET_POS[1]-EYE_POS[1])
             
-            face_zhi=Vector3(faceXY[0],0,faceXY[1])
+            # faceXY=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2])
             
-            faceDir=faceDir.rotate(face_zhi,ey*0.1)
+            # faceXY=faceXY.rotate(-pi/2)
             
+            # face_zhi=Vector3(faceXY[0],0,faceXY[1])
             
-            
-            TARGET_POS[0]=faceDir[0]+EYE_POS[0]
-            TARGET_POS[1]=faceDir[1]+EYE_POS[1]
-            TARGET_POS[2]=faceDir[2]+EYE_POS[2]
-            
+            # faceDir=faceDir.rotate(face_zhi,ey*0.1)
             
             # faceDir=Vector3(TARGET_POS[1]-EYE_POS[1],0,0) #z,face
             
@@ -154,8 +167,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             # tempDir=z0Dir*(zx/(z0Dir.length+0.00000001))
             
             #TARGET_POS[1]=-sin(radz)*z0Dir.x+z0Dir.y*cos(radz)+EYE_POS[1]
-            
-            
+
             self.move()
             self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
