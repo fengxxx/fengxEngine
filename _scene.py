@@ -12,7 +12,7 @@ import os
 
 import time
 
-fps=0.1
+
 
 try:
     from wx import glcanvas
@@ -134,9 +134,9 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             print newFace.get_length(),newFace
            
            
-            TARGET_POS[0]=newFace[0]+EYE_POS[0]
-            TARGET_POS[1]=newFace[1]+EYE_POS[1]
-            TARGET_POS[2]=newFace[2]+EYE_POS[2]
+            # TARGET_POS[0]=newFace[0]+EYE_POS[0]
+            # TARGET_POS[1]=newFace[1]+EYE_POS[1]
+            # TARGET_POS[2]=newFace[2]+EYE_POS[2]
            
             # faceDir=Vector3(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2],TARGET_POS[1]-EYE_POS[1])
             
@@ -172,34 +172,34 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
 
-    '''
-            self.x, self.y = evt.GetPosition()
-            ex=self.x-self.lastx
-            ey=self.y-self.lasty
-            uDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[0]-EYE_POS[0])
+        '''
+                self.x, self.y = evt.GetPosition()
+                ex=self.x-self.lastx
+                ey=self.y-self.lasty
+                uDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[0]-EYE_POS[0])
 
-            lDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[2]-EYE_POS[2])
+                lDir=Vector2(TARGET_POS[1]-EYE_POS[1],TARGET_POS[2]-EYE_POS[2])
 
-            rDir=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2])
+                rDir=Vector2(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2])
 
-            uDir=uDir.rotate(-rSPEED*ey)
-            rDir=rDir.rotate(rSPEED*ex)
-            lDir=lDir.rotate(rSPEED*ey)
-            TARGET_POS[1]=uDir.x+EYE_POS[1]
-            TARGET_POS[0]=uDir.y+EYE_POS[0]
+                uDir=uDir.rotate(-rSPEED*ey)
+                rDir=rDir.rotate(rSPEED*ex)
+                lDir=lDir.rotate(rSPEED*ey)
+                TARGET_POS[1]=uDir.x+EYE_POS[1]
+                TARGET_POS[0]=uDir.y+EYE_POS[0]
 
-            TARGET_POS[1]=uDir.x+EYE_POS[1]
-            TARGET_POS[2]=uDir.y+EYE_POS[2]
-            
+                TARGET_POS[1]=uDir.x+EYE_POS[1]
+                TARGET_POS[2]=uDir.y+EYE_POS[2]
+                
 
-            TARGET_POS[0]=rDir.x+EYE_POS[0]
-            TARGET_POS[2]=rDir.y+EYE_POS[2]
+                TARGET_POS[0]=rDir.x+EYE_POS[0]
+                TARGET_POS[2]=rDir.y+EYE_POS[2]
 
-            self.move()
-            self.lastx, self.lasty = evt.GetPosition()
-            self.Refresh(False)
-    '''
-    '''
+                self.move()
+                self.lastx, self.lasty = evt.GetPosition()
+                self.Refresh(False)
+        '''
+    
         if  evt.LeftIsDown():
             TARGET_POS=[0,0,0]
             #EYE_POS=[5,5,5]
@@ -213,7 +213,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.move()
             self.Refresh(False)
 
-    '''
+    
 
     def OnKeyDown(self, evt):
         keyCode=evt.GetKeyCode()
@@ -341,7 +341,7 @@ class FileTexture( Texture ):
 
 class mainGlCanvas(openGL_BasicCanvas):
     last_time=0
-    global fps
+    FPS=0
     # EYE_POS=[1.0,1.0,1.0]
     # TARGET_POS=[0.0,0.0,0.0]
     def InitGL(self):
@@ -407,9 +407,12 @@ class mainGlCanvas(openGL_BasicCanvas):
         # glEnable( GL_TEXTURE_2D )
         #-----------------------texture    
     def OnDraw(self):
-        self.fps=time.time()-self.last_time
+        
+        self.FPS=time.time()-self.last_time
         self.last_time=time.time()
-        if self.fps!=0: print 1/self.fps
+        
+        if self.FPS!=0: 
+            self.FPS=1/self.FPS
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
@@ -650,19 +653,19 @@ def createGridModel():
     grid.line.vertexs.append((0.0, -l,0.0))
 
     
-    a=Vector2(0.0,21)
-    for s in range(1,360):
-        b=a.rotate(s)    
-        t=3*sin(s*10/180.0*pi)
-        grid.line.colors.append((b.x,1.0,b.y))
-        grid.line.vertexs.append((b.x,t,b.y))
+    # a=Vector2(0.0,21)
+    # for s in range(1,360):
+        # b=a.rotate(s)    
+        # t=3*sin(s*10/180.0*pi)
+        # grid.line.colors.append((b.x,1.0,b.y))
+        # grid.line.vertexs.append((b.x,t,b.y))
 
 
 
     for s in range(0,(len(grid.line.vertexs))):
         grid.line.index.append(s)
 
-    print "xx"
+    #print "xx"
     Helpers.append(grid)
 createGridModel()
 
