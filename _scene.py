@@ -113,30 +113,58 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             # TARGET_POS[2]=EYE_POS[2]+newDir.y
             # TARGET_POS[0]=EYE_POS[0]+newDir.x
            
-            EYE_V=Vector3(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2],TARGET_POS[1]-EYE_POS[1])
+            EYE_V=Vector3(TARGET_POS[0]-EYE_POS[0],TARGET_POS[1]-EYE_POS[1],TARGET_POS[2]-EYE_POS[2])
            
             r=EYE_V.get_length()
+            
             xz_l=sqrt(EYE_V[0]**2+EYE_V[2]**2)
             
-            cos_y=xz_l/r
-            sin_y=EYE_V[1]/r
             
-            cos_x=EYE_V[0]/xz_l
-            sin_x=EYE_V[2]/xz_l
-            print ((ey*180)/pi)*0.01
-            newAy=acos(cos_y)+ey*180/pi*0.1
-            newAx=acos(cos_x)+ex*180/pi*0.1
+            #sin_y=xz_l/r
+            cos_y=abs(xz_l/r)
+            
+            # cos_x=avs(EYE_V[2])/xz_l
+            cos_x=abs(EYE_V[0]/xz_l)
+            
+            
+            if EYE_V[0]>0 and EYE_V[2]>0:
+                newAx=acos(cos_x)
+            elif EYE_V[0]>0 and EYE_V[2]<0:
+                newAx=pi-acos(cos_x)
+            elif EYE_V[0]<0 and EYE_V[2]<0:
+                newAx=pi+acos(cos_x)
+            elif EYE_V[0]<0 and EYE_V[2]>0:
+                newAx=2*pi-acos(cos_x) 
+            
+            if EYE_V[0]*EYE_V[2]:
+                xz_l=-xz_l
+            
+            
+            if xz_l>0 and EYE_V[1]>0:
+                newAy=acos(cos_y)
+            elif xz_l>0 and EYE_V[1]<0:
+                newAy=pi-acos(cos_y)
+            elif xz_l<0 and EYE_V[1]<0:
+                newAy=pi+acos(cos_y)
+            elif xz_l<0 and EYE_V[1]>0:
+                newAy=2*pi-acos(cos_y)
+
+            #print -ey,newAy,ex,newAx
+            newAy-=ey*0.01
+            newAx+=ex*0.01
+
+            # print "mouse: ",newAy*180/pi," | ",newAx*180/pi
+            
             px=r*cos(newAy)*cos(newAx)
             py=r*sin(newAy)
             pz=r*cos(newAy)*sin(newAx)
            
-            newFace=Vector3(px,pz,py)
-            print newFace.get_length(),newFace
+            newFace=Vector3(px,py,pz)
            
            
-            # TARGET_POS[0]=newFace[0]+EYE_POS[0]
-            # TARGET_POS[1]=newFace[1]+EYE_POS[1]
-            # TARGET_POS[2]=newFace[2]+EYE_POS[2]
+            TARGET_POS[0]=newFace[0]+EYE_POS[0]
+            TARGET_POS[1]=newFace[1]+EYE_POS[1]
+            TARGET_POS[2]=newFace[2]+EYE_POS[2]
            
             # faceDir=Vector3(TARGET_POS[0]-EYE_POS[0],TARGET_POS[2]-EYE_POS[2],TARGET_POS[1]-EYE_POS[1])
             
@@ -279,7 +307,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                 TARGET_POS[1] -= SPEED
                 self.move()
             if key=="F":
-                EYE_POS=[5,5,5]
+                EYE_POS=[3,5,4]
                 TARGET_POS=[0,0,0]
                 self.move()
 
@@ -647,10 +675,10 @@ def createGridModel():
             grid.line.colors.append((0.6,0.6,0.6))
             grid.line.vertexs.append((i * j - l, 0,-l))
     grid.name="grid"
-    grid.line.colors.append((0.0,1.0,0.0))
-    grid.line.vertexs.append((0.0, l,0.0))
-    grid.line.colors.append((0.0,1.0,0.0))
-    grid.line.vertexs.append((0.0, -l,0.0))
+    # grid.line.colors.append((0.0,1.0,0.0))
+    # grid.line.vertexs.append((0.0, l,0.0))
+    # grid.line.colors.append((0.0,1.0,0.0))
+    # grid.line.vertexs.append((0.0, -l,0.0))
 
     
     # a=Vector2(0.0,21)
