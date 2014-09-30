@@ -4,3 +4,5 @@ gameobjects-0.0.3
 test.*
 *.png
 w
+*.psd
+temp

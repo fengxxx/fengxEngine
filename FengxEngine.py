@@ -10,9 +10,7 @@
 import wx
 import wx.xrc
 
-ID_NEW_SCENE = 1000
-ID_IMPORT_FILE = 1001
-ID_EXIT = 1002
+
 
 ###########################################################################
 ## Class mainFrame
@@ -42,6 +40,7 @@ class MyFileDropTarget(wx.FileDropTarget):
                 print "import obj file:" ,f
                 importObjFile(f) 
             elif  fileE==".primitives":   
+
                 importBigworldModel(po.getModelInfo(f,"temp\\"))  
                 print "import Primitives file:" ,f
             else:
@@ -59,12 +58,14 @@ class mainFrame ( wx.Frame ):
         self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
         self.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
         self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWFRAME ) )
-        
         # self.statusBar_main = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
         # self.statusBar_main.SetBackgroundColour((66,66,66))# wx.SystemSettings.GetColour( wx.SYS_COLOUR_3DDKSHADOW ) )
         
         
         #--------------Menu
+        # ID_NEW_SCENE = 1000
+        # ID_IMPORT_FILE = 1001
+        # ID_EXIT = 1002
         # self.m_menubar1 = wx.MenuBar( 0 )
         # self.m_menubar1.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_MENU ) )
         # self.m_menubar1.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_BACKGROUND ) )
@@ -92,7 +93,7 @@ class mainFrame ( wx.Frame ):
         #self.p_scenes.SetMinSize( wx.Size( 100,100 ) )
         
         self.sceneWindow=mainGlCanvas(self)
-        self.sceneWindow.SetMinSize( wx.Size( 900,100 ) )
+        self.sceneWindow.SetMinSize( wx.Size( 300,100 ) )
         
         bSizer_mainScene.Add( self.sceneWindow, 4, wx.ALL|wx.EXPAND, 0 )
         
@@ -106,14 +107,15 @@ class mainFrame ( wx.Frame ):
                                 |wx.TR_EDIT_LABELS
                                 #|wx.TR_HIDE_ROOT
                                 |wx.TR_EXTENDED
+
                                #|wx.TR_NO_BUTTONS
                                #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
                                )
         
         # self.tree_project = wx.TreeCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_DEFAULT_STYLE )
-        self.tree_project.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_BACKGROUND ) )
+        self.tree_project.SetForegroundColour((45,45,45) )
         self.tree_project.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWFRAME ) )
-        self.tree_project.SetHelpText( u"asdasdads" )
+        self.tree_project.SetHelpText( u"fengx" )
         self.tree_project.SetMinSize( wx.Size( 200,300 ) )
         self.tree_project.SetMaxSize( wx.Size( 350,-1 ) )
         
@@ -232,16 +234,7 @@ class mainFrame ( wx.Frame ):
         self.sizebar.Bind(wx.EVT_LEFT_DOWN, self.OnSizeMouseLeftDown) 
         self.sizebar.Bind(wx.EVT_MOTION,  self.OnSizeMove)
         
-        self.Bind(wx.EVT_KEY_DOWN,self.OnKeyDown)
-    def OnKeyDown(self, evt):
-        keycode = evt.GetKeyCode()
-        ctrldown = evt.ControlDown()
-        shiftdown = evt.ShiftDown()
-        altdown = evt.AltDown()
-        if keycode==342:
-            if ctrldown and shiftdown and altdown:
-                console=PyConsoleFrame(parent=None,id=-1)
-                console.Show()      
+
     def popupmenu(self,event):
         self.ppmenu = wx.Menu()
         pyc=wx.NewId()
@@ -252,7 +245,7 @@ class mainFrame ( wx.Frame ):
         self.PopupMenu(self.ppmenu)
         self.ppmenu.Destroy()
         
-        
+
     def close(self,event):
             sys.exit()
     def upDate(self,event):        
@@ -346,24 +339,19 @@ class mainFrame ( wx.Frame ):
 
 
     def OnSizeMouseLeftUp(self, event):
-        # newSizeX=event.GetPosition()[0]-self.lastPos[0]+self.GetClientSize()[0]
-        # newSizeY=event.GetPosition()[1]-self.lastPos[1]+self.GetClientSize()[1]
-        # newSize=wx.Point=(newSizeX,newSizeY)
-        # if self.canSize:
-            # self.SetSize(newSize) 
-            # self.lastPos[0]=event.GetPosition()[0]
-            # self.lastPos[1]=event.GetPosition()[1]
         self.p_moveBar.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
         if self.sizebar.HasCapture():
             self.sizebar.ReleaseMouse()          
         self.canSize=False
     def createPyConsole(self,event):
         console=PyConsoleFrame(parent=None,id=-1)
-        console.Show()             
+        console.Show()       
+
+
 mainApp = wx.App()
 
-testFrame=mainFrame(parent=None)
-testFrame.Show()
+mainWindow=mainFrame(parent=None)
+mainWindow.Show()
 
 
 mainApp.MainLoop()

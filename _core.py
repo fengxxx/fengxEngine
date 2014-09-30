@@ -1,6 +1,10 @@
 import math
 from vector3 import*
 from vector2 import*
+import time
+
+
+ID=0
 class Vector4(object):
     def __init__(self,x,y,z,w):
         if x!=None: self._x=x
@@ -314,9 +318,11 @@ class GameObject(object):
 
 
 class ModelObject(object):
-    #i=0
-    #def __init__(self):
-    #    self.i+=1
+    #global ID
+    id=0
+    def __init__(self):
+        self.id+=1
+        #self.id=self.ID
     name="mdoelObject"
     renderEnable=True
     transform=Transform("transform")

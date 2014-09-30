@@ -244,7 +244,7 @@ def packNormal((x,y,z)):
 
 
 def getModelInfo(modelpath,temppath):
-
+    
    indexList = []
    vertexList = []
    vertexs = []
@@ -356,7 +356,8 @@ def getModelInfo(modelpath,temppath):
       s.write(str(vertexs)+"\n\n\ngroupList\n\n"+str(groupList)+"\n\n\nvertexFormatClean\n\n"+str(vertexFormatClean)+"\n\n\nindexs\n\n"+str(indexs)+"\n\n\nvertexFormat\n\n"+str(vertexFormat))
       s.close()
       '''
-   return (tiaoguo,vertexs,indexs,groupList,vertexFormat,vertexFormatClean,indexFormat)
+   n=os.path.split(os.path.splitext(modelpath)[0])[1]
+   return (tiaoguo,vertexs,indexs,groupList,vertexFormat,vertexFormatClean,indexFormat,n)
 
 
 def writeMtl(modelPath):
@@ -465,7 +466,7 @@ def writeObj(modelinfo,outputPath,mtls,filename):
    global tiaoguoCount
    global formatInvalidCount
 
-   tiaoguo,vertexs,indexs,groupList,vertexFormat,vertexFormatClean,indexFormat = modelinfo
+   tiaoguo,vertexs,indexs,groupList,vertexFormat,vertexFormatClean,indexFormat,n = modelinfo
       
    if tiaoguo:
       tiaoguoCount = tiaoguoCount+1
