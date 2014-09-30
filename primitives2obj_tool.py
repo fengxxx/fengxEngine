@@ -227,7 +227,7 @@ def getBStrbyInt(pvalue,long):
    
    return bstr
 
-   
+    
 def packNormal((x,y,z)):
    x = x*1023.0
    y = y*1023.0

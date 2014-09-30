@@ -66,6 +66,7 @@ class mainFrame(wx.Frame):
                                #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
                                )
         
+
         self.resManager.SetBackgroundColour((120,120,120))
         
 

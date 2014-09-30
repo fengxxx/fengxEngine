@@ -312,12 +312,12 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                             wildcard = file_wildcard)  
         if dlg.ShowModal() == wx.ID_OK:  
             self.filename = dlg.GetPath()  
+            fileE=os.path.splitext(self.filename)[1]
+            if fileE==".obj" or  fileE==".OBJ":
+                importObjFile(self.filename) 
+            elif  fileE==".primitives":   
+                importBigworldModel(po.getModelInfo(self.filename,"temp//"))   
         dlg.Destroy()  
-        fileE=os.path.splitext(self.filename)[1]
-        if fileE==".obj" or  fileE==".OBJ":
-            importObjFile(self.filename) 
-        elif  fileE==".primitives":   
-            importBigworldModel(po.getModelInfo(self.filename,"H:\\testPrimitives\\temp\\"))   
 
 
 class Texture( object ):
@@ -359,11 +359,8 @@ class mainGlCanvas(openGL_BasicCanvas):
         # position viewer
         glMatrixMode(GL_MODELVIEW)
 
-        a = 0.217
-        b = 0.342
-        c = 0.537
-        d = 0.4
-        glClearColor (d,d,d,1)
+
+        glClearColor (GL_COLOR_viewPort_BG[0],GL_COLOR_viewPort_BG[1],GL_COLOR_viewPort_BG[2],GL_COLOR_viewPort_BG[3])
         
         #glClearColor(0.5333,0.53333,0,1)
         glEnable(GL_DEPTH_TEST)
@@ -396,20 +393,20 @@ class mainGlCanvas(openGL_BasicCanvas):
         #-----------------------light
         
         #-----------------------texture
-        # fileName="jz_jzsj_yw0020_d_wb.png"
-        # try:
-            # texture = FileTexture( fileName )
-        # except:
-            # print 'could not open ', fileName, '; using random texture'
-            # texture = RandomTexture( 256, 256 )
-        # glShadeModel( GL_SMOOTH )
-        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT )
-        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT )
-        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR )
-        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR )
-        # glTexImage2D( GL_TEXTURE_2D, 0, 3, texture.xSize, texture.ySize, 0,
-                     # GL_RGB, GL_UNSIGNED_BYTE, texture.rawReference )
-        # glEnable( GL_TEXTURE_2D )
+        fileName="checkmap.png"
+        try:
+            texture = FileTexture( fileName )
+        except:
+            print 'could not open ', fileName, '; using random texture'
+            texture = RandomTexture( 256, 256 )
+        glShadeModel( GL_SMOOTH )
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT )
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT )
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR )
+        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR )
+        glTexImage2D( GL_TEXTURE_2D, 0, 3, texture.xSize, texture.ySize, 0,
+                     GL_RGB, GL_UNSIGNED_BYTE, texture.rawReference )
+        glEnable( GL_TEXTURE_2D )
         #-----------------------texture    
     def OnDraw(self):
         
@@ -421,42 +418,23 @@ class mainGlCanvas(openGL_BasicCanvas):
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glMatrixMode(GL_MODELVIEW)
-        # glPushMatrix()
-        # glLoadIdentity()
-        # glPopMatrix()
-        # glEnable(GL_LIGHT1)
-        # glEnable(GL_LIGHTING)
-   
-        if len(Helpers)>0:
-            for s in Helpers:
-                # glDisable(GL_LIGHT1)
-                # glDisable(GL_LIGHTING)
-                drawModelObject(s)
-                
         glEnable(GL_LIGHT1)
         glEnable(GL_LIGHTING)
+                
         if len(ModelObjects)>0:
             for s in ModelObjects:
                 drawModelObject(s)
-                
             glLineWidth(2)   
-            # glDisable(GL_LIGHT1)
-            # glDisable(GL_LIGHTING)
+       
+        glDisable(GL_LIGHT1)
+        glDisable(GL_LIGHTING)
+        if len(ModelObjects)>0:
             for s in ModelObjects:
                 drawMeshLine(s.mesh)
         glLineWidth(1)   
-        '''
-        if len(BigworldModels)>0:
-            i=0
-            glEnable(GL_LIGHT1)
-            glEnable(GL_LIGHTING)
-            for s in BigworldModels:
-                i+=3
-                #glTranslatef(i,0,0)
-                drawObjectFromBigworld(s)
-        '''
-
-        
+        if len(Helpers)>0:
+            for s in Helpers:
+                drawModelObject(s)
         self.SwapBuffers()
 
 def TexFromPNG(self, filename):
@@ -491,7 +469,7 @@ def drawLine(obj):
 def drawMeshLine(obj):
     if type(obj)==Mesh:
         glBegin(GL_LINES)
-        glColor3f(1,0,0)
+        glColor3f(0.1,0.1,0.1)
         for s in obj.egdes:
             glVertex3f(obj.vertexs[(s[0]-1)][0],obj.vertexs[(s[0]-1)][1],obj.vertexs[(s[0]-1)][2])
             glVertex3f(obj.vertexs[(s[1]-1)][0],obj.vertexs[(s[1]-1)][1],obj.vertexs[(s[1]-1)][2])
@@ -637,22 +615,22 @@ def createGridModel():
     l=j*(num-1)/2
     for i in range(num):
         if i == ((num-1)/2):
-            grid.line.colors.append((1.0,0.0,0.0))
+            grid.line.colors.append((0.7,0.0,0.0))
             grid.line.vertexs.append((-l, 0, i * j - l))
-            grid.line.colors.append((1.0,0.0,0.0))
+            grid.line.colors.append((0.7,0.0,0.0))
             grid.line.vertexs.append((l, 0,i * j - l))
-            grid.line.colors.append((0.0,0.0,1.0))
+            grid.line.colors.append((0.0,0.0,0.7))
             grid.line.vertexs.append((i * j - l, 0,l))
-            grid.line.colors.append((0.0,0.0,1.0))
+            grid.line.colors.append((0.0,0.0,0.7))
             grid.line.vertexs.append((i * j - l, 0,-l))
         else:
-            grid.line.colors.append((0.6,0.6,0.6))
+            grid.line.colors.append(GL_COLOR_gridLine)
             grid.line.vertexs.append((-l, 0, i * j - l))
-            grid.line.colors.append((0.6,0.6,0.6))
+            grid.line.colors.append(GL_COLOR_gridLine)
             grid.line.vertexs.append((l, 0,i * j - l))
-            grid.line.colors.append((0.6,0.6,0.6))
+            grid.line.colors.append(GL_COLOR_gridLine)
             grid.line.vertexs.append((i * j - l, 0,l))
-            grid.line.colors.append((0.6,0.6,0.6))
+            grid.line.colors.append(GL_COLOR_gridLine)
             grid.line.vertexs.append((i * j - l, 0,-l))
     grid.name="grid"
     # grid.line.colors.append((0.0,1.0,0.0))

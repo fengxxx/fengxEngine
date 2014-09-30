@@ -25,4 +25,17 @@ rSPEED=-0.01
 
 
 
+GL_COLOR_viewPort_BG=(0.40,0.40,0.40,0)
+GL_COLOR_gridLine=(0.35,0.35,0.35,0)
+
+UI_COLOR_MAIN_BG=(67,67,67)
+UI_COLOR_MAIN_FG=(130,130,130)
+UI_COLOR_movebar_BG=(140,140,140)
+UI_COLOR_movebar_FG=(45,45,45)
+UI_COLOR_sizebar_BG=(130,130,130)
+UI_COLOR_sizebar_FG=(67,67,67)
+UI_COLOR_sceneTree_BG=(140,140,140)
+UI_COLOR_sceneTree_FG=(50,50,50)
+UI_COLOR_mainToolbar_BG=(130,130,130)
+UI_COLOR_mainToolbar_FG=(67,67,67)
 

@@ -56,8 +56,8 @@ class mainFrame ( wx.Frame ):
         wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"FengxEngine 1.0", pos = wx.DefaultPosition, size = wx.Size( 876,685 ), style = wx.NO_BORDER|wx.TAB_TRAVERSAL ) #wx.RESIZE_BORDER|
         
         self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
-        self.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
-        self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWFRAME ) )
+        self.SetForegroundColour( UI_COLOR_MAIN_FG )
+        self.SetBackgroundColour( UI_COLOR_MAIN_BG )
         # self.statusBar_main = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
         # self.statusBar_main.SetBackgroundColour((66,66,66))# wx.SystemSettings.GetColour( wx.SYS_COLOUR_3DDKSHADOW ) )
         
@@ -98,23 +98,23 @@ class mainFrame ( wx.Frame ):
         bSizer_mainScene.Add( self.sceneWindow, 4, wx.ALL|wx.EXPAND, 0 )
         
         self.tree_project=sceneTreePanel(self, wx.NewId(), (0,0) , (100,100),
-                               wx.TR_HAS_BUTTONS
+                                wx.TR_HAS_BUTTONS
+                                |wx.TR_HAS_VARIABLE_ROW_HEIGHT
                                 |wx.TR_TWIST_BUTTONS
                                 |wx.TR_SINGLE
                                 |wx.TR_MULTIPLE
                                 |wx.TR_NO_LINES
                                 |wx.TR_FULL_ROW_HIGHLIGHT
                                 |wx.TR_EDIT_LABELS
-                                #|wx.TR_HIDE_ROOT
                                 |wx.TR_EXTENDED
 
-                               #|wx.TR_NO_BUTTONS
-                               #|wx.TR_HAS_VARIABLE_ROW_HEIGHT
+                                #wx.TR_HIDE_ROOT
+                                #|wx.TR_NO_BUTTONS
                                )
         
         # self.tree_project = wx.TreeCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_DEFAULT_STYLE )
-        self.tree_project.SetForegroundColour((45,45,45) )
-        self.tree_project.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOWFRAME ) )
+        self.tree_project.SetForegroundColour(UI_COLOR_sceneTree_FG )
+        self.tree_project.SetBackgroundColour(UI_COLOR_sceneTree_BG)
         self.tree_project.SetHelpText( u"fengx" )
         self.tree_project.SetMinSize( wx.Size( 200,300 ) )
         self.tree_project.SetMaxSize( wx.Size( 350,-1 ) )
@@ -128,12 +128,13 @@ class mainFrame ( wx.Frame ):
         
 
         self.p_moveBar = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.p_moveBar.SetBackgroundColour( (50,50,50) )
+        self.p_moveBar.SetBackgroundColour( UI_COLOR_movebar_BG )
         self.p_moveBar.SetMinSize( wx.Size( 100,25 ) )
         self.p_moveBar.SetMaxSize( wx.Size( -1,25 ) ) 
         #self.title=wx.StaticText(parent=self.p_moveBar,-1,"xx")
         self.title=wx.StaticText(self.p_moveBar, -1, "VisualFengx_1.0")
-        self.title.SetBackgroundColour((50,50,50))
+        self.title.SetBackgroundColour(UI_COLOR_movebar_BG )
+        self.title.SetForegroundColour(UI_COLOR_movebar_FG )
         
 
         b_close_bmp=wx.Bitmap("b_max.bmp",wx.BITMAP_TYPE_BMP)
@@ -151,14 +152,14 @@ class mainFrame ( wx.Frame ):
 
         
         self.b_close= wx.BitmapButton(self.p_moveBar, -1, b_close_bmp, style = wx.NO_BORDER)
-        self.b_close.SetBackgroundColour((50,50,50))
+        self.b_close.SetBackgroundColour(UI_COLOR_movebar_BG )
         self.b_close.Bind(wx.EVT_BUTTON, self.close)
         
         self.b_max= wx.BitmapButton(self.p_moveBar, -1, b_max_bmp, style = wx.NO_BORDER)
-        self.b_max.SetBackgroundColour((50,50,50))
+        self.b_max.SetBackgroundColour(UI_COLOR_movebar_BG )
         
         self.b_min= wx.BitmapButton(self.p_moveBar, -1, b_min_bmp, style = wx.NO_BORDER)
-        self.b_min.SetBackgroundColour((50,50,50))
+        self.b_min.SetBackgroundColour(UI_COLOR_movebar_BG )
         
         
         #self.b_close=wx.StaticBitmap(parent=self.p_moveBar,bitmap=wx.Bitmap("b_close.bmp"))
@@ -167,13 +168,13 @@ class mainFrame ( wx.Frame ):
         self.sizebar = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         self.sizebar.SetMinSize( wx.Size( 100,15 ) )
         self.sizebar.SetMaxSize( wx.Size( -1,15 ) ) 
-        self.sizebar.SetBackgroundColour( (50,50,50) )
+        self.sizebar.SetBackgroundColour( UI_COLOR_sizebar_BG )
 
 
         self.p_mainTool = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         self.p_mainTool.SetMinSize( wx.Size( 100,5 ) )
         self.p_mainTool.SetMaxSize( wx.Size( -1,5 ) )
-        self.p_mainTool.SetBackgroundColour((40,40,50))
+        self.p_mainTool.SetBackgroundColour(UI_COLOR_mainToolbar_BG)
      
      
         self.box_movebar = wx.BoxSizer( wx.HORIZONTAL )
