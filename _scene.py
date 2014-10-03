@@ -89,11 +89,12 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         self.OnDraw()
        
 
-
+    
     def OnMouseDown(self, evt):
         #self.CaptureMouse()
         self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
         self.lastx, self.lasty = evt.GetPosition()
+        
 
     def OnMouseUp(self, evt):
         #self.ReleaseMouse()
@@ -178,7 +179,24 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
             
-        if  evt.LeftIsDown():
+
+    
+
+    def OnKeyDown(self, evt):
+        global ANGLE
+        global TARGET_POS 
+        global EYE_POS
+        global SPEED
+        global rSPEED
+        keyCode=evt.GetKeyCode()
+
+        ctrldown = evt.ControlDown()
+
+        shiftdown = evt.ShiftDown()
+        altdown = evt.AltDown()
+        #print keycode
+        if keyCode==90:
+            #if  evt.LeftIsDown():
             TARGET_POS=[0,0,0]
             #EYE_POS=[5,5,5]
 
@@ -190,16 +208,6 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
 
             self.move()
             self.Refresh(False)
-
-    
-
-    def OnKeyDown(self, evt):
-        keyCode=evt.GetKeyCode()
-
-        ctrldown = evt.ControlDown()
-        shiftdown = evt.ShiftDown()
-        altdown = evt.AltDown()
-        #print keycode
         if keyCode==79:
             if ctrldown:
                 self.importFile(evt)
@@ -209,11 +217,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                 console.Show()  
         if 32<keyCode<127:
             key=chr(keyCode)
-            global ANGLE
-            global TARGET_POS 
-            global EYE_POS
-            global SPEED
-            global rSPEED
+
             if key=="D":  
                 by=TARGET_POS[2]-EYE_POS[2]
                 bx=TARGET_POS[0]-EYE_POS[0]
@@ -392,22 +396,22 @@ class mainGlCanvas(openGL_BasicCanvas):
         glEnable(GL_COLOR_MATERIAL)
         #-----------------------light
         
-        #-----------------------texture
-        fileName="checkmap.png"
-        try:
-            texture = FileTexture( fileName )
-        except:
-            print 'could not open ', fileName, '; using random texture'
-            texture = RandomTexture( 256, 256 )
-        glShadeModel( GL_SMOOTH )
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT )
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT )
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR )
-        glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR )
-        glTexImage2D( GL_TEXTURE_2D, 0, 3, texture.xSize, texture.ySize, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, texture.rawReference )
-        glEnable( GL_TEXTURE_2D )
-        #-----------------------texture    
+        # #-----------------------texture
+        # fileName="checkmap.png"
+        # try:
+            # texture = FileTexture( fileName )
+        # except:
+            # print 'could not open ', fileName, '; using random texture'
+            # texture = RandomTexture( 256, 256 )
+        # glShadeModel( GL_SMOOTH )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR )
+        # glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR )
+        # glTexImage2D( GL_TEXTURE_2D, 0, 3, texture.xSize, texture.ySize, 0,
+                     # GL_RGB, GL_UNSIGNED_BYTE, texture.rawReference )
+        # glEnable( GL_TEXTURE_2D )
+        # #-----------------------texture    
     def OnDraw(self):
         
         self.FPS=time.time()-self.last_time
@@ -420,7 +424,6 @@ class mainGlCanvas(openGL_BasicCanvas):
         glMatrixMode(GL_MODELVIEW)
         glEnable(GL_LIGHT1)
         glEnable(GL_LIGHTING)
-                
         if len(ModelObjects)>0:
             for s in ModelObjects:
                 drawModelObject(s)
