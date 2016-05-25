@@ -4,10 +4,11 @@ import wx
 from _core import *
 from _data import *
 import array
-import Image
+#import Image
+from PIL import Image
 import random
 import _import_obj as objFile
-import primitives2obj_tool as po 
+import primitives2obj_tool as po
 import os
 
 import time
@@ -40,7 +41,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         glcanvas.GLCanvas.__init__(self, parent, -1,size=(100,100))
         self.init = False
         self.context = glcanvas.GLContext(self)
-        
+
         # initial mouse position
         self.lastx = self.x = 0
         self.lasty = self.y = 0
@@ -54,7 +55,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
         self.Bind(wx.EVT_MOUSEWHEEL, self.OnWheelRotation)
-        
+
     def OnEraseBackground(self, event):
         pass # Do nothing, to avoid flashing on MSW.
 
@@ -72,7 +73,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         event.Skip()
 
     def DoSetViewport(self):
-        
+
         self.size=self.GetClientSize()
         b=self.size.width/(self.size.height+0.0)
         #gluPerspective(120,b/1,1,1000)
@@ -87,21 +88,21 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.InitGL()
             self.init = True
         self.OnDraw()
-       
 
-    
+
+
     def OnMouseDown(self, evt):
         #self.CaptureMouse()
         self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
         self.lastx, self.lasty = evt.GetPosition()
-        
+
 
     def OnMouseUp(self, evt):
         #self.ReleaseMouse()
         ()
     def OnWheelRotation(self,evt):
         global SPEED
-        
+
         if evt.GetWheelRotation()>0 and evt.RightIsDown():
             if SPEED<1.5:
                 SPEED+=0.07
@@ -113,9 +114,9 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                 if SPEED<0.07:
                     SPEED=0.07
                     print "SPEED too slow !",SPEED
-                    
+
                 print "SPEED - ",SPEED
-            
+
             elif SPEED>0 and SPEED>=1.5:
                 SPEED-=0.5
                 print "SPEED - ",SPEED
@@ -143,13 +144,13 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             elif EYE_V[0]<0 and EYE_V[2]<0:
                 newAx=pi+acos(cos_x)
             elif EYE_V[0]<0 and EYE_V[2]>0:
-                newAx=pi-acos(cos_x) 
-            
+                newAx=pi-acos(cos_x)
+
             # if EYE_V[0]*EYE_V[2]<0:
                 # xz_l=-xz_l
             # else:
                 # xz_l=abs(xz_l)
-            
+
             # if xz_l>0 and EYE_V[1]>0:
                 # newAy=acos(cos_y)
             # elif xz_l>0 and EYE_V[1]<0:
@@ -162,7 +163,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                 newAy=acos(cos_y)
             elif EYE_V[1]<0:
                 newAy=2*pi-acos(cos_y)
- 
+
             newAy-=ey*0.01
             newAx+=ex*0.01
 
@@ -178,13 +179,13 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             self.move()
             self.lastx, self.lasty = evt.GetPosition()
             self.Refresh(False)
-            
 
-    
+
+
 
     def OnKeyDown(self, evt):
         global ANGLE
-        global TARGET_POS 
+        global TARGET_POS
         global EYE_POS
         global SPEED
         global rSPEED
@@ -214,11 +215,11 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         if keyCode==342:
             if ctrldown and shiftdown and altdown:
                 console=PyConsoleFrame(parent=None,id=-1)
-                console.Show()  
+                console.Show()
         if 32<keyCode<127:
             key=chr(keyCode)
 
-            if key=="D":  
+            if key=="D":
                 by=TARGET_POS[2]-EYE_POS[2]
                 bx=TARGET_POS[0]-EYE_POS[0]
                 bv=Vector2(-by,bx).normalise()*SPEED
@@ -227,8 +228,8 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                 TARGET_POS[2]+=bv.y
                 EYE_POS[2]+=bv.y
                 self.move()
-                
-            if key=="A":  
+
+            if key=="A":
                 by=TARGET_POS[2]-EYE_POS[2]
                 bx=TARGET_POS[0]-EYE_POS[0]
                 bv=Vector2(by,-bx).normalise()*SPEED
@@ -237,7 +238,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                 TARGET_POS[2]+=bv.y
                 EYE_POS[2]+=bv.y
                 self.move()
-                
+
             if key=="W":
                 by=TARGET_POS[2]-EYE_POS[2]
                 bx=TARGET_POS[0]-EYE_POS[0]
@@ -250,7 +251,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                 EYE_POS[1]+=bv.z
                 EYE_POS[2]+=bv.y
                 self.move()
-                
+
             if key=="S":
                 by=TARGET_POS[2]-EYE_POS[2]
                 bx=TARGET_POS[0]-EYE_POS[0]
@@ -263,7 +264,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
                 EYE_POS[1]-=bv.z
                 EYE_POS[2]-=bv.y
                 self.move()
-                
+
             if key=="E":
                 EYE_POS[1] +=SPEED
                 TARGET_POS[1] +=SPEED
@@ -280,7 +281,7 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
             if key=="P":
                 TARGET_POS=[0,0,0]
                 #EYE_POS=[5,5,5]
-                
+
                 a=Vector2(EYE_POS[0],EYE_POS[2])
                 a=a.rotate(SPEED)
 
@@ -309,19 +310,19 @@ class openGL_BasicCanvas(glcanvas.GLCanvas):
         gluLookAt(EYE_POS[0],EYE_POS[1], EYE_POS[2],  TARGET_POS[0],TARGET_POS[1] ,TARGET_POS[2], 0,1,0)
         self.Refresh(False)
     def importFile(self,event):
-        file_wildcard = "OBJ files(*.obj)|*.obj|BigWorld model files(*.primitives)|*.primitives|All files(*.*)|*.*"   
-        dlg = wx.FileDialog(self, "Open paint file...",  
-                            "E:\\Desktop\\",   
-                            style = wx.OPEN,  
-                            wildcard = file_wildcard)  
-        if dlg.ShowModal() == wx.ID_OK:  
-            self.filename = dlg.GetPath()  
+        file_wildcard = "OBJ files(*.obj)|*.obj|BigWorld model files(*.primitives)|*.primitives|All files(*.*)|*.*"
+        dlg = wx.FileDialog(self, "Open paint file...",
+                            "E:\\Desktop\\",
+                            style = wx.OPEN,
+                            wildcard = file_wildcard)
+        if dlg.ShowModal() == wx.ID_OK:
+            self.filename = dlg.GetPath()
             fileE=os.path.splitext(self.filename)[1]
             if fileE==".obj" or  fileE==".OBJ":
-                importObjFile(self.filename) 
-            elif  fileE==".primitives":   
-                importBigworldModel(po.getModelInfo(self.filename,"temp//"))   
-        dlg.Destroy()  
+                importObjFile(self.filename)
+            elif  fileE==".primitives":
+                importBigworldModel(po.getModelInfo(self.filename,"temp//"))
+        dlg.Destroy()
 
 
 class Texture( object ):
@@ -365,7 +366,7 @@ class mainGlCanvas(openGL_BasicCanvas):
 
 
         glClearColor (GL_COLOR_viewPort_BG[0],GL_COLOR_viewPort_BG[1],GL_COLOR_viewPort_BG[2],GL_COLOR_viewPort_BG[3])
-        
+
         #glClearColor(0.5333,0.53333,0,1)
         glEnable(GL_DEPTH_TEST)
 
@@ -395,7 +396,7 @@ class mainGlCanvas(openGL_BasicCanvas):
         glLightModelfv(GL_LIGHT_MODEL_AMBIENT, Light_Model_Ambient)
         glEnable(GL_COLOR_MATERIAL)
         #-----------------------light
-        
+
         # #-----------------------texture
         # fileName="checkmap.png"
         # try:
@@ -411,13 +412,13 @@ class mainGlCanvas(openGL_BasicCanvas):
         # glTexImage2D( GL_TEXTURE_2D, 0, 3, texture.xSize, texture.ySize, 0,
                      # GL_RGB, GL_UNSIGNED_BYTE, texture.rawReference )
         # glEnable( GL_TEXTURE_2D )
-        # #-----------------------texture    
+        # #-----------------------texture
     def OnDraw(self):
-        
+
         self.FPS=time.time()-self.last_time
         self.last_time=time.time()
-        
-        if self.FPS!=0: 
+
+        if self.FPS!=0:
             self.FPS=1/self.FPS
         # clear color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -427,14 +428,14 @@ class mainGlCanvas(openGL_BasicCanvas):
         if len(ModelObjects)>0:
             for s in ModelObjects:
                 drawModelObject(s)
-            glLineWidth(2)   
-       
+            glLineWidth(2)
+
         glDisable(GL_LIGHT1)
         glDisable(GL_LIGHTING)
         if len(ModelObjects)>0:
             for s in ModelObjects:
                 drawMeshLine(s.mesh)
-        glLineWidth(1)   
+        glLineWidth(1)
         if len(Helpers)>0:
             for s in Helpers:
                 drawModelObject(s)
@@ -465,10 +466,10 @@ def drawLine(obj):
         for s in obj.index:
             glColor3f(obj.colors[obj.index[i]][0],obj.colors[obj.index[i]][1],obj.colors[obj.index[i]][2])
             glVertex3f(obj.vertexs[obj.index[i]][0],obj.vertexs[obj.index[i]][1],obj.vertexs[obj.index[i]][2])
-            i+=1    
+            i+=1
         glEnd()
-        glLineWidth(1) 
-   
+        glLineWidth(1)
+
 def drawMeshLine(obj):
     if type(obj)==Mesh:
         glBegin(GL_LINES)
@@ -477,8 +478,8 @@ def drawMeshLine(obj):
             glVertex3f(obj.vertexs[(s[0]-1)][0],obj.vertexs[(s[0]-1)][1],obj.vertexs[(s[0]-1)][2])
             glVertex3f(obj.vertexs[(s[1]-1)][0],obj.vertexs[(s[1]-1)][1],obj.vertexs[(s[1]-1)][2])
         glEnd()
-        
-        
+
+
 def drawMesh(obj):
     if type(obj)==Mesh:
         glColor3f(0.5,0.5,0.5)
@@ -498,7 +499,7 @@ def drawMesh(obj):
                     glVertex3f(obj.vertexs[v_num][0],obj.vertexs[v_num][1],obj.vertexs[v_num][2])
         glEnd()
         glBegin(GL_TRIANGLES)
-        
+
         for s in obj.faces:
             if len(s)==3:
                 for i in s:
@@ -511,7 +512,7 @@ def drawMesh(obj):
                         glTexCoord2f(obj.uvs[vt_num][0],obj.uvs[vt_num][1])
                     glVertex3f(obj.vertexs[v_num][0],obj.vertexs[v_num][1],obj.vertexs[v_num][2])
         glEnd()
-        
+
         glBegin(GL_POLYGON)
         for s in obj.faces:
             if len(s)>4:
@@ -526,11 +527,11 @@ def drawMesh(obj):
                         glTexCoord2f(obj.uvs[vt_num][0],obj.uvs[vt_num][1])
                     glVertex3f(obj.vertexs[v_num][0],obj.vertexs[v_num][1],obj.vertexs[v_num][2])
         glEnd()
-        
 
-        
-        
-        
+
+
+
+
         #--draw the line
         '''
         glLineWidth(2)
@@ -542,17 +543,17 @@ def drawMesh(obj):
             glVertex3f(obj.vertexs[i][0],obj.vertexs[i][1],obj.vertexs[i][2])
             #glVertex3f(obj.vertexs[i+lon][0],obj.vertexs[i+lon][1],obj.vertexs[i+lon][2])
             lon=-lon
-            i+=1    
+            i+=1
         glEnd()
         glLineWidth(1)
-        '''       
+        '''
 def drawModelObject(obj):
     if obj.renderEnable==True:
         #glMatrixMode(GL_objVIEW)
         glTranslatef(obj.transform.position.x, obj.transform.position.y, obj.transform.position.z)
         #glRotatef(self.x, 0.0, 1.0, 0.0)
         drawMesh(obj.mesh)
-        drawLine(obj.line)         
+        drawLine(obj.line)
 
 # global ModelObjects
 def importObjFile(filePath):
@@ -577,16 +578,16 @@ def importObjFile(filePath):
     #print mesh.normals
     ModelObjects.append(obj)
 def importFile():
-    file_wildcard = "OBJ files(*.obj)|*.obj|All files(*.*)|*.*"   
+    file_wildcard = "OBJ files(*.obj)|*.obj|All files(*.*)|*.*"
     #os.getcwd()
-    dlg = wx.FileDialog(self, "Open Wavefront obj file...",  
-                        "E:\\Desktop\\",   
-                        style = wx.OPEN,  
-                        wildcard = file_wildcard)  
-    if dlg.ShowModal() == wx.ID_OK:  
-        self.filename = dlg.GetPath()  
-    dlg.Destroy()  
-    importObjFile(self.filename) 
+    dlg = wx.FileDialog(self, "Open Wavefront obj file...",
+                        "E:\\Desktop\\",
+                        style = wx.OPEN,
+                        wildcard = file_wildcard)
+    if dlg.ShowModal() == wx.ID_OK:
+        self.filename = dlg.GetPath()
+    dlg.Destroy()
+    importObjFile(self.filename)
 
 def importBigworldModel(modelInfo):
     obj=ModelObject()
@@ -597,7 +598,7 @@ def importBigworldModel(modelInfo):
         obj.mesh.vertexs.append(modelInfo[1][s][0])
         obj.mesh.uvs.append(modelInfo[1][s][1])
         obj.mesh.normals.append(modelInfo[1][s][2])
-        
+
     for i in range(0,(len(modelInfo[2])/3)):
         #print "xxxx",i
         f_1=[(i*3+1),(i*3+1),(i*3+1)]#(modelInfo[2][i*3]+1),(modelInfo[2][i*3]+1)]
@@ -609,8 +610,8 @@ def importBigworldModel(modelInfo):
     #obj.mesh.smoothGroup=meshData[6]
     #obj.mesh.materials=meshData[7]
 
-    ModelObjects.append(obj)   
-       
+    ModelObjects.append(obj)
+
 def createGridModel():
     grid=ModelObject()
     num=21
@@ -641,10 +642,10 @@ def createGridModel():
     # grid.line.colors.append((0.0,1.0,0.0))
     # grid.line.vertexs.append((0.0, -l,0.0))
 
-    
+
     # a=Vector2(0.0,21)
     # for s in range(1,360):
-        # b=a.rotate(s)    
+        # b=a.rotate(s)
         # t=3*sin(s*10/180.0*pi)
         # grid.line.colors.append((b.x,1.0,b.y))
         # grid.line.vertexs.append((b.x,t,b.y))
@@ -664,7 +665,7 @@ def drawObjectFromBigworld(modelInfo):
     indexs=modelInfo[2]
     #glPointSize(5)
     #glLineWidth(2)
-    glColor3f(0.5,0.5,0.5)    
+    glColor3f(0.5,0.5,0.5)
     glBegin(GL_TRIANGLES)#_STRIP)
     for i in range(0,(len(indexs)-1)):
         #print vertexs[indexs[i]]
